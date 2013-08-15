@@ -1,0 +1,11 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:UI="clr-namespace:Polyhedrus.UI;assembly=Polyhedrus" x:Class="Polyhedrus.Tests.MainWindow"
+        Title="MainWindow" Height="350" Width="525">
+	<Grid>
+
+		<UI:Knob Caption="Abcde" ShowValue="True" Min="-3" Max="4" Margin="85,49,220,56"/>
+
+	</Grid>
+</Window>
