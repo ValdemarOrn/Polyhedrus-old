@@ -31,6 +31,7 @@ namespace Polyhedrus.UI
 		static internal DependencyProperty MaxProperty;
 		static internal DependencyProperty StepsProperty;
 		static internal DependencyProperty ValueFormatterProperty;
+		static internal DependencyProperty LabelHeightProperty;
 
 		static Knob()
 		{
@@ -54,6 +55,8 @@ namespace Polyhedrus.UI
 				new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 			StepsProperty = DependencyProperty.Register("Steps", typeof(int), typeof(Knob),
 				new FrameworkPropertyMetadata(1000, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+			LabelHeightProperty = DependencyProperty.Register("LabelHeight", typeof(int), typeof(Knob),
+				new FrameworkPropertyMetadata(20, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 			ValueFormatterProperty = DependencyProperty.Register("ValueFormatter", typeof(Func<double, string>), typeof(Knob),
 				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 		}
@@ -163,6 +166,12 @@ namespace Polyhedrus.UI
 		{
 			get { return (Visibility)base.GetValue(ShowCenterProperty); }
 			set { SetValue(ShowCenterProperty, value); }
+		}
+
+		public int LabelHeight
+		{
+			get { return (int)base.GetValue(LabelHeightProperty); }
+			set { SetValue(LabelHeightProperty, value); }
 		}
 
 		#endregion

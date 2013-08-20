@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
 using SharpSoundDevice;
-using AudioLib;
 using Polyhedrus.Modules;
+using Polyhedrus.UI;
 
 namespace Polyhedrus
 {
@@ -24,6 +24,8 @@ namespace Polyhedrus
 		// --------------- ----------------------- ---------------
 
 		public SynthController Controller;
+		public SynthView View;
+		public ViewModel VM;
 
 		public double Samplerate;
 
@@ -34,20 +36,27 @@ namespace Polyhedrus
 			ParameterInfo = new Parameter[1];
 			PortInfo = new Port[1];
 			Controller = new SynthController();
+
+			VM = new ViewModel(Controller);
+			View = new SynthView(VM);
 		}
 
 		public void InitializeDevice()
 		{
+			DevInfo.DeviceID = "Low Profile - Rodent.V2";
+#if DEBUG
+			DevInfo.DeviceID = DevInfo.DeviceID + " - Dev";
+#endif
+
 			DevInfo.Developer = "Valdemar Erlingsson";
-			DevInfo.DeviceID = "Analog Window - Polyhedrus";
-			DevInfo.EditorHeight = (Controller.View != null) ? (int)Controller.View.Height : 400;
-			DevInfo.EditorWidth = (Controller.View != null) ? (int)Controller.View.Width : 800;
+			DevInfo.EditorHeight = 600;
+			DevInfo.EditorWidth = 1020;
 			DevInfo.HasEditor = true;
 			DevInfo.Name = "Polyhedrus Software Synthesizer";
 			DevInfo.ProgramCount = 1;
 			DevInfo.Type = DeviceType.Generator;
 			DevInfo.Version = 1000;
-			DevInfo.VstId = 1;
+			DevInfo.VstId = DeviceUtilities.GenerateIntegerId(DevInfo.DeviceID);
 
 			PortInfo[0].Direction = PortDirection.Output;
 			PortInfo[0].Name = "Stereo Output";
@@ -87,11 +96,8 @@ namespace Polyhedrus
 
 		public void OpenEditor(IntPtr parentWindow)
 		{
-			Controller.CreateView();
-			DevInfo.EditorHeight = (Controller.View != null) ? (int)Controller.View.Height : 400;
-			DevInfo.EditorWidth = (Controller.View != null) ? (int)Controller.View.Width : 800;
 			HostInfo.SendEvent(this, new Event() { Data = null, EventIndex = 0, Type = EventType.WindowSize });
-			DeviceUtilities.DockWpfWindow(Controller.View, parentWindow);
+			DeviceUtilities.DockWpfWindow(View, parentWindow);
 		}
 
 		public void CloseEditor() { }

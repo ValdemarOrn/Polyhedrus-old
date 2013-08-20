@@ -9,114 +9,301 @@ namespace Polyhedrus.Modules
 {
 	public sealed class ModMatrix
 	{
-		public Voice Voice;
-		public List<ModRouting> Routes;
-
 		public static int[] AvailableSources;
 		public static int[] AvailableDestinations;
 
-		static ModMatrix()
-		{
-			var sources = new List<int>();
-			var destinations = new List<int>();
-			
-			foreach (var s in Enum.GetValues(typeof(ModDestination)))
-				destinations.Add((int)s);
+		public Voice Voice;
+		public ModRoute[] Routes;
 
-			foreach (var s in Enum.GetValues(typeof(ModSource)))
-				sources.Add((int)s);
+		public double Filter1Tracking;
+		public double Filter2Tracking;
+		public double Filter1EnvMod;
+		public double Filter2EnvMod;
 
-			AvailableSources = sources.ToArray();
-			AvailableDestinations = destinations.ToArray();
-		}
+		double[] PreviousValues;
+		double[] Values;
+
+		volatile bool UpdateMixer;
+
+		int[] ActiveRoutes;
+		ModDestination[] ActiveDestinations;
 
 		public ModMatrix(Voice voice)
 		{
 			Voice = voice;
-			Routes = new List<ModRouting>();
+			int count = GetDestinationCount();
+			Values = new double[count];
+			PreviousValues = new double[count];
+			ActiveRoutes = new int[0];
+			ActiveDestinations = new ModDestination[0];
+
+			Routes = new ModRoute[20]; // structs get initialized
+		}
+
+		public void UpdateRoute(ModRoute route)
+		{
+			Routes[route.Index] = route;
+
+			var dests = new List<ModDestination>();
+			var activeRoutes = new List<int>();
+
+			for (int i = 0; i < Routes.Length; i++)
+			{
+				if (!Routes[i].Enabled || Routes[i].Amount == 0 || Routes[i].Source == ModSource.None || Routes[i].Destination == ModDestination.None)
+					continue;
+
+				if(!dests.Contains(Routes[i].Destination))
+					dests.Add(Routes[i].Destination);
+
+				activeRoutes.Add(i);
+			}
+
+			// Todo: Zero out current modulation value after turning off a mod route 
+
+			ActiveDestinations = dests.ToArray();
+			ActiveRoutes = activeRoutes.ToArray();
+
+			ProcessAllRoutes();
+		}
+
+		public void ProcessAllRoutes()
+		{
+			UpdateMixer = false;
+
+			// zero out old values
+			for (int i = 0; i < Values.Length; i++)
+				Values[i] = 0;
+
+			// loop through ALL routes and add together all the values
+			for (int i = 0; i < Routes.Length; i++)
+			{
+				var route = Routes[i];
+
+				double src = Voice.GetModSource(route.Source);
+				double ctrl = Voice.GetModSource(route.Control);
+				double ctrlAmt = route.ControlAmount;
+				double amt = route.Amount * (route.Enabled ? 1 : 0);
+
+				double result = src * (1 - ctrlAmt + ctrlAmt * ctrl) * amt;
+				Values[(int)route.Destination] += result;
+			}
+
+			// apply the values to the destination
+			for (int i = 0; i < Values.Length; i++)
+			{
+				var value = Values[i];
+				PreviousValues[i] = value;
+				UpdateModDestination((ModDestination)i, value);
+			}
+
+			if (UpdateMixer)
+				Voice.Mixer.Update();
 		}
 
 		public void Process()
 		{
-			// Note: don't use foreach because another thread change modify the collection during the looping
-			for(int i=0; i < Routes.Count; i++)
-			{
-				// one in a billion chance the user can remove the last route at the very momeny we try to read it
-				// highly improbably, but if this code causes exceptions, it'll probably be that
-				// probably requires locking to get rid of, or replacing the old route with null and performing null check
-				var route = Routes[i];
+			UpdateMixer = false;
 
-				double src = 0.0;
+			// zero out old values
+			for (int i = 0; i < ActiveDestinations.Length; i++)
+			{
+				var dest = ActiveDestinations[i];
+				Values[(int)dest] = 0;
+			}
+
+			// loop through active routes and add together all the values
+			for (int i = 0; i < ActiveRoutes.Length; i++)
+			{
+				var route = Routes[ActiveRoutes[i]];
+
+				double src = Voice.GetModSource(route.Source);
+				double ctrl = Voice.GetModSource(route.Control);
+				double ctrlAmt = route.ControlAmount;
 				double amt = route.Amount;
 
-				switch (route.Source)
-				{
-					case(ModSource.AmpEnv):
-						src = Voice.AmpEnv.Output;
-						break;
-					case(ModSource.Filter1Env):
-						src = Voice.Filter1Env.Output;
-						break;
-					case (ModSource.Filter2Env):
-						src = Voice.Filter2Env.Output;
-						break;
-					case (ModSource.Lfo1):
-						src = Voice.Lfo1.Output;
-						break;
-					case (ModSource.Lfo2):
-						src = Voice.Lfo2.Output;
-						break;
-					case (ModSource.ModEnv1):
-						src = Voice.ModEnv1.Output;
-						break;
-					case (ModSource.ModWheel):
-						src = 0.0;
-						break;
-					case (ModSource.Pitch):
-						src = 0.0;
-						break;
-					case (ModSource.Velocity):
-						src = 0.0;
-						break;
-				}
-
-				/*switch(route.Destination)
-				{
-					case (ModDestination.Filter1Vol):
-						Voice.Filter1Vol = Voice.Filter1Vol * (amt * src + (1 - amt));
-						break;
-					case (ModDestination.Filter1Freq):
-						Voice.Filter1.Cutoff += src * amt;
-						break;
-					case (ModDestination.Filter1Res):
-						Voice.Filter1.Resonance += src * amt;
-						break;
-
-					case (ModDestination.Filter2Vol):
-						Voice.Filter2Vol = Voice.Filter2Vol * (amt * src + (1 - amt));
-						break;
-					case (ModDestination.Filter2Freq):
-						Voice.Filter2.Cutoff += src * amt;
-						break;
-					case (ModDestination.Filter2Res):
-						Voice.Filter2.Resonance += src * amt;
-						break;
-
-					case (ModDestination.Lfo1Speed):
-						Voice.Lfo1.FreqHz += src * amt * 15.0; // full modulation gives +-15Hz swing
-						break;
-					case (ModDestination.Lfo2Speed):
-						Voice.Lfo2.FreqHz += src * amt * 15.0; // full modulation gives +-15Hz swing
-						break;
-
-					case (ModDestination.Osc1Pitch):
-						Voice.Osc1.Pitch += src * amt * 36.0; // full modulation gives +-3 octaves
-						break;
-					case (ModDestination.Osc2Pitch):
-						Voice.Osc2.Pitch += src * amt * 36.0; // full modulation gives +-3 octaves
-						break;
-				}*/
+				double result = src * (1 - ctrlAmt + ctrlAmt * ctrl) * amt;
+				Values[(int)route.Destination] += result;
 			}
+
+			// apply the values to the destination
+			for (int i = 0; i < ActiveDestinations.Length; i++)
+			{
+				var dest = ActiveDestinations[i];
+
+				var previousOutput = PreviousValues[(int)dest];
+				var value = Values[(int)dest];
+				PreviousValues[(int)dest] = value;
+
+				if (previousOutput == value)
+					continue; // no need for an update
+
+				UpdateModDestination(dest, value);
+			}
+
+			if (UpdateMixer)
+				Voice.Mixer.Update();
+		}
+
+		void UpdateModDestination(ModDestination dest, double value)
+		{
+			// If you're reading this, try to come up with a better idea :)
+			switch (dest)
+			{
+				case ModDestination.Filter1Freq:
+					Voice.Filter1.CutoffModulation = value;
+					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
+					// Voice.Filter1.UpdateCoefficients(); 
+					break;
+				case ModDestination.Filter1Pan:
+					Voice.Mixer.F1PanModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Filter1Res:
+					Voice.Filter1.ResonanceModulation = value;
+					break;
+				case ModDestination.Filter1Vol:
+					Voice.Mixer.F1VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Filter2Freq:
+					Voice.Filter2.CutoffModulation = value;
+					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
+					// Voice.Filter1.UpdateCoefficients(); 
+					break;
+				case ModDestination.Filter2Pan:
+					Voice.Mixer.F2PanModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Filter2Res:
+					Voice.Filter2.ResonanceModulation = value;
+					break;
+				case ModDestination.Filter2Vol:
+					Voice.Mixer.F2VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.FX1Wet:
+					// Add route
+					break;
+				case ModDestination.FX2Wet:
+					// Add route
+					break;
+				case ModDestination.FX3Wet:
+					// Add route
+					break;
+				case ModDestination.FX4Wet:
+					// Add route
+					break;
+				case ModDestination.Insert1Param1:
+					// Add route
+					break;
+				case ModDestination.Insert1Param2:
+					// Add route
+					break;
+				case ModDestination.Insert1Param3:
+					// Add route
+					break;
+				case ModDestination.Insert1Param4:
+					// Add route
+					break;
+				case ModDestination.Insert1Wet:
+					// Add route
+					break;
+				case ModDestination.Insert2Param1:
+					// Add route
+					break;
+				case ModDestination.Insert2Param2:
+					// Add route
+					break;
+				case ModDestination.Insert2Param3:
+					// Add route
+					break;
+				case ModDestination.Insert2Param4:
+					// Add route
+					break;
+				case ModDestination.Insert2Wet:
+					// Add route
+					break;
+				case ModDestination.Mod1Speed:
+					// Add route
+					break;
+				case ModDestination.Mod2Speed:
+					// Add route
+					break;
+				case ModDestination.Mod3Speed:
+					// Add route
+					break;
+				case ModDestination.Mod4Speed:
+					// Add route
+					break;
+				case ModDestination.Mod5Speed:
+					// Add route
+					break;
+				case ModDestination.Mod6Speed:
+					// Add route
+					break;
+				case ModDestination.MasterPan:
+					Voice.Mixer.OutputPanModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.MasterVolume:
+					Voice.Mixer.OutputVolumeModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Osc1Pitch:
+					Voice.Osc1.Modulation = value;
+					Voice.Osc1.UpdateStepsize();
+					break;
+				case ModDestination.Osc1Vol:
+					Voice.Mixer.Osc1VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Osc1Wave:
+					// Add route
+					break;
+				case ModDestination.Osc2Pitch:
+					Voice.Osc2.Modulation = value;
+					Voice.Osc2.UpdateStepsize();
+					break;
+				case ModDestination.Osc2Vol:
+					Voice.Mixer.Osc2VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Osc2Wave:
+					// Add route
+					break;
+				case ModDestination.Osc3Pitch:
+					Voice.Osc3.Modulation = value;
+					Voice.Osc3.UpdateStepsize();
+					break;
+				case ModDestination.Osc3Vol:
+					Voice.Mixer.Osc3VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Osc3Wave:
+					// Add route
+					break;
+				case ModDestination.Osc4Pitch:
+					Voice.Osc4.Modulation = value;
+					Voice.Osc4.UpdateStepsize();
+					break;
+				case ModDestination.Osc4Vol:
+					Voice.Mixer.Osc4VolModulation = value;
+					UpdateMixer = true;
+					break;
+				case ModDestination.Osc4Wave:
+					// Add route
+					break;
+			}
+		}
+
+		private int GetDestinationCount()
+		{
+			var destinations = new List<int>();
+
+			foreach (var s in Enum.GetValues(typeof(ModDestination)))
+				destinations.Add((int)s);
+
+			return destinations.Max();
 		}
 	}
 }

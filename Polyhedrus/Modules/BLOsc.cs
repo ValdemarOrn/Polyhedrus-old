@@ -12,6 +12,7 @@ namespace Polyhedrus.Modules
 	{
 		public const int WaveSize = 2048;
 
+		double _fsInv;
 		double _samplerate;
 		public double Samplerate
 		{
@@ -19,12 +20,14 @@ namespace Polyhedrus.Modules
 			set
 			{
 				_samplerate = value;
+				_fsInv = 1.0 / _samplerate;
 				Wavetables.CalculateIndexes(value);
 			}
 		}
 		
 		public double Output;
 
+		public double StartPhase;
 		public int Octave;
 		public int Semi;
 		public int Cent;
@@ -45,6 +48,11 @@ namespace Polyhedrus.Modules
 				Wavetable[i] = new double[WaveSize];
 
 			SetWave(AudioLib.Utils.Saw(WaveSize, 1));
+		}
+
+		public void Reset()
+		{
+			Accumulator = StartPhase;
 		}
 
 		public void SetWave(double[] baseWave)
@@ -85,7 +93,7 @@ namespace Polyhedrus.Modules
 
 		public void UpdateStepsize()
 		{
-			double note = Note + Octave * 12 + Semi + Cent * 0.01 + Modulation;
+			double note = Note + Octave * 12 + Semi + Cent * 0.01 + Modulation * 24;
 			if (note > 127)
 				note = 127;
 			else if (note < 0)
@@ -95,8 +103,7 @@ namespace Polyhedrus.Modules
 			WavetableCurrent = Wavetable[waveNumber];
 
 			var hz = AudioLib.Utils.Note2HzLookup(note);
-			double samplesPerCycle = Samplerate / (double)hz; // todo, flip divisors to make it faster
-			double increment = 1.0 / samplesPerCycle;
+			double increment = hz * _fsInv;
 			Stepsize = increment;
 		}
 

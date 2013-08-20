@@ -88,17 +88,6 @@ namespace Polyhedrus.UI
 			}
 		}
 
-		public double Volume
-		{
-			get { return _volume; }
-			set
-			{
-				_volume = value;
-				Ctrl.SetParameter(ModuleId, FilterParams.Volume, value);
-				NotifyChange(() => Volume);
-			}
-		}
-
 		public double X
 		{
 			get { return _x; }

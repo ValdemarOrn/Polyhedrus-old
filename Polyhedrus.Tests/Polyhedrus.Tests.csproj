@@ -15,7 +15,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -91,8 +91,12 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Polyhedrus\Polyhedrus.csproj">
+    <ProjectReference Include="..\Polyhedrus.UI\Polyhedrus.UI.csproj">
       <Project>{8d5df506-0d6f-4c2f-b6b5-c403c62168ae}</Project>
+      <Name>Polyhedrus.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Polyhedrus\Polyhedrus.csproj">
+      <Project>{54f8b06b-8451-46ba-ad77-c7e7f6c3f7cd}</Project>
       <Name>Polyhedrus</Name>
     </ProjectReference>
   </ItemGroup>

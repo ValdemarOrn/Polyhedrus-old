@@ -1,0 +1,76 @@
+﻿<UI:SynthModuleView
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:UI="clr-namespace:Polyhedrus.UI" 
+             xmlns:local="clr-namespace:Polyhedrus.UI" x:Class="Polyhedrus.UI.ModulatorView" 
+             mc:Ignorable="d" 
+             x:Name="Main"
+             d:DesignHeight="240" d:DesignWidth="300">
+    <UI:SynthModuleView.Resources>
+        <ResourceDictionary Source="PluginStyles.xaml"/>
+    </UI:SynthModuleView.Resources>
+    <Grid Margin="0" Style="{StaticResource ResourceKey=ModulatorStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="1.6*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Attack}" ShowCenter="Hidden" 
+                    Caption="Attack" x:Name="KnobA" VerticalAlignment="Top" Grid.Column="0" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Hold}" ShowCenter="Hidden" 
+                    Caption="Hold" x:Name="KnobH" VerticalAlignment="Top" Grid.Column="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Decay}" ShowCenter="Hidden" 
+                    Caption="Decay" x:Name="KnobD" VerticalAlignment="Top" Grid.Column="2" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Sustain}" ShowCenter="Hidden" 
+                    Caption="Sustain" x:Name="KnobS" VerticalAlignment="Top" Grid.Column="3" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Release}" ShowCenter="Hidden" 
+                    Caption="Relase" x:Name="KnobR" VerticalAlignment="Top" Grid.Column="4" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Frequency}" ShowCenter="Hidden"
+                    Caption="Frequency" x:Name="KnobFreq" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Phase}" ShowCenter="Hidden" 
+                    Caption="Phase" x:Name="KnobPhase" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Delay}" ShowCenter="Hidden" 
+                    Caption="Delay" x:Name="KnobDelay" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Offset}" ShowCenter="Hidden" Min="-1" Max="1"
+                    Caption="Offset" x:Name="KnobOffset" VerticalAlignment="Top" Grid.Column="3" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+
+        <ComboBox Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,5,0,0" ItemsSource="{Binding ElementName=Main, Path=Waveforms}" 
+                  SelectedItem="{Binding ElementName=Main, Path=SelectedWaveform, Mode=TwoWay}"/>
+        
+            <Grid Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Height="50" VerticalAlignment="Top" Margin="0,5,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="17*"/>
+                <ColumnDefinition Width="7*"/>
+            </Grid.ColumnDefinitions>
+            <Label>Free Phase</Label>
+            <Label Grid.Row="1">Tempo Sync</Label>
+            <ToggleButton Grid.Column="1" IsChecked="{Binding ElementName=Main, Path=FreePhase, Mode=TwoWay}"></ToggleButton>
+            <ToggleButton Grid.Column="1" Grid.Row="1" IsChecked="{Binding ElementName=Main, Path=TempoSync, Mode=TwoWay}"></ToggleButton>
+        </Grid>
+
+    </Grid>
+</UI:SynthModuleView>

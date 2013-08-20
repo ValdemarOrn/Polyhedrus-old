@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyhedrus", "Polyhedrus\Polyhedrus.csproj", "{8D5DF506-0D6F-4C2F-B6B5-C403C62168AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyhedrus.UI", "Polyhedrus.UI\Polyhedrus.UI.csproj", "{8D5DF506-0D6F-4C2F-B6B5-C403C62168AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioLib", "..\AudioLib\AudioLib\AudioLib.csproj", "{4905489D-6F81-4129-8780-744CED5B3269}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LowProfile.Fourier", "..\FFT\LowProfile.Fourier\LowProfile.Fourier.csproj", "{937CCECF-3BF1-4ED2-B3A9-89157D8B0664}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyhedrus.Tests", "Polyhedrus.Tests\Polyhedrus.Tests.csproj", "{E927B6AD-A8B8-4720-886F-940D63DEF935}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyhedrus", "Polyhedrus\Polyhedrus.csproj", "{54F8B06B-8451-46BA-AD77-C7E7F6C3F7CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polyhydrus.SSD", "Polyhydrus.SSD\Polyhydrus.SSD.csproj", "{EBB16C58-68CE-462B-B14F-E27567FB612F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,14 @@ Global
 		{E927B6AD-A8B8-4720-886F-940D63DEF935}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E927B6AD-A8B8-4720-886F-940D63DEF935}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E927B6AD-A8B8-4720-886F-940D63DEF935}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54F8B06B-8451-46BA-AD77-C7E7F6C3F7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54F8B06B-8451-46BA-AD77-C7E7F6C3F7CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54F8B06B-8451-46BA-AD77-C7E7F6C3F7CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54F8B06B-8451-46BA-AD77-C7E7F6C3F7CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBB16C58-68CE-462B-B14F-E27567FB612F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBB16C58-68CE-462B-B14F-E27567FB612F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBB16C58-68CE-462B-B14F-E27567FB612F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBB16C58-68CE-462B-B14F-E27567FB612F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

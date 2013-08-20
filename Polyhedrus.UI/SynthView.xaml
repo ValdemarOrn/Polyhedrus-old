@@ -1,0 +1,51 @@
+﻿<Window
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:local="clr-namespace:Polyhedrus.UI" 
+                xmlns:UI="clr-namespace:Polyhedrus.UI" 
+                xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                x:Class="Polyhedrus.UI.SynthView"
+                x:Name="Main"
+                Title="MainWindow" Height="655" Width="1020">
+    <Grid Background="#FFE5E5E5">
+
+        <UI:ModuleControl x:Name="OscModule" Title="{Binding Path=SelectedOscName, FallbackValue=Oscillator 1, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="192" Width="370" Margin="5,23,0,0"
+                          Selectors="{Binding Path=OscNames, Mode=TwoWay}" Panel="{Binding Path=OscView, Mode=OneWay}" SelectedIndex="{Binding Path=SelectedOsc}" />
+
+        <UI:ModuleControl x:Name="AmpEnvModule" Title="Amp Envelope" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="85" 
+                          Panel="{Binding Path=AmpEnvView}" Width="305" Margin="380,23,0,0" />
+
+        <UI:ModuleControl x:Name="InsertFXModule" Title="Insert Effect" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="85" 
+                          Panel="{Binding Path=InsertFXView}" Width="305" Margin="380,130,0,0" />
+
+        <UI:ModuleControl x:Name="FilterModule" Title="Filter 1" HorizontalAlignment="Left" VerticalAlignment="Top" Height="192" Width="305" Margin="690,23,0,0" 
+                          Panel="{Binding Path=FilterView}" />
+
+        <UI:ModuleControl x:Name="FilterEnvModule" Title="Filter Envelope" HorizontalAlignment="Left" VerticalAlignment="Top" Height="85" Width="305" Margin="690,239,0,0"
+                          Panel="{Binding Path=FilterEnvView}" />
+
+        <UI:ModuleControl x:Name="RoutingModuleView" Title="Routing" HorizontalAlignment="Left" VerticalAlignment="Top" Height="190" Width="635" Margin="5,239,0,0"
+                          Panel="{Binding Path=RoutingView}" />
+        <UI:Logo HorizontalAlignment="Left" Margin="571.35,312.86,0,0" VerticalAlignment="Top" Height="42.28" Width="188.938" RenderTransformOrigin="0.5,0.5">
+            <UI:Logo.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </UI:Logo.RenderTransform>
+        </UI:Logo>
+
+        <UI:ModuleControl x:Name="SettingsModule" Title="Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="370" Margin="5,453,0,0"
+                          Panel="{Binding Path=SettingsView}" />
+
+        <UI:ModuleControl x:Name="EffectModule" Title="Effects" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="305" Margin="380,453,0,0"
+                          Panel="{Binding Path=EffectView}" />
+
+        <UI:ModuleControl x:Name="ModulatorModule" Title="{Binding Path=SelectedModulatorName, FallbackValue=Modulator 1, Mode=OneWay}" HorizontalAlignment="Left" 
+                          Selectors="{Binding Path=ModulatorNames, Mode=TwoWay}" VerticalAlignment="Top" Height="261" Width="305" Margin="690,349,0,0"
+                          Panel="{Binding Path=ModulatorView, Mode=OneWay}" SelectedIndex="{Binding Path=SelectedModulator}" />
+
+    </Grid>
+</Window>

@@ -42,10 +42,13 @@ namespace Polyhedrus.UI
 			new FrameworkPropertyMetadata("Temp", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		static internal DependencyProperty ShowComboBoxProperty = DependencyProperty.Register("ShowComboBox", typeof(Visibility), typeof(ModuleControl),
-			new FrameworkPropertyMetadata(Visibility.Visible, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+			new FrameworkPropertyMetadata(Visibility.Collapsed, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		static internal DependencyProperty SelectorsProperty = DependencyProperty.Register("Selectors", typeof(ObservableCollection<string>), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+		static internal DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(ModuleControl),
+			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		public Control Panel
 		{
@@ -71,10 +74,32 @@ namespace Polyhedrus.UI
 			set { SetValue(SelectorsProperty, value); }
 		}
 
+		public int SelectedIndex
+		{
+			get { return (int)base.GetValue(SelectedIndexProperty); }
+			set { SetValue(SelectedIndexProperty, value); }
+		}
+
 		public ModuleControl()
 		{
 			InitializeComponent();
 			Selectors = new ObservableCollection<string>(new string[] { null, null, null, null, null, null });
+		}
+
+		private void Label_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (sender == Selector0)
+				SelectedIndex = 0;
+			else if (sender == Selector1)
+				SelectedIndex = 1;
+			else if (sender == Selector2)
+				SelectedIndex = 2;
+			else if (sender == Selector3)
+				SelectedIndex = 3;
+			else if (sender == Selector4)
+				SelectedIndex = 4;
+			else if (sender == Selector5)
+				SelectedIndex = 5;
 		}
 
 	}

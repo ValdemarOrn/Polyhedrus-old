@@ -30,6 +30,10 @@ namespace Polyhedrus.UI
 		public EnvelopeView()
 		{
 			InitializeComponent();
+			KnobA.ValueFormatter = Formatter;
+			KnobH.ValueFormatter = Formatter;
+			KnobD.ValueFormatter = Formatter;
+			KnobR.ValueFormatter = Formatter;
 		}
 
 		public EnvelopeView(SynthController ctrl, ModuleParams moduleId) : this()
@@ -38,13 +42,29 @@ namespace Polyhedrus.UI
 			ModuleId = moduleId;
 		}
 
+		string Formatter(double val)
+		{
+			double value = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
+			if(value < 10)
+				return String.Format("{0:0.00}ms", value);
+			else if (value < 100)
+				return String.Format("{0:0.0}ms", value);
+			else if (value < 1000)
+				return String.Format("{0:0}ms", value);
+			else
+				return String.Format("{0:0.00}s", value * 0.001);
+		}
+
+		
+
 		public double Attack
 		{
 			get { return _attack; }
 			set
 			{
 				_attack = value;
-				Ctrl.SetParameter(ModuleId, EnvParams.Attack, value);
+				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
+				Ctrl.SetParameter(ModuleId, EnvParams.Attack, val);
 				NotifyChange(() => Attack);
 			}
 		}
@@ -55,7 +75,8 @@ namespace Polyhedrus.UI
 			set
 			{
 				_hold = value;
-				Ctrl.SetParameter(ModuleId, EnvParams.Hold, value);
+				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
+				Ctrl.SetParameter(ModuleId, EnvParams.Hold, val);
 				NotifyChange(() => Hold);
 			}
 		}
@@ -66,7 +87,8 @@ namespace Polyhedrus.UI
 			set
 			{
 				_decay = value;
-				Ctrl.SetParameter(ModuleId, EnvParams.Decay, value);
+				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
+				Ctrl.SetParameter(ModuleId, EnvParams.Decay, val);
 				NotifyChange(() => Decay);
 			}
 		}
@@ -88,7 +110,8 @@ namespace Polyhedrus.UI
 			set
 			{
 				_release = value;
-				Ctrl.SetParameter(ModuleId, EnvParams.Release, value);
+				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
+				Ctrl.SetParameter(ModuleId, EnvParams.Release, val);
 				NotifyChange(() => Release);
 			}
 		}

@@ -14,7 +14,6 @@ namespace Polyhedrus.Parameters
 		Phase,
 		Volume,
 		FreePhase,
-		MixFilters
 	}
 
 	public enum FilterParams
@@ -23,7 +22,6 @@ namespace Polyhedrus.Parameters
 		Resonance,
 		Tracking,
 		Envelope,
-		Volume,
 		X,
 		A,
 		B,
@@ -75,15 +73,41 @@ namespace Polyhedrus.Parameters
 		Enabled
 	}
 
-	public enum LFOParams
+	public enum ModulatorParams
 	{
-		Frequency = 1,
-		Phase,
-		Attack,
+		Attack = 1,
 		Hold,
 		Decay,
+		Sustain,
+		Release,
+
+		Frequency,
+		Phase,
+		Delay,
+		Offset,
+
 		Wave,
 		FreePhase,
 		TempoSync
+	}
+
+	public enum ModMatrixParams
+	{
+		Modroute1 = 1,
+		Modroute2,
+		Modroute3,
+		Modroute4,
+		Modroute5,
+		Modroute6,
+		Modroute7,
+		Modroute8,
+		Modroute9,
+		Modroute10,
+		Modroute11,
+		Modroute12,
+		Modroute13,
+		Modroute14,
+		Modroute15,
+		Modroute16
 	}
 }

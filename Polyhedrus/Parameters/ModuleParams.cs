@@ -16,19 +16,19 @@ namespace Polyhedrus.Parameters
 		Filter2,
 
 		AmpEnv,
-		FilterEnv,
-		ModEnv1,
-		ModEnv2,
-		ModEnv3,
-		ModEnv4,
+		Filter1Env,
+		Filter2Env,
 
 		Insert1,
 		Insert2,
 
-		LFO1,
-		LFO2,
-		LFO3,
-		LFO4,
+		Modulator1,
+		Modulator2,
+		Modulator3,
+		Modulator4,
+		Modulator5,
+		Modulator6,
+
 		Step1,
 		Step2,
 
@@ -36,7 +36,7 @@ namespace Polyhedrus.Parameters
 		FX2,
 		FX3,
 
-		RouteAudio,
+		Mixer,
 		ModMatrix,
 
 		Arp,

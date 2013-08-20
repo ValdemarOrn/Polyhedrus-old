@@ -24,6 +24,9 @@ namespace Polyhedrus.UI
 		private double _octave;
 		private double _semi;
 		private double _cent;
+		private double _position;
+		private double _phase;
+		private double _volume;
 
 		public BLOscView()
 		{
@@ -66,6 +69,39 @@ namespace Polyhedrus.UI
 				_cent = value;
 				Ctrl.SetParameter(ModuleId, OscParams.Cent, value); 
 				NotifyChange(() => Cent); 
+			}
+		}
+
+		public double Position
+		{
+			get { return _position; }
+			set
+			{
+				_position = value;
+				Ctrl.SetParameter(ModuleId, OscParams.Position, value);
+				NotifyChange(() => Position);
+			}
+		}
+
+		public double Phase
+		{
+			get { return _phase; }
+			set
+			{
+				_phase = value;
+				Ctrl.SetParameter(ModuleId, OscParams.Phase, value);
+				NotifyChange(() => Phase);
+			}
+		}
+
+		public double Volume
+		{
+			get { return _volume; }
+			set
+			{
+				_volume = value;
+				Ctrl.SetParameter(ModuleId, OscParams.Volume, value);
+				NotifyChange(() => Volume);
 			}
 		}
 	}

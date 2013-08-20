@@ -13,23 +13,25 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Polyhedrus.Tests
+namespace Polyhedrus.UI
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class SynthView : Window
 	{
-		public MainWindow()
+		private ViewModel VM;
+
+		public SynthView(ViewModel vm)
+		{
+			VM = vm;
+			InitializeComponent();
+			DataContext = VM;
+		}
+
+		public SynthView()
 		{
 			InitializeComponent();
-
-			var Controller = new SynthController();
-			var VM = new ViewModel(Controller);
-			var View = new SynthView(VM);
-
-			View.Show();
-			this.Close();
-		}
+		}	
 	}
 }

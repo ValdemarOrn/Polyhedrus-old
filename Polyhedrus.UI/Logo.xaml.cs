@@ -1,5 +1,4 @@
-﻿using Polyhedrus.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,22 +15,13 @@ using System.Windows.Shapes;
 namespace Polyhedrus.UI
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for Logo.xaml
 	/// </summary>
-	public partial class SynthView : Window
+	public partial class Logo : UserControl
 	{
-		private ViewModel VM;
-
-		public SynthView(SynthController controller)
+		public Logo()
 		{
 			InitializeComponent();
-			VM = new ViewModel(controller);
-			DataContext = VM;
 		}
-
-		public SynthView()
-		{
-			InitializeComponent();
-		}	
 	}
 }

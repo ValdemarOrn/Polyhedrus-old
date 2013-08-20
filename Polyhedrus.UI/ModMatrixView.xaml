@@ -1,0 +1,101 @@
+﻿<UI:SynthModuleView  x:Class="Polyhedrus.UI.ModMatrixView"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                     mc:Ignorable="d" 
+                     xmlns:UI="clr-namespace:Polyhedrus.UI"
+                     x:Name="Main" Height="175" Width="625">
+    <UI:SynthModuleView.Resources>
+        <ResourceDictionary Source="PluginStyles.xaml"/>
+    </UI:SynthModuleView.Resources>
+    <Grid>
+        
+        <Grid HorizontalAlignment="Stretch" Margin="10,5,10,15" VerticalAlignment="Stretch" Style="{StaticResource ResourceKey=ModMatrixStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="22" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1.2*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1.2*" />
+                <ColumnDefinition Width="0.4*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.ColumnSpan="5">
+                <Button Width="60" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Page1" Click="PageClick">Page 1</Button>
+                <Button Width="60" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Page2" Click="PageClick">Page 2</Button>
+                <Button Width="60" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Page3" Click="PageClick">Page 3</Button>
+                <Button Width="60" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Page4" Click="PageClick">Page 4</Button>
+            </StackPanel>
+
+            <Label Grid.Row="1" Grid.Column="0">Source</Label>
+            <Label Grid.Row="1" Grid.Column="1">Controller</Label>
+            <Label Grid.Row="1" Grid.Column="2">Ctrl. Amt</Label>
+            <Label Grid.Row="1" Grid.Column="3">Destination</Label>
+            <Label Grid.Row="1" Grid.Column="4">Amount</Label>
+            <Label Grid.Row="1" Grid.Column="5">On</Label>
+
+            <ComboBox	Grid.Row="2" Grid.Column="0" x:Name="Source1" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[0].Source, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="3" Grid.Column="0" x:Name="Source2" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[1].Source, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="4" Grid.Column="0" x:Name="Source3" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[2].Source, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="5" Grid.Column="0" x:Name="Source4" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[3].Source, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="6" Grid.Column="0" x:Name="Source5" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[4].Source, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+
+            <ComboBox	Grid.Row="2" Grid.Column="1" x:Name="Control1" ItemsSource="{Binding ElementName=Main, Path=Sources}"
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[0].Control, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="3" Grid.Column="1" x:Name="Control2" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[1].Control, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="4" Grid.Column="1" x:Name="Control3" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[2].Control, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="5" Grid.Column="1" x:Name="Control4" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[3].Control, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+            <ComboBox	Grid.Row="6" Grid.Column="1" x:Name="Control5" ItemsSource="{Binding ElementName=Main, Path=Sources}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[4].Control, Mode=TwoWay, Converter={StaticResource ResourceKey=ModSourceConverter}}" />
+
+            <UI:Spinner Grid.Row="2" Grid.Column="2" x:Name="CtrlAmt1" Min="-1" Max="1" Value="{Binding ElementName=Main, Path=Routes[0].ControlAmount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="3" Grid.Column="2" x:Name="CtrlAmt2" Min="-1" Max="1" Value="{Binding ElementName=Main, Path=Routes[1].ControlAmount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="4" Grid.Column="2" x:Name="CtrlAmt3" Min="-1" Max="1" Value="{Binding ElementName=Main, Path=Routes[2].ControlAmount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="5" Grid.Column="2" x:Name="CtrlAmt4" Min="-1" Max="1" Value="{Binding ElementName=Main, Path=Routes[3].ControlAmount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="6" Grid.Column="2" x:Name="CtrlAmt5" Min="-1" Max="1" Value="{Binding ElementName=Main, Path=Routes[4].ControlAmount, Mode=TwoWay}" />
+
+            <ComboBox	Grid.Row="2" Grid.Column="3" x:Name="Dest1" ItemsSource="{Binding ElementName=Main, Path=Destinations}"
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[0].Destination, Mode=TwoWay, Converter={StaticResource ResourceKey=ModDestinationConverter}}" />
+            <ComboBox	Grid.Row="3" Grid.Column="3" x:Name="Dest2" ItemsSource="{Binding ElementName=Main, Path=Destinations}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[1].Destination, Mode=TwoWay, Converter={StaticResource ResourceKey=ModDestinationConverter}}" />
+            <ComboBox	Grid.Row="4" Grid.Column="3" x:Name="Dest3" ItemsSource="{Binding ElementName=Main, Path=Destinations}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[2].Destination, Mode=TwoWay, Converter={StaticResource ResourceKey=ModDestinationConverter}}" />
+            <ComboBox	Grid.Row="5" Grid.Column="3" x:Name="Dest4" ItemsSource="{Binding ElementName=Main, Path=Destinations}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[3].Destination, Mode=TwoWay, Converter={StaticResource ResourceKey=ModDestinationConverter}}" />
+            <ComboBox	Grid.Row="6" Grid.Column="3" x:Name="Dest5" ItemsSource="{Binding ElementName=Main, Path=Destinations}" 
+                        SelectedItem="{Binding ElementName=Main, Path=Routes[4].Destination, Mode=TwoWay, Converter={StaticResource ResourceKey=ModDestinationConverter}}" />
+
+            <UI:Spinner Grid.Row="2" Grid.Column="4" x:Name="Amt1" Min="-2" Max="2" Value="{Binding ElementName=Main, Path=Routes[0].Amount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="3" Grid.Column="4" x:Name="Amt2" Min="-2" Max="2" Value="{Binding ElementName=Main, Path=Routes[1].Amount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="4" Grid.Column="4" x:Name="Amt3" Min="-2" Max="2" Value="{Binding ElementName=Main, Path=Routes[2].Amount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="5" Grid.Column="4" x:Name="Amt4" Min="-2" Max="2" Value="{Binding ElementName=Main, Path=Routes[3].Amount, Mode=TwoWay}" />
+            <UI:Spinner Grid.Row="6" Grid.Column="4" x:Name="Amt5" Min="-2" Max="2" Value="{Binding ElementName=Main, Path=Routes[4].Amount, Mode=TwoWay}" />
+
+            <ToggleButton Grid.Row="2" Grid.Column="5" x:Name="On1" IsChecked="{Binding ElementName=Main, Path=Routes[0].Enabled, Mode=TwoWay}" />
+            <ToggleButton Grid.Row="3" Grid.Column="5" x:Name="On2" IsChecked="{Binding ElementName=Main, Path=Routes[1].Enabled, Mode=TwoWay}" />
+            <ToggleButton Grid.Row="4" Grid.Column="5" x:Name="On3" IsChecked="{Binding ElementName=Main, Path=Routes[2].Enabled, Mode=TwoWay}" />
+            <ToggleButton Grid.Row="5" Grid.Column="5" x:Name="On4" IsChecked="{Binding ElementName=Main, Path=Routes[3].Enabled, Mode=TwoWay}" />
+            <ToggleButton Grid.Row="6" Grid.Column="5" x:Name="On5" IsChecked="{Binding ElementName=Main, Path=Routes[4].Enabled, Mode=TwoWay}" />
+            
+        </Grid>
+
+    </Grid>
+</UI:SynthModuleView>
