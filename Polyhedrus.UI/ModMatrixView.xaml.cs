@@ -64,9 +64,12 @@ namespace Polyhedrus.UI
 		ObservableCollection<ModRoutingVM> _routes;
 		int _page;
 
-		public ModMatrixView() { }
+		public ModMatrixView()
+		{
+			InitializeComponent();
+		}
 
-		public ModMatrixView(SynthController ctrl, ModuleParams moduleId) : this()
+		public ModMatrixView(SynthController ctrl, ModuleParams moduleId)
 		{
 			Ctrl = ctrl;
 			ModuleId = moduleId;

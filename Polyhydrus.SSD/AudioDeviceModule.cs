@@ -38,7 +38,6 @@ namespace Polyhedrus
 			Controller = new SynthController();
 
 			VM = new ViewModel(Controller);
-			View = new SynthView(VM);
 		}
 
 		public void InitializeDevice()
@@ -49,8 +48,8 @@ namespace Polyhedrus
 #endif
 
 			DevInfo.Developer = "Valdemar Erlingsson";
-			DevInfo.EditorHeight = 600;
-			DevInfo.EditorWidth = 1020;
+			DevInfo.EditorHeight = 620;
+			DevInfo.EditorWidth = 1010;
 			DevInfo.HasEditor = true;
 			DevInfo.Name = "Polyhedrus Software Synthesizer";
 			DevInfo.ProgramCount = 1;
@@ -96,11 +95,15 @@ namespace Polyhedrus
 
 		public void OpenEditor(IntPtr parentWindow)
 		{
+			View = new SynthView(VM);
 			HostInfo.SendEvent(this, new Event() { Data = null, EventIndex = 0, Type = EventType.WindowSize });
 			DeviceUtilities.DockWpfWindow(View, parentWindow);
 		}
 
-		public void CloseEditor() { }
+		public void CloseEditor() 
+		{
+			View.Close();
+		}
 
 		public void SendEvent(Event ev)
 		{
@@ -113,11 +116,14 @@ namespace Polyhedrus
 				var data = (byte[])ev.Data;
 				if (data[0] == 0x80)
 				{
-					Controller.NoteOn(data[1], 0);
+					Controller.NoteOff(data[1], data[2]);
 				}
 				else if (data[0] == 0x90)
 				{
-					Controller.NoteOn(data[1], data[2] / 127.0);
+					if(data[2] > 0)
+						Controller.NoteOn(data[1], data[2]);
+					else
+						Controller.NoteOff(data[1], 0);
 				}
 				else if (data[0] == 0xE0)
 				{

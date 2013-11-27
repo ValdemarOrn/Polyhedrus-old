@@ -20,36 +20,24 @@ namespace Polyhedrus.UI
 	/// </summary>
 	public partial class CascadeFilterView : SynthModuleView
 	{
-		public double _cutoff;
-		public double _resonance;
-		public double _tracking;
-		public double _envelope;
-		public double _volume;
-		public double _x;
-		public double _a;
-		public double _b;
-		public double _c;
-		public double _d;
-
 		public CascadeFilterView()
 		{
 			InitializeComponent();
 		}
 
-		public CascadeFilterView(SynthController ctrl, ModuleParams moduleId) : this()
+		public CascadeFilterView(SynthController ctrl, ModuleParams moduleId)
 		{
 			Ctrl = ctrl;
 			ModuleId = moduleId;
-			D = 1.0;
+			InitializeComponent();
 		}
 
 
 		public double Cutoff
 		{
-			get { return _cutoff; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.Cutoff); }
 			set
 			{
-				_cutoff = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.Cutoff, value);
 				NotifyChange(() => Cutoff);
 			}
@@ -57,21 +45,29 @@ namespace Polyhedrus.UI
 
 		public double Resonance
 		{
-			get { return _resonance; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.Resonance); }
 			set
 			{
-				_resonance = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.Resonance, value);
 				NotifyChange(() => Resonance);
 			}
 		}
 
-		public double Tracking
+		public double Gain
 		{
-			get { return _tracking; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.Gain); }
 			set
 			{
-				_tracking = value;
+				Ctrl.SetParameter(ModuleId, FilterParams.Gain, value);
+				NotifyChange(() => Gain);
+			}
+		}
+
+		public double Tracking
+		{
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.Tracking); }
+			set
+			{
 				Ctrl.SetParameter(ModuleId, FilterParams.Tracking, value);
 				NotifyChange(() => Tracking);
 			}
@@ -79,10 +75,9 @@ namespace Polyhedrus.UI
 
 		public double Envelope
 		{
-			get { return _envelope; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.Envelope); }
 			set
 			{
-				_envelope = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.Envelope, value);
 				NotifyChange(() => Envelope);
 			}
@@ -90,10 +85,9 @@ namespace Polyhedrus.UI
 
 		public double X
 		{
-			get { return _x; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.X); }
 			set
 			{
-				_x = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.X, value);
 				NotifyChange(() => X);
 			}
@@ -101,10 +95,9 @@ namespace Polyhedrus.UI
 
 		public double A
 		{
-			get { return _a; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.A); }
 			set
 			{
-				_a = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.A, value);
 				NotifyChange(() => A);
 			}
@@ -112,10 +105,9 @@ namespace Polyhedrus.UI
 
 		public double B
 		{
-			get { return _b; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.B); }
 			set
 			{
-				_b = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.B, value);
 				NotifyChange(() => B);
 			}
@@ -123,10 +115,9 @@ namespace Polyhedrus.UI
 
 		public double C
 		{
-			get { return _c; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.C); }
 			set
 			{
-				_c = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.C, value);
 				NotifyChange(() => C);
 			}
@@ -134,10 +125,9 @@ namespace Polyhedrus.UI
 
 		public double D
 		{
-			get { return _d; }
+			get { return (double)Ctrl.GetParameter(ModuleId, FilterParams.D); }
 			set
 			{
-				_d = value;
 				Ctrl.SetParameter(ModuleId, FilterParams.D, value);
 				NotifyChange(() => D);
 			}

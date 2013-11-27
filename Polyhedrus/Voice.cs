@@ -11,7 +11,12 @@ namespace Polyhedrus
 {
 	public sealed class Voice
 	{
+		const int Bufsize = 16;
 		object lockObject = new object();
+
+		public bool IsActive;
+		public long TriggerIndex;
+		public int Note;
 
 		// ---------------------------- Synth Parts ----------------------------
 
@@ -27,21 +32,31 @@ namespace Polyhedrus
 		
 		// ----------------------------Voice Specific Parameters ----------------------------
 
-		int ModulationIterator;
+		double[] AmpEnvBuffer, Filter1EnvBuffer, Filter2EnvBuffer;
+		double[] Path1Buffer, Path2Buffer;
+		double[] OutputBuffer;
 
 		public Voice()
 		{
 			double samplerate = 48000;
 
+			AmpEnvBuffer = new double[Bufsize];
+			Filter1EnvBuffer = new double[Bufsize];
+			Filter2EnvBuffer = new double[Bufsize];
+			
+			Path1Buffer = new double[Bufsize];
+			Path2Buffer = new double[Bufsize];
+			OutputBuffer = new double[Bufsize];
+
 			ModuleMap = new Dictionary<ModuleParams, object>();
 
-			Osc1 = new BLOsc(samplerate);
-			Osc2 = new BLOsc(samplerate);
-			Osc3 = new BLOsc(samplerate);
-			Osc4 = new BLOsc(samplerate);
+			Osc1 = new BLOsc(samplerate, Bufsize);
+			Osc2 = new BLOsc(samplerate, Bufsize);
+			Osc3 = new BLOsc(samplerate, Bufsize);
+			Osc4 = new BLOsc(samplerate, Bufsize);
 
-			Filter1 = new CascadeFilter(samplerate);
-			Filter2 = new CascadeFilter(samplerate);
+			Filter1 = new CascadeFilter(samplerate, Bufsize);
+			Filter2 = new CascadeFilter(samplerate, Bufsize);
 
 			AmpEnv = new Ahdsr(samplerate);
 			Filter1Env = new Ahdsr(samplerate);
@@ -96,44 +111,56 @@ namespace Polyhedrus
 			ModuleMap[ModuleParams.Mixer] = Mixer;
 		}
 
-		public void SetNote(int note, double velocity)
+		public void ResetEnvelopes()
 		{
-			if (velocity > 0) // triggering new note
-			{
-				/*if(MidiInput.Gate == true)
-				{
-					AmpEnv.Retrigger();
-					Filter1Env.Retrigger();
-				}*/
+			AmpEnv.Reset();
+			Filter1Env.Reset();
+			Filter2Env.Reset();
+			Mod1.Reset();
+			Mod2.Reset();
+			Mod3.Reset();
+			Mod4.Reset();
+			Mod5.Reset();
+			Mod6.Reset();
+		}
 
-				MidiInput.Velocity = velocity;
-				MidiInput.Note = note;
+		public void NoteOn(int note, int velocity)
+		{
+			MidiInput.Velocity = velocity / 127.0;
 
-				Osc1.Note = note;
-				Osc2.Note = note;
-				Osc3.Note = note;
-				Osc4.Note = note;
+			Note = note;
+			MidiInput.Note = note;
+			Osc1.Note = note;
+			Osc2.Note = note;
+			Osc3.Note = note;
+			Osc4.Note = note;
 
-				Osc1.UpdateStepsize();
-				Osc2.UpdateStepsize();
-				Osc3.UpdateStepsize();
-				Osc4.UpdateStepsize();
-			}
+			Osc1.UpdateStepsize();
+			Osc2.UpdateStepsize();
+			Osc3.UpdateStepsize();
+			Osc4.UpdateStepsize();
 
-			// Set gate if we're releasing the current note, or if we just set the note
-			if (note == MidiInput.Note)
-			{
-				MidiInput.Gate = (velocity > 0);
-				AmpEnv.Gate = MidiInput.Gate;
-				Filter1Env.Gate = MidiInput.Gate;
-				Filter2Env.Gate = MidiInput.Gate;
-				Mod1.SetGate(MidiInput.Gate);
-				Mod2.SetGate(MidiInput.Gate);
-				Mod3.SetGate(MidiInput.Gate);
-				Mod4.SetGate(MidiInput.Gate);
-				Mod5.SetGate(MidiInput.Gate);
-				Mod6.SetGate(MidiInput.Gate);
-			}
+			SetGate(true);
+		}
+
+		public void NoteOff(int releaseVelocity)
+		{
+			MidiInput.ReleaseVelocity = releaseVelocity / 127.0;
+			SetGate(false);
+		}
+
+		void SetGate(bool gate)
+		{
+			MidiInput.Gate = gate;
+			AmpEnv.Gate = gate;
+			Filter1Env.Gate = gate;
+			Filter2Env.Gate = gate;
+			Mod1.SetGate(gate);
+			Mod2.SetGate(gate);
+			Mod3.SetGate(gate);
+			Mod4.SetGate(gate);
+			Mod5.SetGate(gate);
+			Mod6.SetGate(gate);
 		}
 
 		public double GetModSource(ModSource source)
@@ -188,52 +215,61 @@ namespace Polyhedrus
 		{
 			lock (lockObject)
 			{
-				for (int i = 0; i < buffer[0].Length; i++)
+				IsActive = (AmpEnv.Output > 0.00001 || AmpEnv.Gate);
+
+				if(!IsActive)
 				{
-					// Amp and Filter envs update every cycle
-					AmpEnv.Process(1);
-					Filter1Env.Process(1);
-					Filter2Env.Process(1);
-
-					if (ModulationIterator == 0)
+					for (int i = 0; i < buffer[0].Length; i++)
 					{
-						ModulationIterator = 16;
-						Mod1.Process(ModulationIterator);
-						Mod2.Process(ModulationIterator);
-						Mod3.Process(ModulationIterator);
-						Mod4.Process(ModulationIterator);
-						Mod5.Process(ModulationIterator);
-						Mod6.Process(ModulationIterator);
-
-						ModMatrix.Process();
+						buffer[0][i] += 0;
+						buffer[1][i] += 0;
 					}
 
-					// Calculate Amp and Filter modulation every cycle
-					{
-						Filter1.CutoffModulationEnv = Filter1Env.Output * ModMatrix.Filter1EnvMod;
-						Filter1.UpdateCoefficients();
+					return;
+				}
 
-						Filter2.CutoffModulationEnv = Filter2Env.Output * ModMatrix.Filter2EnvMod;
-						Filter2.UpdateCoefficients();
+				for (int i = 0; i < buffer[0].Length; i += Bufsize)
+				{
+					var f1Env = ModMatrix.Filter1EnvMod;
+					var f2Env = ModMatrix.Filter2EnvMod;
+					for (int n = 0; n < Bufsize; n++)
+					{
+						AmpEnvBuffer[n] = AmpEnv.Process(1);
+						Filter1EnvBuffer[n] = Filter1Env.Process(1) * f1Env;
+						Filter2EnvBuffer[n] = Filter2Env.Process(1) * f2Env;
 					}
 
-					Osc1.Process();
-					Osc2.Process();
-					Osc3.Process();
-					Osc4.Process();
+					// Process modulation
+					Mod1.Process(Bufsize);
+					Mod2.Process(Bufsize);
+					Mod3.Process(Bufsize);
+					Mod4.Process(Bufsize);
+					Mod5.Process(Bufsize);
+					Mod6.Process(Bufsize);
+					ModMatrix.Process();
 
-					var val = Osc1.Output * Mixer.Osc1Vol
-							+ Osc2.Output * Mixer.Osc2Vol
-							+ Osc3.Output * Mixer.Osc3Vol
-							+ Osc4.Output * Mixer.Osc4Vol;
+					Osc1.Process(Bufsize);
+					Osc2.Process(Bufsize);
+					Osc3.Process(Bufsize);
+					Osc4.Process(Bufsize);
 
-					val = Filter1.Process(val);
-					val = val * Mixer.OutputVolume * AmpEnv.Output;
+					for(int n = 0; n < Bufsize; n++)
+					{
+						Path1Buffer[n] = Osc1.OutputBuffer[n] * Mixer.Osc1Vol + Osc2.OutputBuffer[n] * Mixer.Osc2Vol;
+						Path2Buffer[n] = Osc3.OutputBuffer[n] * Mixer.Osc3Vol + Osc4.OutputBuffer[n] * Mixer.Osc4Vol;
+					}
 
-					buffer[0][i] = val;
-					buffer[1][i] = val;
+					Filter1.Process(Path1Buffer, Filter1EnvBuffer);
+					Filter2.Process(Path2Buffer, Filter2EnvBuffer);
 
-					ModulationIterator--;
+					for (int n = 0; n < Bufsize; n++)
+					{
+						OutputBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
+						OutputBuffer[n] *= Mixer.OutputVolume * AmpEnvBuffer[n];
+
+						buffer[0][i + n] += OutputBuffer[n];
+						buffer[1][i + n] += OutputBuffer[n];
+					}
 				}
 			}
 		}
@@ -304,7 +340,7 @@ namespace Polyhedrus
 		{
 			BLOsc osc = ModuleMap[module] as BLOsc;
 			OscParams para = (OscParams)parameter;
-			double val = (double)value;
+			double val = Convert.ToDouble(value);
 
 			switch (para)
 			{
@@ -318,7 +354,7 @@ namespace Polyhedrus
 					osc.Cent = (int)val;
 					break;
 				case OscParams.Position:
-					// Todo
+					osc.TablePosition = (double)val;
 					break;
 				case OscParams.Phase:
 					// Todo
@@ -350,7 +386,7 @@ namespace Polyhedrus
 		{
 			var filter = ModuleMap[module] as CascadeFilter;
 			FilterParams para = (FilterParams)parameter;
-			double val = (double)value;
+			double val = Convert.ToDouble(value);
 
 			switch (para)
 			{
@@ -393,7 +429,10 @@ namespace Polyhedrus
 		{
 			var env = ModuleMap[module] as Ahdsr;
 			EnvParams para = (EnvParams)parameter;
-			double val = (double)value;
+			double val = Convert.ToDouble(value);
+
+			if(para != EnvParams.Sustain) // 2ms - 20sec range
+				val = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
 
 			switch (para)
 			{
@@ -419,6 +458,12 @@ namespace Polyhedrus
 		{
 			var mod = ModuleMap[module] as Modulator;
 			ModulatorParams para = (ModulatorParams)parameter;
+
+			if (para == ModulatorParams.Attack || para == ModulatorParams.Hold || para == ModulatorParams.Decay || para == ModulatorParams.Release || para == ModulatorParams.Delay) // 2ms - 20sec range
+				value = ValueTables.Get((double)value, ValueTables.Response4Dec) * 20000;
+			
+			if(para == ModulatorParams.Frequency)
+				value = ValueTables.Get((double)value, ValueTables.Response3Dec) * 50;
 
 			mod.SetParameter(para, value);
 			mod.UpdateStepsize();

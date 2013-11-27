@@ -13,9 +13,9 @@
     </UI:SynthModuleView.Resources>
     <Grid Margin="0" Style="{StaticResource ResourceKey=ModulatorStyle}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="65" />
+            <RowDefinition Height="65" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="1.6*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -51,11 +51,11 @@
         <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Delay}" ShowCenter="Hidden" 
                     Caption="Delay" x:Name="KnobDelay" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Offset}" ShowCenter="Hidden" Min="-1" Max="1"
+        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Offset}" ShowCenter="Visible" Min="-1" Max="1"
                     Caption="Offset" x:Name="KnobOffset" VerticalAlignment="Top" Grid.Column="3" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
 
-        <ComboBox Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,5,0,0" ItemsSource="{Binding ElementName=Main, Path=Waveforms}" 
-                  SelectedItem="{Binding ElementName=Main, Path=SelectedWaveform, Mode=TwoWay}"/>
+        <ComboBox Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Waveforms}" 
+                  Height="20" SelectedItem="{Binding ElementName=Main, Path=SelectedWaveform, Mode=TwoWay}"/>
         
             <Grid Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Height="50" VerticalAlignment="Top" Margin="0,5,5,0">
             <Grid.RowDefinitions>

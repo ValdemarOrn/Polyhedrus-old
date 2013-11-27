@@ -21,23 +21,6 @@ namespace Polyhedrus.UI
 {
 	public partial class ModulatorView : SynthModuleView
 	{
-		double _attack;
-		double _hold;
-		double _decay;
-		double _sustain;
-		double _release;
-
-		double _frequency;
-		double _phase;
-		double _delay;
-		double _offset;
-
-		bool _freePhase;
-		bool _tempoSync;
-
-		ObservableCollection<ListItem<LFO.Wave>> _waveforms;
-		ListItem<LFO.Wave> _selectedWave;
-
 		public ModulatorView()
 		{
 			InitializeComponent();
@@ -45,6 +28,21 @@ namespace Polyhedrus.UI
 			KnobH.ValueFormatter = EnvFormatter;
 			KnobD.ValueFormatter = EnvFormatter;
 			KnobR.ValueFormatter = EnvFormatter;
+			KnobFreq.ValueFormatter = FreqFormatter;
+		}
+
+		public ModulatorView(SynthController ctrl, ModuleParams moduleId)
+		{
+			Ctrl = ctrl;
+			ModuleId = moduleId;
+			Waveforms = Ctrl.LFOWaves.Select(x => new ListItem<LFO.Wave>(x.Key, x.Value)).ToArray();
+
+			InitializeComponent();
+			KnobA.ValueFormatter = EnvFormatter;
+			KnobH.ValueFormatter = EnvFormatter;
+			KnobD.ValueFormatter = EnvFormatter;
+			KnobR.ValueFormatter = EnvFormatter;
+			KnobDelay.ValueFormatter = EnvFormatter;
 			KnobFreq.ValueFormatter = FreqFormatter;
 		}
 
@@ -67,15 +65,8 @@ namespace Polyhedrus.UI
 			return String.Format("{0:0.00}", value);
 		}
 
-		public ModulatorView(SynthController ctrl, ModuleParams moduleId) : this()
-		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
-			var waveformItems = LFO.WaveNames.Select(x => new ListItem<LFO.Wave>(x.Key, x.Value)).ToArray();
-			Waveforms = new ObservableCollection<ListItem<LFO.Wave>>(waveformItems);
-		}
-
-		public ObservableCollection<ListItem<LFO.Wave>> Waveforms
+		IEnumerable<ListItem<LFO.Wave>> _waveforms;
+		public IEnumerable<ListItem<LFO.Wave>> Waveforms
 		{
 			get { return _waveforms; }
 			set
@@ -85,9 +76,14 @@ namespace Polyhedrus.UI
 			}
 		}
 
+		ListItem<LFO.Wave> _selectedWave;
 		public ListItem<LFO.Wave> SelectedWaveform
 		{
-			get { return _selectedWave; }
+			get 
+			{ 
+				var wave = (LFO.Wave)Ctrl.GetParameter(ModuleId, ModulatorParams.Wave);
+				return Waveforms.Single(x => x.Value == wave);
+			}
 			set
 			{
 				_selectedWave = value;
@@ -98,46 +94,39 @@ namespace Polyhedrus.UI
 
 		public double Attack
 		{
-			get { return _attack; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Attack); }
 			set
 			{
-				_attack = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Attack, val);
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Attack, value);
 				NotifyChange(() => Attack);
 			}
 		}
 
 		public double Hold
 		{
-			get { return _hold; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Hold); }
 			set
 			{
-				_hold = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Hold, val);
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Hold, value);
 				NotifyChange(() => Hold);
 			}
 		}
 
 		public double Decay
 		{
-			get { return _decay; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Decay); }
 			set
 			{
-				_decay = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Decay, val);
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Decay, value);
 				NotifyChange(() => Decay);
 			}
 		}
 
 		public double Sustain
 		{
-			get { return _sustain; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Sustain); }
 			set
 			{
-				_sustain = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Sustain, value);
 				NotifyChange(() => Sustain);
 			}
@@ -145,34 +134,29 @@ namespace Polyhedrus.UI
 
 		public double Release
 		{
-			get { return _release; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Release); }
 			set
 			{
-				_release = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Release, val);
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Release, value);
 				NotifyChange(() => Release);
 			}
 		}
 
 		public double Frequency
 		{
-			get { return _frequency; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Frequency); }
 			set
 			{
-				_frequency = value;
-				var val = ValueTables.Get(value, ValueTables.Response3Dec) * 50;
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Frequency, val);
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Frequency, value);
 				NotifyChange(() => Frequency);
 			}
 		}
 
 		public double Phase
 		{
-			get { return _phase; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Phase); }
 			set
 			{
-				_phase = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Phase, value);
 				NotifyChange(() => Phase);
 			}
@@ -180,10 +164,9 @@ namespace Polyhedrus.UI
 
 		public double Delay
 		{
-			get { return _delay; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Delay); }
 			set
 			{
-				_delay = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Delay, value);
 				NotifyChange(() => Delay);
 			}
@@ -191,10 +174,9 @@ namespace Polyhedrus.UI
 
 		public double Offset
 		{
-			get { return _offset; }
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Offset); }
 			set
 			{
-				_offset = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Offset, value);
 				NotifyChange(() => Offset);
 			}
@@ -203,10 +185,9 @@ namespace Polyhedrus.UI
 
 		public bool FreePhase
 		{
-			get { return _freePhase; }
+			get { return (bool)Ctrl.GetParameter(ModuleId, ModulatorParams.FreePhase); }
 			set
 			{
-				_freePhase = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.FreePhase, value);
 				NotifyChange(() => FreePhase);
 			}
@@ -214,10 +195,9 @@ namespace Polyhedrus.UI
 
 		public bool TempoSync
 		{
-			get { return _tempoSync; }
+			get { return (bool)Ctrl.GetParameter(ModuleId, ModulatorParams.TempoSync); }
 			set
 			{
-				_tempoSync = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.TempoSync, value);
 				NotifyChange(() => TempoSync);
 			}

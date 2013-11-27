@@ -43,37 +43,39 @@ namespace Polyhedrus.Modules
 
 		public void SetParameter(ModulatorParams parameter, object value)
 		{
+			double val = Convert.ToDouble(value);
+
 			switch(parameter)
 			{
 				case ModulatorParams.Attack:
-					Envelope.SetParameter(Ahdsr.StageAttack, (double)value);
+					Envelope.SetParameter(Ahdsr.StageAttack, val);
 					break;
 				case ModulatorParams.Hold:
-					Envelope.SetParameter(Ahdsr.StageHold, (double)value);
+					Envelope.SetParameter(Ahdsr.StageHold, val);
 					break;
 				case ModulatorParams.Decay:
-					Envelope.SetParameter(Ahdsr.StageDecay, (double)value);
+					Envelope.SetParameter(Ahdsr.StageDecay, val);
 					break;
 				case ModulatorParams.Sustain:
-					Envelope.SetParameter(Ahdsr.StageSustain, (double)value);
+					Envelope.SetParameter(Ahdsr.StageSustain, val);
 					break;
 				case ModulatorParams.Release:
-					Envelope.SetParameter(Ahdsr.StageRelease, (double)value);
+					Envelope.SetParameter(Ahdsr.StageRelease, val);
 					break;
 				case ModulatorParams.Delay:
-					DelaySamples = (double)value * 1000 * _fsInv;
+					DelaySamples = val * 1000 * _fsInv;
 					break;
 				case ModulatorParams.Frequency:
-					Lfo.FreqHz = (double)value;
+					Lfo.FreqHz = val;
 					break;
 				case ModulatorParams.FreePhase:
 					FreePhase = (bool)value;
 					break;
 				case ModulatorParams.Offset:
-					OffsetValue = (double)value;
+					OffsetValue = val;
 					break;
 				case ModulatorParams.Phase:
-					Lfo.StartPhase = (double)value;
+					Lfo.StartPhase = val;
 					break;
 				case ModulatorParams.TempoSync:
 					Lfo.TempoSync = (bool)value;
@@ -89,14 +91,19 @@ namespace Polyhedrus.Modules
 			Lfo.UpdateStepsize();
 		}
 
+		public void Reset()
+		{
+			Envelope.Reset();
+			if (!FreePhase)
+				Lfo.Reset();
+		}
+
 		public void SetGate(bool state)
 		{
 			if(state && !Gate) // turning on
 			{
 				Gate = true;
 				DelayAccumulator = 0;
-				if (!FreePhase)
-					Lfo.Reset();
 			}
 			else if (Gate && !state) // turning off
 			{

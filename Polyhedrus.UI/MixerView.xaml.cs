@@ -1,7 +1,6 @@
-﻿using Polyhedrus.UI;
+﻿using Polyhedrus.Parameters;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -17,29 +16,21 @@ using System.Windows.Shapes;
 namespace Polyhedrus.UI
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for MixerView.xaml
 	/// </summary>
-	public partial class SynthView : Window
+	public partial class MixerView : SynthModuleView
 	{
-		private ViewModel VM;
-
-		public SynthView(ViewModel vm)
-		{
-			VM = vm;
-			DataContext = VM;
-			InitializeComponent();
-		}
-
-		public SynthView(SynthController ctrl)
-		{
-			VM = new ViewModel(ctrl);
-			DataContext = VM;
-			InitializeComponent();
-		}
-
-		public SynthView()
+		public MixerView()
 		{
 			InitializeComponent();
 		}
+
+		public MixerView(SynthController ctrl, ModuleParams moduleId)
+		{
+			Ctrl = ctrl;
+			ModuleId = moduleId;
+
+			InitializeComponent();
+		}		
 	}
 }

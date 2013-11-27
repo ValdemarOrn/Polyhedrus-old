@@ -6,15 +6,104 @@
     <UI:ModSourceConverter x:Key="ModSourceConverter"></UI:ModSourceConverter>
     <UI:ModDestinationConverter x:Key="ModDestinationConverter"></UI:ModDestinationConverter>
 
-    <SolidColorBrush x:Key="BorderColor" Color="#555555" />
-    
-    <!--   Knob Style    -->
-    
+    <SolidColorBrush x:Key="BorderColor" Color="#333" />
+
     <SolidColorBrush x:Key="PrimaryColor" Color="CornflowerBlue" />
-    <SolidColorBrush x:Key="SecondaryColor" Color="#111111" />
+    <SolidColorBrush x:Key="SecondaryColor" Color="#333" />
     <SolidColorBrush x:Key="TextColor" Color="Black" />
     <SolidColorBrush x:Key="HoverColor" Color="#bbbbbb" />
 
+    <!-- Button Styles   -->
+
+    <Style TargetType="ToggleButton" x:Key="ToggleStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Stroke="{TemplateBinding BorderBrush}" RadiusX="3" RadiusY="3"></Rectangle>
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4" Fill="{TemplateBinding Background}" RadiusX="3" RadiusY="3"></Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{StaticResource ResourceKey=BorderColor}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="ToggleButton" x:Key="ToggleStyleBlue">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Fill="{TemplateBinding Background}" RadiusX="3" RadiusY="3"></Rectangle>
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="2" Fill="{TemplateBinding Foreground}" RadiusX="2" RadiusY="2"></Rectangle>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource ResourceKey=SecondaryColor}" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Width" Value="20" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource ResourceKey=PrimaryColor}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Button" x:Key="ButtonStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Background}" RadiusX="3" RadiusY="3"></Rectangle>
+                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="Transparent" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ResourceKey=PrimaryColor}" />
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- Combobox Style -->
+
+    <Style TargetType="ComboBox" x:Key="ComboBoxStyle">
+        <Setter Property="Margin" Value="0,0,2,2" />
+        <Setter Property="Padding" Value="3,1,1,1" />
+        <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+    
+    <!-- Spinner Style -->
+    <Style x:Key="SpinnerBase" TargetType="UI:Spinner">
+        <Setter Property="Height" Value="18"></Setter>
+        <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
+    </Style>
+
+    <!-- Slider Style -->
+
+    <Style x:Key="SliderStyle" TargetType="UI:Slider">
+        <Setter Property="Foreground" Value="{StaticResource ResourceKey=PrimaryColor}"></Setter>
+        <Setter Property="Fill" Value="{StaticResource ResourceKey=SecondaryColor}"></Setter>
+        <Setter Property="Height" Value="10"></Setter>
+    </Style>
+    
+    <!--   Knob Style    -->
+   
     <Style x:Key="KnobStyleBase" TargetType="UI:Knob">
         <Setter Property="FontSize" Value="11"></Setter>
         <Setter Property="LabelHeight" Value="19"></Setter>
@@ -37,7 +126,29 @@
         <Setter Property="Height" Value="75"></Setter>
     </Style>
     
-    
+    <!-- Slider Grid Table -->
+    <Style TargetType="Grid" x:Key="SliderGrid">
+        <Style.Resources>
+            <Style TargetType="UI:Slider" BasedOn="{StaticResource ResourceKey=SliderStyle}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource ResourceKey=ToggleStyleBlue}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+            
+            <Style TargetType="Label">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="Margin" Value="0,0,5,0" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+
     <!--  Module Selector Styles -->
 
     <UI:SelectorVisible x:Key="SelectorVisible" />
@@ -66,48 +177,7 @@
     </Style>
 
 
-    <!-- Button Styles   -->
-
-    <Style TargetType="ToggleButton" x:Key="ToggleStyle">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Grid>
-                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Stroke="{TemplateBinding BorderBrush}" RadiusX="3" RadiusY="3"></Rectangle>
-                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="4" Fill="{TemplateBinding Background}" RadiusX="3" RadiusY="3"></Rectangle>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Style.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="{StaticResource ResourceKey=BorderColor}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style TargetType="Button" x:Key="ButtonStyle">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Background}" RadiusX="3" RadiusY="3"></Rectangle>
-                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Background" Value="Transparent" />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource ResourceKey=PrimaryColor}" />
-                <Setter Property="Foreground" Value="White"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
+    
 
     <!-- Mod Matrix Style  -->
 
@@ -120,15 +190,9 @@
             <Style TargetType="Button" BasedOn="{StaticResource ResourceKey=ButtonStyle}">
                 <Setter Property="Margin" Value="0,0,5,0" />
             </Style>
-            <Style TargetType="ComboBox">
+            <Style TargetType="ComboBox" BasedOn="{StaticResource ResourceKey=ComboBoxStyle}" />
+            <Style TargetType="UI:Spinner" BasedOn="{StaticResource ResourceKey=SpinnerBase}">
                 <Setter Property="Margin" Value="0,0,2,2" />
-                <Setter Property="Padding" Value="3,1,1,1" />
-                <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
-            <Style TargetType="UI:Spinner">
-                <Setter Property="Margin" Value="0,0,2,2" />
-                <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
             </Style>
             <Style TargetType="ToggleButton" BasedOn="{StaticResource ResourceKey=ToggleStyle}">
                 <Setter Property="Margin" Value="0,0,2,2" />
@@ -136,7 +200,22 @@
         </Style.Resources>
     </Style>
 
+    <Style TargetType="Grid" x:Key="MixerStyle">
+        <Style.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource ResourceKey=ComboBoxStyle}" />
+            <Style TargetType="UI:Spinner" BasedOn="{StaticResource ResourceKey=SpinnerBase}">
+              
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+
     <!-- Modulator Styles -->
+    
     <Style TargetType="Grid" x:Key="ModulatorStyle">
         <Style.Resources>
             <Style TargetType="Label">
@@ -146,6 +225,11 @@
             </Style>
             <Style TargetType="ToggleButton" BasedOn="{StaticResource ResourceKey=ToggleStyle}">
                 <Setter Property="Margin" Value="4" />
+            </Style>
+            <Style TargetType="ComboBox">
+                <Setter Property="Padding" Value="3,1,1,1" />
+                <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
+                <Setter Property="Background" Value="Transparent" />
             </Style>
         </Style.Resources>
     </Style>

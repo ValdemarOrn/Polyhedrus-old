@@ -20,6 +20,7 @@ namespace Polyhedrus.Parameters
 	{
 		Cutoff = 1,
 		Resonance,
+		Gain,
 		Tracking,
 		Envelope,
 		X,
@@ -47,32 +48,6 @@ namespace Polyhedrus.Parameters
 		Param5
 	}
 
-	public enum SettingsParams
-	{
-		Volume = 1,
-		Pan,
-		Stereo,
-		Unison,
-		Voices,
-		UnisonSpread,
-		UnisonPan,
-		Glide
-	}
-
-	public enum EffectsParams
-	{
-		Param1 = 1,
-		Param2,
-		Param3,
-		Param4,
-		Param5,
-		Param6,
-		Param7,
-		Param8,
-		Wet,
-		Enabled
-	}
-
 	public enum ModulatorParams
 	{
 		Attack = 1,
@@ -89,6 +64,35 @@ namespace Polyhedrus.Parameters
 		Wave,
 		FreePhase,
 		TempoSync
+	}
+
+	public enum EffectsParams
+	{
+		Param1 = 1,
+		Param2,
+		Param3,
+		Param4,
+		Param5,
+		Param6,
+		Param7,
+		Param8,
+		Wet,
+		Enabled
+	}
+
+	public enum MixerParams
+	{
+		Osc1Mix = 1,
+		Osc2Mix,
+		Osc3Mix,
+		Osc4Mix,
+		F1ToF2,
+		F1Vol,
+		F2Vol,
+		F1Pan,
+		F2Pan,
+		OutputVolume,
+		OutputPan
 	}
 
 	public enum ModMatrixParams
@@ -108,6 +112,22 @@ namespace Polyhedrus.Parameters
 		Modroute13,
 		Modroute14,
 		Modroute15,
-		Modroute16
+		Modroute16,
+		Modroute17,
+		Modroute18,
+		Modroute19,
+		Modroute20,
+	}
+
+	public enum SettingsParams
+	{
+		Volume = 1,
+		Pan,
+		Stereo,
+		Unison,
+		Voices,
+		UnisonSpread,
+		UnisonPan,
+		Glide
 	}
 }

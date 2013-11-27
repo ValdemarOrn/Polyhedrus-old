@@ -33,39 +33,48 @@ namespace Polyhedrus.UI
 	/// <summary>
 	/// Interaction logic for ModuleControl.xaml
 	/// </summary>
-	public partial class ModuleControl : UserControl
+	public partial class ModuleControl : UserControl, INotifyPropertyChanged
 	{
-		static internal DependencyProperty PanelProperty = DependencyProperty.Register("Panel", typeof(Control), typeof(ModuleControl),
+		static internal DependencyProperty PanelsProperty = DependencyProperty.Register("Panels", typeof(ObservableCollection<Control>), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-		static internal DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(ModuleControl),
-			new FrameworkPropertyMetadata("Temp", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-		static internal DependencyProperty ShowComboBoxProperty = DependencyProperty.Register("ShowComboBox", typeof(Visibility), typeof(ModuleControl),
-			new FrameworkPropertyMetadata(Visibility.Collapsed, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		static internal DependencyProperty SelectorsProperty = DependencyProperty.Register("Selectors", typeof(ObservableCollection<string>), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+		static internal DependencyProperty TitlesProperty = DependencyProperty.Register("Titles", typeof(ObservableCollection<string>), typeof(ModuleControl),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+		static internal DependencyProperty ShowComboBoxProperty = DependencyProperty.Register("ShowComboBox", typeof(Visibility), typeof(ModuleControl),
+			new FrameworkPropertyMetadata(Visibility.Collapsed, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
 		static internal DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		public Control Panel
+		public ModuleControl()
 		{
-			get { return (Control)base.GetValue(PanelProperty); }
-			set { SetValue(PanelProperty, value); }
+			InitializeComponent();
+
+			var prop = DependencyPropertyDescriptor.FromProperty(PanelsProperty, this.GetType());
+			prop.AddValueChanged(this, (s, e) => 
+				NotifyChange(() => Panel));
+
+			prop = DependencyPropertyDescriptor.FromProperty(SelectorsProperty, this.GetType());
+
+			prop = DependencyPropertyDescriptor.FromProperty(TitlesProperty, this.GetType());
+			prop.AddValueChanged(this, (s, e) => 
+				NotifyChange(() => Title));
+
+			prop = DependencyPropertyDescriptor.FromProperty(SelectedIndexProperty, this.GetType());
+			prop.AddValueChanged(this, (s, e) => 
+				NotifyChange(() => Title));
+			prop.AddValueChanged(this, (s, e) => 
+				NotifyChange(() => Panel));
 		}
 
-		public string Title
+		public ObservableCollection<Control> Panels
 		{
-			get { return (string)base.GetValue(TitleProperty); }
-			set { SetValue(TitleProperty, value); }
-		}
-
-		public Visibility ShowComboBox
-		{
-			get { return (Visibility)base.GetValue(ShowComboBoxProperty); }
-			set { SetValue(ShowComboBoxProperty, value); }
+			get { return (ObservableCollection<Control>)base.GetValue(PanelsProperty); }
+			set { SetValue(PanelsProperty, value); }
 		}
 
 		public ObservableCollection<string> Selectors
@@ -74,33 +83,63 @@ namespace Polyhedrus.UI
 			set { SetValue(SelectorsProperty, value); }
 		}
 
+		public ObservableCollection<string> Titles
+		{
+			get { return (ObservableCollection<string>)base.GetValue(TitlesProperty); }
+			set { SetValue(TitlesProperty, value); }
+		}
+
+		public Visibility ShowComboBox
+		{
+			get { return (Visibility)base.GetValue(ShowComboBoxProperty); }
+			set { SetValue(ShowComboBoxProperty, value); }
+		}
+
 		public int SelectedIndex
 		{
 			get { return (int)base.GetValue(SelectedIndexProperty); }
 			set { SetValue(SelectedIndexProperty, value); }
 		}
 
-		public ModuleControl()
+		public string Title
 		{
-			InitializeComponent();
-			Selectors = new ObservableCollection<string>(new string[] { null, null, null, null, null, null });
+			get { return Titles.Eval(x => x[SelectedIndex], ""); }
 		}
+
+		public Control Panel
+		{
+			get { return Panels.Eval(x => x[SelectedIndex], null); }
+		}
+	
+		#region Notify Change
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		// I used this and GetPropertyName to avoid having to hard-code property names
+		// into the NotifyChange events. This makes the application much easier to refactor
+		// leter on, if needed.
+		protected void NotifyChange<T>(System.Linq.Expressions.Expression<Func<T>> exp)
+		{
+			var name = GetPropertyName(exp);
+			NotifyChange(name);
+		}
+
+		protected void NotifyChange(string property)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged.Invoke(this, new PropertyChangedEventArgs(property));
+		}
+
+		protected static string GetPropertyName<T>(System.Linq.Expressions.Expression<Func<T>> exp)
+		{
+			return (((System.Linq.Expressions.MemberExpression)(exp.Body)).Member).Name;
+		}
+
+		#endregion
 
 		private void Label_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if (sender == Selector0)
-				SelectedIndex = 0;
-			else if (sender == Selector1)
-				SelectedIndex = 1;
-			else if (sender == Selector2)
-				SelectedIndex = 2;
-			else if (sender == Selector3)
-				SelectedIndex = 3;
-			else if (sender == Selector4)
-				SelectedIndex = 4;
-			else if (sender == Selector5)
-				SelectedIndex = 5;
+			SelectedIndex = Selectors.IndexOf((sender as Label).Content as string);
 		}
-
 	}
 }

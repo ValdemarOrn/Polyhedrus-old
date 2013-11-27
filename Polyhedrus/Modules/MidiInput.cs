@@ -9,6 +9,7 @@ namespace Polyhedrus.Modules
 	{
 		public bool Gate;
 		public double Velocity;
+		public double ReleaseVelocity;
 		public double Pitch; // note + pitchbend
 		public double Note;
 		public double PitchBend;

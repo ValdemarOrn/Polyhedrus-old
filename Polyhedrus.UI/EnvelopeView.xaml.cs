@@ -21,12 +21,6 @@ namespace Polyhedrus.UI
 	/// </summary>
 	public partial class EnvelopeView : SynthModuleView
 	{
-		double _attack;
-		double _hold;
-		double _decay;
-		double _sustain;
-		double _release;
-
 		public EnvelopeView()
 		{
 			InitializeComponent();
@@ -36,15 +30,22 @@ namespace Polyhedrus.UI
 			KnobR.ValueFormatter = Formatter;
 		}
 
-		public EnvelopeView(SynthController ctrl, ModuleParams moduleId) : this()
+		public EnvelopeView(SynthController ctrl, ModuleParams moduleId)
 		{
 			Ctrl = ctrl;
 			ModuleId = moduleId;
+
+			InitializeComponent();
+			KnobA.ValueFormatter = Formatter;
+			KnobH.ValueFormatter = Formatter;
+			KnobD.ValueFormatter = Formatter;
+			KnobR.ValueFormatter = Formatter;
 		}
 
 		string Formatter(double val)
 		{
-			double value = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
+			var value = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
+
 			if(value < 10)
 				return String.Format("{0:0.00}ms", value);
 			else if (value < 100)
@@ -59,46 +60,39 @@ namespace Polyhedrus.UI
 
 		public double Attack
 		{
-			get { return _attack; }
+			get { return (double)Ctrl.GetParameter(ModuleId, EnvParams.Attack); }
 			set
 			{
-				_attack = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, EnvParams.Attack, val);
+				Ctrl.SetParameter(ModuleId, EnvParams.Attack, value);
 				NotifyChange(() => Attack);
 			}
 		}
 
 		public double Hold
 		{
-			get { return _hold; }
+			get { return (double)Ctrl.GetParameter(ModuleId, EnvParams.Hold); }
 			set
 			{
-				_hold = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, EnvParams.Hold, val);
+				Ctrl.SetParameter(ModuleId, EnvParams.Hold, value);
 				NotifyChange(() => Hold);
 			}
 		}
 
 		public double Decay
 		{
-			get { return _decay; }
+			get { return (double)Ctrl.GetParameter(ModuleId, EnvParams.Decay); }
 			set
 			{
-				_decay = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, EnvParams.Decay, val);
+				Ctrl.SetParameter(ModuleId, EnvParams.Decay, value);
 				NotifyChange(() => Decay);
 			}
 		}
 
 		public double Sustain
 		{
-			get { return _sustain; }
+			get { return (double)Ctrl.GetParameter(ModuleId, EnvParams.Sustain); }
 			set
 			{
-				_sustain = value;
 				Ctrl.SetParameter(ModuleId, EnvParams.Sustain, value);
 				NotifyChange(() => Sustain);
 			}
@@ -106,12 +100,10 @@ namespace Polyhedrus.UI
 
 		public double Release
 		{
-			get { return _release; }
+			get { return (double)Ctrl.GetParameter(ModuleId, EnvParams.Release); }
 			set
 			{
-				_release = value;
-				var val = ValueTables.Get(value, ValueTables.Response4Dec) * 20000;
-				Ctrl.SetParameter(ModuleId, EnvParams.Release, val);
+				Ctrl.SetParameter(ModuleId, EnvParams.Release, value);
 				NotifyChange(() => Release);
 			}
 		}

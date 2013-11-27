@@ -101,9 +101,6 @@ namespace Polyhedrus.UI
 			Paint();
 		}
 
-
-		public Func<double, string> ValueFormatter { get; set; }
-
 		double _internalVal;
 
 		#region DependencyProperties
@@ -174,6 +171,12 @@ namespace Polyhedrus.UI
 			set { SetValue(LabelHeightProperty, value); }
 		}
 
+		public Func<double, string> ValueFormatter 
+		{
+			get { return (Func<double, string>)base.GetValue(ValueFormatterProperty); }
+			set { SetValue(ValueFormatterProperty, value); }
+		}
+
 		#endregion
 
 		bool Selected;
@@ -220,6 +223,9 @@ namespace Polyhedrus.UI
 
 			if (Math.Abs(dx) < 0.5)
 				return;
+
+			if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+				dx *= 0.2;
 
 			var oldVal = _internalVal;
 			var val = _internalVal + Delta * dx;

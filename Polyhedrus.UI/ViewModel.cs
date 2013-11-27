@@ -6,35 +6,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 
 namespace Polyhedrus
 {
 	public class ViewModel : INotifyPropertyChanged
 	{
 		SynthController Ctrl;
-
-		SynthModuleView _osc1View;
-		SynthModuleView _osc2View;
-		SynthModuleView _osc3View;
-		SynthModuleView _osc4View;
-		SynthModuleView _filter1View;
-		SynthModuleView _filter2View;
-		SynthModuleView _ampEnvView;
-		SynthModuleView _filter1EnvView;
-		SynthModuleView _filter2EnvView;
-		SynthModuleView _modulator1View;
-		SynthModuleView _modulator2View;
-		SynthModuleView _modulator3View;
-		SynthModuleView _modulator4View;
-		SynthModuleView _modulator5View;
-		SynthModuleView _modulator6View;
-		SynthModuleView _modMatrixView;
-		
-		int _selectedOsc;
-		int _selectedModulator;
-
-		ObservableCollection<string> _oscNames;
-		ObservableCollection<string> _modulatorNames;
 
 		public ViewModel(SynthController ctrl)
 		{
@@ -44,119 +22,154 @@ namespace Polyhedrus
 
 		public void Init()
 		{
-			_osc1View = new BLOscView(Ctrl, ModuleParams.Osc1);
-			_osc2View = new BLOscView(Ctrl, ModuleParams.Osc2);
-			_osc3View = new BLOscView(Ctrl, ModuleParams.Osc3);
-			_osc4View = new BLOscView(Ctrl, ModuleParams.Osc4);
-			_filter1View = new CascadeFilterView(Ctrl, ModuleParams.Filter1);
-			_filter2View = new CascadeFilterView(Ctrl, ModuleParams.Filter2);
-			_ampEnvView = new EnvelopeView(Ctrl, ModuleParams.AmpEnv);
-			_filter1EnvView = new EnvelopeView(Ctrl, ModuleParams.Filter1Env);
-			_filter2EnvView = new EnvelopeView(Ctrl, ModuleParams.Filter2Env);
-			_modMatrixView = new ModMatrixView(Ctrl, ModuleParams.ModMatrix);
-			_modulator1View = new ModulatorView(Ctrl, ModuleParams.Modulator1);
-			_modulator2View = new ModulatorView(Ctrl, ModuleParams.Modulator2);
-			_modulator3View = new ModulatorView(Ctrl, ModuleParams.Modulator3);
-			_modulator4View = new ModulatorView(Ctrl, ModuleParams.Modulator4);
-			_modulator5View = new ModulatorView(Ctrl, ModuleParams.Modulator5);
-			_modulator6View = new ModulatorView(Ctrl, ModuleParams.Modulator6);
-
-			OscNames = new ObservableCollection<string>(new string[] { "1", "2", "3", "4", null, null });
-			ModulatorNames = new ObservableCollection<string>(new string[] { "1", "2", "3", "4", "5", "6" });
-		}
-
-		public ObservableCollection<string> OscNames
-		{
-			get { return _oscNames; }
-			set { _oscNames = value; NotifyChange(() => OscNames); }
-		}
-
-		public ObservableCollection<string> ModulatorNames
-		{
-			get { return _modulatorNames; }
-			set { _modulatorNames = value; NotifyChange(() => ModulatorNames); }
-		}
-
-		public SynthModuleView OscView
-		{
-			get 
+			OscViews = new ObservableCollection<Control>(new []
 			{
-				switch(SelectedOsc)
-				{
-					case 0:
-						return _osc1View;
-					case 1:
-						return _osc2View;
-					case 2:
-						return _osc3View;
-					case 3:
-						return _osc4View;
-					default:
-						return null;
-				}
-			}
-		}
+				new BLOscView(Ctrl, ModuleParams.Osc1),
+				new BLOscView(Ctrl, ModuleParams.Osc2),
+				new BLOscView(Ctrl, ModuleParams.Osc3),
+				new BLOscView(Ctrl, ModuleParams.Osc4)
+			});
 
-		public SynthModuleView AmpEnvView
-		{
-			get { return _ampEnvView; }
-			set { _ampEnvView = value; NotifyChange(() => AmpEnvView); }
-		}
-
-		public SynthModuleView FilterView
-		{
-			get { return _filter1View; }
-			set { _filter1View = value; NotifyChange(() => FilterView); }
-		}
-
-		public SynthModuleView FilterEnvView
-		{
-			get { return _filter1EnvView; }
-			set { _filter1EnvView = value; NotifyChange(() => FilterEnvView); }
-		}
-
-		public SynthModuleView RoutingView
-		{
-			get { return _modMatrixView; }
-			set { _modMatrixView = value; NotifyChange(() => RoutingView); }
-		}
-
-		public SynthModuleView ModulatorView
-		{
-			get
+			FilterViews = new ObservableCollection<Control>(new []
 			{
-				switch (SelectedModulator)
-				{
-					case 0:
-						return _modulator1View;
-					case 1:
-						return _modulator2View;
-					case 2:
-						return _modulator3View;
-					case 3:
-						return _modulator4View;
-					case 4:
-						return _modulator5View;
-					case 5:
-						return _modulator6View;
-					default:
-						return null;
-				}
-			}
+				new CascadeFilterView(Ctrl, ModuleParams.Filter1),
+				new CascadeFilterView(Ctrl, ModuleParams.Filter2)
+			});
+
+			AmpEnvViews = new ObservableCollection<Control>(new []
+			{
+				new EnvelopeView(Ctrl, ModuleParams.AmpEnv)
+			});
+
+			FilterEnvViews = new ObservableCollection<Control>(new []
+			{
+				new EnvelopeView(Ctrl, ModuleParams.Filter1Env),
+				new EnvelopeView(Ctrl, ModuleParams.Filter2Env)
+			});
+
+			RoutingViews = new ObservableCollection<Control>(new Control[]
+			{
+				new MixerView(Ctrl, ModuleParams.Mixer),
+				new ModMatrixView(Ctrl, ModuleParams.ModMatrix)
+			});
+
+			ModulatorViews = new ObservableCollection<Control>(new[]
+			{
+				new ModulatorView(Ctrl, ModuleParams.Modulator1),
+				new ModulatorView(Ctrl, ModuleParams.Modulator2),
+				new ModulatorView(Ctrl, ModuleParams.Modulator3),
+				new ModulatorView(Ctrl, ModuleParams.Modulator4),
+				new ModulatorView(Ctrl, ModuleParams.Modulator5),
+				new ModulatorView(Ctrl, ModuleParams.Modulator6)
+			});
+
+			OscNames = new ObservableCollection<string>(new string[] { "Osc 1", "Osc 2", "Osc 3", "Osc 4" });
+			AmpEnvNames = new ObservableCollection<string>(new string[] { "Amp Env" });
+			InsertFXNames = new ObservableCollection<string>(new string[] { "Insert 1", "Insert 2" });
+			FilterNames = new ObservableCollection<string>(new string[] { "Filter 1", "Filter 2" });
+			FilterEnvNames = new ObservableCollection<string>(new string[] { "Filter 1 Envelope", "Filter 2 Envelope" });
+			RoutingNames = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
+			SettingsNames = new ObservableCollection<string>(new string[] { "Settings" });
+			EffectNames = new ObservableCollection<string>(new string[] { "FX 1", "FX 2", "FX 3", "FX 4" });
+			ModulatorNames = new ObservableCollection<string>(new string[] { "Mod 1", "Mod 2", "Mod 3", "Mod 4", "Mod 5", "Mod 6" });
+
+			OscSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
+			AmpEnvSelectors = new ObservableCollection<string>(new string[] { "" });
+			InsertSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
+			FilterSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
+			FilterEnvSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
+			RoutingSelectors = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
+			SettingsSelectors = new ObservableCollection<string>(new string[] { "" });
+			EffectsSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
+			ModulatorSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4", "5", "6" });
 		}
-		
+
+		public ObservableCollection<string> OscNames { get; set; }
+		public ObservableCollection<string> AmpEnvNames { get; set; }
+		public ObservableCollection<string> InsertFXNames { get; set; }
+		public ObservableCollection<string> FilterNames { get; set; }
+		public ObservableCollection<string> FilterEnvNames { get; set; }
+		public ObservableCollection<string> RoutingNames { get; set; }
+		public ObservableCollection<string> SettingsNames { get; set; }
+		public ObservableCollection<string> EffectNames { get; set; }
+		public ObservableCollection<string> ModulatorNames { get; set; }
+
+		public ObservableCollection<string> OscSelectors { get; set; }
+		public ObservableCollection<string> AmpEnvSelectors { get; set; }
+		public ObservableCollection<string> InsertSelectors { get; set; }
+		public ObservableCollection<string> FilterSelectors { get; set; }
+		public ObservableCollection<string> FilterEnvSelectors { get; set; }
+		public ObservableCollection<string> RoutingSelectors { get; set; }
+		public ObservableCollection<string> SettingsSelectors { get; set; }
+		public ObservableCollection<string> EffectsSelectors { get; set; }
+		public ObservableCollection<string> ModulatorSelectors { get; set; }
+
+		private ObservableCollection<Control> _oscViews;
+		public ObservableCollection<Control> OscViews
+		{
+			get { return _oscViews; }
+			set { _oscViews = value; NotifyChange(() => OscViews); }
+		}
+
+		private ObservableCollection<Control> _ampEnvViews;
+		public ObservableCollection<Control> AmpEnvViews
+		{
+			get { return _ampEnvViews; }
+			set { _ampEnvViews = value; NotifyChange(() => AmpEnvViews); }
+		}
+
+		private ObservableCollection<Control> _filterViews;
+		public ObservableCollection<Control> FilterViews
+		{
+			get { return _filterViews; }
+			set { _filterViews = value; NotifyChange(() => FilterViews); }
+		}
+
+		private ObservableCollection<Control> _filterEnvViews;
+		public ObservableCollection<Control> FilterEnvViews
+		{
+			get { return _filterEnvViews; }
+			set { _filterEnvViews = value; NotifyChange(() => FilterEnvViews); }
+		}
+
+		private ObservableCollection<Control> _routingViews;
+		public ObservableCollection<Control> RoutingViews
+		{
+			get { return _routingViews; }
+			set { _routingViews = value; NotifyChange(() => RoutingViews); }
+		}
+
+		private ObservableCollection<Control> _modulatorViews;
+		public ObservableCollection<Control> ModulatorViews
+		{
+			get { return _modulatorViews; }
+			set { _modulatorViews = value; NotifyChange(() => ModulatorViews); }
+		}
+
+
+		private int _selectedOsc;
 		public int SelectedOsc
 		{
 			get { return _selectedOsc; }
 			set 
-			{ 
+			{
 				_selectedOsc = value; 
 				NotifyChange(() => SelectedOsc); 
-				NotifyChange(() => SelectedOscName);
-				NotifyChange(() => OscView); 
 			}
 		}
 
+		private int _selectedFilter;
+		public int SelectedFilter
+		{
+			get { return _selectedFilter; }
+			set
+			{
+				_selectedFilter = value;
+				NotifyChange(() => SelectedFilter);
+			}
+		}
+
+		private int _selectedModulator;
 		public int SelectedModulator
 		{
 			get { return _selectedModulator; }
@@ -164,19 +177,7 @@ namespace Polyhedrus
 			{
 				_selectedModulator = value;
 				NotifyChange(() => SelectedModulator);
-				NotifyChange(() => SelectedModulatorName);
-				NotifyChange(() => ModulatorView);
 			}
-		}
-
-		public string SelectedOscName
-		{ 
-			get { return "Oscillator " + (_selectedOsc + 1); }
-		}
-
-		public string SelectedModulatorName
-		{
-			get { return "Modulator " + (_selectedModulator + 1); }
 		}
 
 		#region Notify Change
