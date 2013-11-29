@@ -15,7 +15,7 @@
             <RowDefinition Height="23"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=Ctrl, Path=TitleVisibility, Mode=OneWay}">
             <Label Style="{StaticResource ResourceKey=ModuleTitle}" Margin="0" Padding="5,0,10,0" 
                    Content="{Binding ElementName=Ctrl, Path=Title, Mode=OneWay, FallbackValue=Module}" HorizontalAlignment="Left" 
                    VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontSize="14" />
@@ -46,7 +46,7 @@
             
         </StackPanel>
         <Border BorderBrush="Black" Background="White" BorderThickness="1" Grid.Column="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Stretch">
-            <ContentPresenter Margin="0,7,0,0" Content="{Binding ElementName=Ctrl, Path=Panel}" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+            <ContentPresenter Margin="4,7,4,0" Content="{Binding ElementName=Ctrl, Path=Panel}" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
         </Border>
 
     </Grid>

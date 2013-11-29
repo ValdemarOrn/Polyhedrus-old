@@ -7,33 +7,29 @@
              xmlns:local="clr-namespace:Polyhedrus.UI" x:Class="Polyhedrus.UI.EnvelopeView" 
              mc:Ignorable="d" 
              x:Name="Main"
-             d:DesignHeight="65" d:DesignWidth="300">
+             d:DesignHeight="65" d:DesignWidth="312">
     <UI:SynthModuleView.Resources>
         <ResourceDictionary Source="PluginStyles.xaml"/>
     </UI:SynthModuleView.Resources>
-    <Grid Margin="0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <StackPanel Orientation="Horizontal" Margin="0">
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Attack}" ShowCenter="Hidden" 
-                    Caption="Attack" x:Name="KnobA" VerticalAlignment="Top" Grid.Column="0" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Delay}" Visibility="{Binding ElementName=Main, Path=DelayVisibility}"
+                    Caption="Delay" x:Name="KnobDelay" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
         
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Hold}" ShowCenter="Hidden" 
-                    Caption="Hold" x:Name="KnobH" VerticalAlignment="Top" Grid.Column="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Attack}"
+                    Caption="Attack" x:Name="KnobA" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
         
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Decay}" ShowCenter="Hidden" 
-                    Caption="Decay" x:Name="KnobD" VerticalAlignment="Top" Grid.Column="2" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Hold}"
+                    Caption="Hold" x:Name="KnobH" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
         
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Sustain}" ShowCenter="Hidden" 
-                    Caption="Sustain" x:Name="KnobS" VerticalAlignment="Top" Grid.Column="3" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Decay}" 
+                    Caption="Decay" x:Name="KnobD" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
         
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Release}" ShowCenter="Hidden" 
-                    Caption="Relase" x:Name="KnobR" VerticalAlignment="Top" Grid.Column="4" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Sustain}"
+                    Caption="Sustain" x:Name="KnobS" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Release}"
+                    Caption="Relase" x:Name="KnobR" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-    </Grid>
+    </StackPanel>
 </UI:SynthModuleView>

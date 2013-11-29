@@ -56,7 +56,13 @@ namespace Polyhedrus.UI
 				return String.Format("{0:0.00}s", value * 0.001);
 		}
 
-		
+		private Visibility delayVisibility;
+		public Visibility DelayVisibility
+		{
+			get { return delayVisibility; }
+			set { delayVisibility = value; NotifyChange(() => DelayVisibility); }
+		}
+	
 
 		public double Attack
 		{

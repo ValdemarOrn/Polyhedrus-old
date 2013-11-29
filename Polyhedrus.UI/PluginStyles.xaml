@@ -26,6 +26,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="Height" Value="18"></Setter>
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
         <Setter Property="Background" Value="Transparent" />
@@ -84,6 +85,7 @@
     <Style TargetType="ComboBox" x:Key="ComboBoxStyle">
         <Setter Property="Margin" Value="0,0,2,2" />
         <Setter Property="Padding" Value="3,1,1,1" />
+        <Setter Property="Height" Value="18"></Setter>
         <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
         <Setter Property="Background" Value="Transparent" />
     </Style>
@@ -91,6 +93,8 @@
     <!-- Spinner Style -->
     <Style x:Key="SpinnerBase" TargetType="UI:Spinner">
         <Setter Property="Height" Value="18"></Setter>
+        <Setter Property="FontSize" Value="12"></Setter>
+        <Setter Property="Foreground" Value="{StaticResource ResourceKey=SecondaryColor}"></Setter>
         <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />
     </Style>
 
@@ -125,17 +129,43 @@
         <Setter Property="Width" Value="75"></Setter>
         <Setter Property="Height" Value="75"></Setter>
     </Style>
-    
+
+    <Style x:Key="Knob2StyleBase" TargetType="UI:Knob2">
+        <Setter Property="FontSize" Value="11"></Setter>
+        <Setter Property="InnerPadding" Value="10"></Setter>
+        <Setter Property="Thickness" Value="6"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+        <Setter Property="FillColor" Value="{StaticResource ResourceKey=PrimaryColor}"></Setter>
+        <Setter Property="Foreground" Value="{StaticResource ResourceKey=SecondaryColor}"></Setter>
+    </Style>
+
+    <Style x:Key="Knob2Small" BasedOn="{StaticResource ResourceKey=Knob2StyleBase}" TargetType="UI:Knob2">
+        <Setter Property="Width" Value="55"></Setter>
+        <Setter Property="Height" Value="54"></Setter>
+    </Style>
+
+    <Style x:Key="Knob2Medium" BasedOn="{StaticResource ResourceKey=Knob2StyleBase}" TargetType="UI:Knob2">
+        <Setter Property="Width" Value="52"></Setter>
+        <Setter Property="Height" Value="60"></Setter>
+    </Style>
+
+    <Style x:Key="Knob2Large" BasedOn="{StaticResource ResourceKey=Knob2StyleBase}" TargetType="UI:Knob2">
+        <Setter Property="Width" Value="65"></Setter>
+        <Setter Property="Height" Value="75"></Setter>
+    </Style>
+
     <!-- Slider Grid Table -->
     <Style TargetType="Grid" x:Key="SliderGrid">
         <Style.Resources>
             <Style TargetType="UI:Slider" BasedOn="{StaticResource ResourceKey=SliderStyle}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Margin" Value="2" />
             </Style>
             <Style TargetType="ToggleButton" BasedOn="{StaticResource ResourceKey=ToggleStyleBlue}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Margin" Value="2" />
             </Style>
             
             <Style TargetType="Label">
@@ -200,12 +230,8 @@
         </Style.Resources>
     </Style>
 
-    <Style TargetType="Grid" x:Key="MixerStyle">
+    <Style TargetType="Grid" x:Key="MixerStyle" BasedOn="{StaticResource ResourceKey=SliderGrid}">
         <Style.Resources>
-            <Style TargetType="Label">
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
             <Style TargetType="ComboBox" BasedOn="{StaticResource ResourceKey=ComboBoxStyle}" />
             <Style TargetType="UI:Spinner" BasedOn="{StaticResource ResourceKey=SpinnerBase}">
               

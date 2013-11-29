@@ -49,6 +49,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Knob2.xaml.cs">
+      <DependentUpon>Knob2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MixerView.xaml.cs">
       <DependentUpon>MixerView.xaml</DependentUpon>
     </Compile>
@@ -99,6 +102,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Knob2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Logo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -26,22 +26,22 @@ namespace Polyhedrus.UI
 
 		static internal DependencyProperty ValueTextProperty = DependencyProperty.Register("ValueText", typeof(string), typeof(Spinner));
 
-		static internal DependencyProperty FormattingProperty = DependencyProperty.Register("Formatting", typeof(string), typeof(Spinner),
-			new FrameworkPropertyMetadata("{0:0.000}", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+		static internal DependencyProperty FormattingProperty = DependencyProperty.Register("Formatting", typeof(Func<double?, string>), typeof(Spinner),
+			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		static new internal DependencyProperty BorderBrushProperty = DependencyProperty.Register("BorderBrush", typeof(Brush), typeof(Spinner),
 				new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Black), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 		
 		public Spinner()
 		{
-			Delta = 0.01;
+			Delta = 0.005;
 			Min = 0;
 			Max = 1;
 			InitializeComponent();
 
 			// add change listeners to props
 			DependencyPropertyDescriptor prop = DependencyPropertyDescriptor.FromProperty(ValueProperty, this.GetType());
-			prop.AddValueChanged(this, (x, y) => SetValue(ValueTextProperty, ValueText));
+			prop.AddValueChanged(this, (x, y) => SetValue(ValueTextProperty, FormattedValue));
 		}
 
 		public double? Value
@@ -52,13 +52,29 @@ namespace Polyhedrus.UI
 
 		public string ValueText
 		{
-			get { return String.Format(CultureInfo.InvariantCulture, Formatting, Value); }
+			get { return (string)base.GetValue(ValueTextProperty); }
+			set { SetValue(ValueTextProperty, value); }
 		}
 
-		public string Formatting
+		private string FormattedValue
 		{
-			get { return (string)base.GetValue(FormattingProperty); }
-			set { SetValue(FormattingProperty, value); }
+			get 
+			{
+				if (Formatting == null)
+					return string.Format(CultureInfo.InvariantCulture, "{0:0.000}", Value);
+				else
+					return Formatting(Value); 
+			}
+		}
+
+		public Func<double?, string> Formatting
+		{
+			get { return (Func<double?, string>)base.GetValue(FormattingProperty); }
+			set 
+			{ 
+				SetValue(FormattingProperty, value);
+				ValueText = FormattedValue;
+			}
 		}
 
 		public new Brush BorderBrush
@@ -116,7 +132,7 @@ namespace Polyhedrus.UI
 			if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
 				dx *= 0.1;
 
-			var oldVal = Value;
+			var oldVal = Value ?? 0.0;
 			var val = oldVal + Delta * dx;
 
 			if (val < Min)

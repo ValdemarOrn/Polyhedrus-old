@@ -13,6 +13,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
+            <RowDefinition Height="65"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -21,33 +22,38 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <local:Knob HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobLarge}" Margin="1,-3.205,0,0"
-                    Value="{Binding ElementName=Main, Path=Cutoff}" Caption="Cutoff" ShowValue="True" Grid.ColumnSpan="2" Steps="1001" />
+        <local:Knob2 HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Large}" Margin="-3,0,0,0"
+                    Value="{Binding ElementName=Main, Path=Cutoff}" Caption="Cutoff" Grid.ColumnSpan="2" Steps="1001" />
 
-        <local:Knob HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobLarge}" Margin="14,-3.205,0,0"
-                    Value="{Binding ElementName=Main, Path=Resonance}" Caption="Resonance" ShowValue="True" Grid.ColumnSpan="2" Grid.Column="1" />
+        <local:Knob2 HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Large}" Margin="10,0,0,0"
+                    Value="{Binding ElementName=Main, Path=Resonance}" Caption="Resonance" Grid.ColumnSpan="2" Grid.Column="1" />
 
-        <local:Knob ShowValue="True" ShowCenter="Hidden" Caption="Gain" Style="{StaticResource ResourceKey=KnobSmall}" Margin="24,0,0,0" HorizontalAlignment="Left"
-                    Value="{Binding ElementName=Main, Path=Gain}" VerticalAlignment="Bottom" Grid.Column="2" Grid.ColumnSpan="2" />
-        <local:Knob ShowValue="True" ShowCenter="Hidden" Caption="Tracking" Style="{StaticResource ResourceKey=KnobSmall}" Margin="14,0,0,0" HorizontalAlignment="Left"
-                    Value="{Binding ElementName=Main, Path=Tracking}" VerticalAlignment="Bottom" Grid.Column="3" Grid.ColumnSpan="2" />
-        <local:Knob ShowValue="True" ShowCenter="Hidden" Caption="Envelope" Style="{StaticResource ResourceKey=KnobSmall}" Margin="64,0,0,0" HorizontalAlignment="Left"
-                    Value="{Binding ElementName=Main, Path=Envelope}" VerticalAlignment="Bottom" Grid.Column="3" Grid.ColumnSpan="2" />
+        <local:Knob2 Caption="Gain" Style="{StaticResource ResourceKey=Knob2Small}" Margin="20,0,0,0" HorizontalAlignment="Left"
+                    Value="{Binding ElementName=Main, Path=Gain}" VerticalAlignment="Bottom" Grid.Column="2" Grid.ColumnSpan="4" />
+        <local:Knob2 Caption="Tracking" Style="{StaticResource ResourceKey=Knob2Small}" Margin="63,0,0,0" HorizontalAlignment="Left"
+                    Value="{Binding ElementName=Main, Path=Tracking}" VerticalAlignment="Bottom" Grid.Column="2" Grid.ColumnSpan="4" />
+        <local:Knob2 Caption="Env" Style="{StaticResource ResourceKey=Knob2Small}" Margin="104,0,0,0" HorizontalAlignment="Left"
+                     Min="-1" Max="1"
+                    Value="{Binding ElementName=Main, Path=Envelope}" VerticalAlignment="Bottom" Grid.Column="2" Grid.ColumnSpan="4" />
+        <local:Knob2 Caption="Pan" Style="{StaticResource ResourceKey=Knob2Small}" Margin="146,0,0,0" HorizontalAlignment="Left"
+                    Value="{Binding ElementName=Main, Path=Pan}" VerticalAlignment="Bottom" Grid.Column="2" Grid.ColumnSpan="4" />
 
 
-        <local:Knob VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobMedium}" 
-                    Value="{Binding ElementName=Main, Path=X}" Caption="X" Max="1" Min="-1" ShowValue="True" ShowCenter="Visible" Grid.Row="1" />
-        <local:Knob VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobMedium}" 
-                    Value="{Binding ElementName=Main, Path=A}" Caption="A" Max="1" Min="-1" ShowValue="True" ShowCenter="Visible" Grid.Column="1" Grid.Row="1" />
-        <local:Knob VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobMedium}" 
-                    Value="{Binding ElementName=Main, Path=B}" Caption="B" Max="1" Min="-1" ShowValue="True" ShowCenter="Visible" Grid.Column="2" Grid.Row="1" />
-        <local:Knob VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobMedium}" 
-                    Value="{Binding ElementName=Main, Path=C}" Caption="C" Max="1" Min="-1" ShowValue="True" ShowCenter="Visible" Grid.Column="3" Grid.Row="1" />
-        <local:Knob VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=KnobMedium}" 
-                    Value="{Binding ElementName=Main, Path=D}" Caption="D" Max="1" Min="-1" ShowValue="True" ShowCenter="Visible" Grid.Column="4" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=X}" Caption="X" Max="1" Min="-1" Central="True" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=A}" Caption="A" Max="1" Min="-1" Central="True" Grid.Column="1" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=B}" Caption="B" Max="1" Min="-1" Central="True" Grid.Column="2" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=C}" Caption="C" Max="1" Min="-1" Central="True" Grid.Column="3" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=D}" Caption="D" Max="1" Min="-1" Central="True" Grid.Column="4" Grid.Row="1" />
+        <local:Knob2 VerticalAlignment="Bottom" Style="{StaticResource ResourceKey=Knob2Medium}" 
+                    Value="{Binding ElementName=Main, Path=Volume}" Caption="Volume" Max="1" Min="-1" Central="True" Grid.Column="5" Grid.Row="1" />
 
     </Grid>
 </UI:SynthModuleView>

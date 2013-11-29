@@ -7,7 +7,7 @@
                          mc:Ignorable="d"
                          xmlns:UI="clr-namespace:Polyhedrus.UI"
                          x:Name="Main"
-                         d:DesignHeight="190" Width="360">
+                         d:DesignHeight="190" Width="364">
     <UI:SynthModuleView.Resources>
         <ResourceDictionary Source="PluginStyles.xaml"/>
     </UI:SynthModuleView.Resources>
@@ -16,6 +16,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -25,33 +27,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Octave" Grid.Column="0" ShowCenter="Visible" Min="-3" Max="3" Steps="7"
-                 x:Name="KnobOctave" Value="{Binding ElementName=Main, Path=Octave}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Octave" Grid.Column="0" Central="True" Min="-3" Max="3" Steps="7"
+                 x:Name="KnobOctave" Value="{Binding ElementName=Main, Path=Octave}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Semi" Grid.Column="1" ShowCenter="Visible" Min="-12" Max="12" Steps="25"
-                 x:Name="KnobSemi" Value="{Binding ElementName=Main, Path=Semi}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Semi" Grid.Column="1" Central="True" Min="-12" Max="12" Steps="25"
+                 x:Name="KnobSemi" Value="{Binding ElementName=Main, Path=Semi}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Cent" Grid.Column="2" ShowCenter="Visible" Min="-100" Max="100" Steps="201"
-                 x:Name="KnobCent" Value="{Binding ElementName=Main, Path=Cent}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Cent" Grid.Column="2" Central="True" Min="-100" Max="100" Steps="201"
+                 x:Name="KnobCent" Value="{Binding ElementName=Main, Path=Cent}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Position" Grid.Column="3" Min="0" Max="62" Steps="621"
-                 Value="{Binding ElementName=Main, Path=Position}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Position" Grid.Column="3" Grid.ColumnSpan="2"  Min="0" Max="62" Steps="621"
+                 Value="{Binding ElementName=Main, Path=Position}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Phase" Grid.Column="4" Min="0" Max="1" Steps="1001"
-                 Value="{Binding ElementName=Main, Path=Phase}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Phase" Grid.Column="5" Min="0" Max="1" Steps="1001"
+                 Value="{Binding ElementName=Main, Path=Phase}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob HorizontalAlignment="Left" ShowValue="True" Caption="Volume" Grid.Column="5" Min="0" Max="1" Steps="1001" x:Name="VolumeKnob"
-                 Value="{Binding ElementName=Main, Path=Volume}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <UI:Knob2 Caption="Mix" Grid.Column="6" Min="0" Max="1" Steps="1001" x:Name="MixKnob"
+                 Value="{Binding ElementName=Main, Path=Volume}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        
+        <UI:Knob2 Caption="Volume" Grid.Column="7" Min="0" Max="1" Steps="1001" x:Name="VolumeKnob"
+                 Value="{Binding ElementName=Main, Path=Volume}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <ComboBox Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Wavetables}" 
+        <ComboBox Grid.Row="1" Grid.ColumnSpan="4" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Wavetables}" 
                   Height="20" SelectedItem="{Binding ElementName=Main, Path=SelectedWavetable, Mode=TwoWay}" Style="{StaticResource ResourceKey=ComboBoxStyle}"/>
 
-        <UI:WaveView Grid.ColumnSpan="3" VerticalAlignment="Top" Height="80" Margin="5,35,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="Black"
+        <UI:WaveView Grid.ColumnSpan="4" VerticalAlignment="Top" Height="80" Margin="5,35,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="Black"
                      Data="{Binding ElementName=Main, Path=WavetableData, Mode=OneWay}"/>
 
-        
-        
-        <Grid Grid.ColumnSpan="3" Grid.Column="3" HorizontalAlignment="Right" Margin="0,35,5,0" Grid.Row="1" 
+        <Grid Grid.ColumnSpan="4" Grid.Column="4" HorizontalAlignment="Right" Margin="0,35,10,0" Grid.Row="1" 
               VerticalAlignment="Top" Width="165" Style="{StaticResource ResourceKey=SliderGrid}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
@@ -63,7 +66,7 @@
                 <RowDefinition Height="20" />
                 <RowDefinition Height="20" />
             </Grid.RowDefinitions>
-            
+
             <Label Content="Filter Mix" Grid.Row="0"></Label>
             <UI:Slider Value="{Binding ElementName=VolumeKnob, Path=Value}" 
                        HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" />
@@ -78,7 +81,7 @@
 
             <Label Content="Free Phase" Grid.Row="3"></Label>
             <ToggleButton Grid.Column="1" Grid.Row="3" />
-            
+
         </Grid>
 
     </Grid>

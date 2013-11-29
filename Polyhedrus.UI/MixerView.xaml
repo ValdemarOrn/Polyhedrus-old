@@ -19,24 +19,28 @@
             <ColumnDefinition Width="0.7*"/>
             <ColumnDefinition Width="0.4*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="0.9*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.7*"/>
             <ColumnDefinition Width="1.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.7*"/>
         </Grid.RowDefinitions>
 
-        <Label Content="Osc. 1" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Margin="2" VerticalAlignment="Center" />
-        <Label Content="Osc. 2" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Margin="2" VerticalAlignment="Center" />
-        <Label Content="Osc. 3" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Margin="2" VerticalAlignment="Center" />
-        <Label Content="Osc. 4" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" Margin="2" VerticalAlignment="Center" />
+        <Label Content="Frequency Modulation" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" />
+        <Label Content="Routing" Grid.Column="7" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Left" />
+        
+        <Label Content="Osc. 1" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
+        <Label Content="Osc. 2" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
+        <Label Content="Osc. 3" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" />
+        <Label Content="Osc. 4" Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" />
         
         <UI:Spinner Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Center" Margin="2" />
         <UI:Spinner Grid.Column="2" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Center" Margin="2" />
@@ -62,6 +66,38 @@
         <Label Content="Osc. 2" Grid.Column="2" Grid.Row="5" HorizontalAlignment="Center" Margin="2" VerticalAlignment="Center" />
         <Label Content="Osc. 3" Grid.Column="3" Grid.Row="5" HorizontalAlignment="Center" Margin="2" VerticalAlignment="Center" />
         <Label Content="Osc. 4" Grid.Column="4" Grid.Row="5" HorizontalAlignment="Center" Margin="2" VerticalAlignment="Center" />
+
+        <Label Content="Osc 1 Mix" Grid.Column="6" Grid.Row="1"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" 
+                    x:Name="Osc1MixSpinner" Value="{Binding ElementName=Main, Mode=TwoWay, Path=Osc1Mix}" Grid.Column="7" Grid.Row="1" />
+        
+        <Label Content="Osc 2 Mix" Grid.Column="6" Grid.Row="2"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" 
+                    x:Name="Osc2MixSpinner" Value="{Binding ElementName=Main, Mode=TwoWay, Path=Osc2Mix}" Grid.Column="7" Grid.Row="2" />
+
+        <Label Content="Osc 3 Mix" Grid.Column="6" Grid.Row="3"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" 
+                    x:Name="Osc3MixSpinner" Value="{Binding ElementName=Main, Mode=TwoWay, Path=Osc3Mix}" Grid.Column="7" Grid.Row="3" />
+
+        <Label Content="Osc 4 Mix" Grid.Column="6" Grid.Row="4"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" 
+                    x:Name="Osc4MixSpinner" Value="{Binding ElementName=Main, Mode=TwoWay, Path=Osc4Mix}" Grid.Column="7" Grid.Row="4" />
+
+
+        <Label Content="F1 -> F2" Grid.Column="8" Grid.Row="1"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" 
+                    Value="{Binding ElementName=Main, Mode=TwoWay, Path=F1ToF2}" Grid.Column="9" Grid.Row="1" />
+
+        <Label Content="Filter 1" Grid.Column="8" Grid.Row="2"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2"
+                    Value="{Binding ElementName=Main, Mode=TwoWay, Path=Filter1Vol}" Grid.Column="9" Grid.Row="2" />
+
+        <Label Content="Filter 2" Grid.Column="8" Grid.Row="3"></Label>
+        <UI:Spinner HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2"
+                    Value="{Binding ElementName=Main, Mode=TwoWay, Path=Filter2Vol}" Grid.Column="9" Grid.Row="3" />
+        
+        <Label Content="Parallel FX" Grid.Column="8" Grid.Row="4"></Label>
+        <ToggleButton Grid.Column="9" Grid.Row="4" IsChecked="{Binding ElementName=Main, Mode=TwoWay, Path=ParallelFX}" />
         
     </Grid>
 </UI:SynthModuleView>

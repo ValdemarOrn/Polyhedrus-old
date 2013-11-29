@@ -7,6 +7,8 @@ namespace Polyhedrus.Modules
 {
 	public class Mixer
 	{
+		public bool ParallelFX;
+
 		/// <summary>
 		/// Knob Values
 		/// </summary>

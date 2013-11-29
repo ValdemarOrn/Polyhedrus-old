@@ -38,7 +38,7 @@ namespace Polyhedrus
 
 			AmpEnvViews = new ObservableCollection<Control>(new []
 			{
-				new EnvelopeView(Ctrl, ModuleParams.AmpEnv)
+				new EnvelopeView(Ctrl, ModuleParams.AmpEnv) { DelayVisibility = System.Windows.Visibility.Collapsed }
 			});
 
 			FilterEnvViews = new ObservableCollection<Control>(new []
@@ -71,7 +71,7 @@ namespace Polyhedrus
 			RoutingNames = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
 			SettingsNames = new ObservableCollection<string>(new string[] { "Settings" });
 			EffectNames = new ObservableCollection<string>(new string[] { "FX 1", "FX 2", "FX 3", "FX 4" });
-			ModulatorNames = new ObservableCollection<string>(new string[] { "Mod 1", "Mod 2", "Mod 3", "Mod 4", "Mod 5", "Mod 6" });
+			ModulatorNames = new ObservableCollection<string>(new string[] { "Modulator 1", "Modulator 2", "Modulator 3", "Modulator 4", "Modulator 5", "Modulator 6" });
 
 			OscSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
 			AmpEnvSelectors = new ObservableCollection<string>(new string[] { "" });

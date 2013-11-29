@@ -85,6 +85,7 @@ namespace Polyhedrus
 				data[new ParameterKey(module, MixerParams.F2Pan)] = 0.0;
 				data[new ParameterKey(module, MixerParams.OutputVolume)] = 1.0;
 				data[new ParameterKey(module, MixerParams.OutputPan)] = 0.0;
+				data[new ParameterKey(module, MixerParams.ParallelFX)] = false;
 			}
 
 			// Mod Matrix

@@ -42,14 +42,14 @@ namespace Polyhedrus
 
 		public void InitializeDevice()
 		{
-			DevInfo.DeviceID = "Low Profile - Rodent.V2";
+			DevInfo.DeviceID = "Low Profile - Polyhedrus.V2";
 #if DEBUG
 			DevInfo.DeviceID = DevInfo.DeviceID + " - Dev";
 #endif
 
 			DevInfo.Developer = "Valdemar Erlingsson";
-			DevInfo.EditorHeight = 620;
-			DevInfo.EditorWidth = 1010;
+			DevInfo.EditorHeight = 655;
+			DevInfo.EditorWidth = 990;
 			DevInfo.HasEditor = true;
 			DevInfo.Name = "Polyhedrus Software Synthesizer";
 			DevInfo.ProgramCount = 1;

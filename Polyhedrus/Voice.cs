@@ -255,8 +255,15 @@ namespace Polyhedrus
 
 					for(int n = 0; n < Bufsize; n++)
 					{
-						Path1Buffer[n] = Osc1.OutputBuffer[n] * Mixer.Osc1Vol + Osc2.OutputBuffer[n] * Mixer.Osc2Vol;
-						Path2Buffer[n] = Osc3.OutputBuffer[n] * Mixer.Osc3Vol + Osc4.OutputBuffer[n] * Mixer.Osc4Vol;
+						Path1Buffer[n] = Osc1.OutputBuffer[n] * Mixer.Osc1Vol * (1.0 - Mixer.Osc1Mix)
+										+ Osc2.OutputBuffer[n] * Mixer.Osc2Vol * (1.0 - Mixer.Osc2Mix)
+										+ Osc3.OutputBuffer[n] * Mixer.Osc3Vol * (1.0 - Mixer.Osc3Mix) 
+										+ Osc4.OutputBuffer[n] * Mixer.Osc4Vol * (1.0 - Mixer.Osc4Mix);
+
+						Path2Buffer[n] = Osc1.OutputBuffer[n] * Mixer.Osc1Vol * Mixer.Osc1Mix
+										+ Osc2.OutputBuffer[n] * Mixer.Osc2Vol * Mixer.Osc2Mix
+										+ Osc3.OutputBuffer[n] * Mixer.Osc3Vol * Mixer.Osc3Mix
+										+ Osc4.OutputBuffer[n] * Mixer.Osc4Vol * Mixer.Osc4Mix;
 					}
 
 					Filter1.Process(Path1Buffer, Filter1EnvBuffer);
@@ -308,6 +315,10 @@ namespace Polyhedrus
 						break;
 					case ModuleParams.Filter2Env:
 						SetParameterEnv(module, parameter, value);
+						break;
+
+					case ModuleParams.Mixer:
+						SetParameterMixer(module, parameter, value);
 						break;
 
 					case ModuleParams.Modulator1:
@@ -452,6 +463,42 @@ namespace Polyhedrus
 					env.SetParameter(Ahdsr.StageRelease, val);
 					break;
 			}
+		}
+
+		private void SetParameterMixer(ModuleParams module, Enum parameter, object value)
+		{
+			var para = (MixerParams)parameter;
+			double val = Convert.ToDouble(value);
+
+			switch (para)
+			{
+				case MixerParams.Osc1Mix:
+					Mixer.Osc1MixParam = val;
+					break;
+				case MixerParams.Osc2Mix:
+					Mixer.Osc2MixParam = val;
+					break;
+				case MixerParams.Osc3Mix:
+					Mixer.Osc3MixParam = val;
+					break;
+				case MixerParams.Osc4Mix:
+					Mixer.Osc4MixParam = val;
+					break;
+				case MixerParams.F1ToF2:
+					Mixer.F1ToF2Param = val;
+					break;
+				case MixerParams.F1Vol:
+					Mixer.F1VolParam = val;
+					break;
+				case MixerParams.F2Vol:
+					Mixer.F2VolParam = val;
+					break;
+				case MixerParams.ParallelFX:
+					Mixer.ParallelFX = (bool)value;
+					break;
+			}
+
+			Mixer.Update();
 		}
 
 		private void SetParameterModulator(ModuleParams module, Enum parameter, object value)

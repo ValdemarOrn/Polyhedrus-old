@@ -50,6 +50,9 @@ namespace Polyhedrus.UI
 		static internal DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+		public static readonly DependencyProperty TitleVisibilityProperty =
+			DependencyProperty.Register("TitleVisibility", typeof(Visibility), typeof(ModuleControl), new PropertyMetadata(Visibility.Visible));
+
 		public ModuleControl()
 		{
 			InitializeComponent();
@@ -99,6 +102,12 @@ namespace Polyhedrus.UI
 		{
 			get { return (int)base.GetValue(SelectedIndexProperty); }
 			set { SetValue(SelectedIndexProperty, value); }
+		}
+
+		public Visibility TitleVisibility
+		{
+			get { return (Visibility)GetValue(TitleVisibilityProperty); }
+			set { SetValue(TitleVisibilityProperty, value); }
 		}
 
 		public string Title

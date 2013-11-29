@@ -92,7 +92,8 @@ namespace Polyhedrus.Parameters
 		F1Pan,
 		F2Pan,
 		OutputVolume,
-		OutputPan
+		OutputPan,
+		ParallelFX
 	}
 
 	public enum ModMatrixParams

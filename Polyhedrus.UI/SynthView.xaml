@@ -6,44 +6,47 @@
                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
                 x:Class="Polyhedrus.UI.SynthView"
                 x:Name="Main"
-                Title="MainWindow" Height="655" Width="1020">
+                Title="MainWindow" Height="660" Width="995">
     <Grid Background="#FFE5E5E5">
 
-        <UI:ModuleControl x:Name="OscModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="192" Width="370" Margin="5,23,0,0"
+        <UI:ModuleControl x:Name="OscModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="215" Width="374" Margin="5,25,0,0"
                           Selectors="{Binding Path=OscSelectors}"
                           Titles="{Binding Path=OscNames, Mode=OneWay}"
                           Panels="{Binding Path=OscViews, Mode=OneWay}"
                           SelectedIndex="{Binding Path=SelectedOsc, Mode=TwoWay}" />
 
-        <UI:ModuleControl x:Name="AmpEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="85" 
+        <UI:ModuleControl x:Name="AmpEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="80" 
                           Selectors="{Binding Path=AmpEnvSelectors}"
                           Titles="{Binding Path=AmpEnvNames, Mode=OneWay}"
                           Panels="{Binding Path=AmpEnvViews, Mode=OneWay}"
-                          Width="305" Margin="380,23,0,0" />
-        
+                          Width="268" Margin="384,25,0,0" />
 
-        <UI:ModuleControl x:Name="InsertFXModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="85" 
-                          Width="305" Margin="380,130,0,0" />
+        <Border BorderBrush="Black" Background="White" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="384,110,0,0" Width="268" Height="130"/>
 
-        <UI:ModuleControl x:Name="FilterModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="192" Width="305" Margin="690,23,0,0" 
+        <UI:ModuleControl x:Name="InsertFXModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="80" 
+                          Width="320" Margin="658,270,0,0" />
+
+        <UI:ModuleControl x:Name="FilterModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="154" Width="320" Margin="658,25,0,0" 
                           Selectors="{Binding Path=FilterSelectors}"
                           Titles="{Binding Path=FilterNames, Mode=OneWay}"
                           Panels="{Binding Path=FilterViews, Mode=OneWay}"
                           SelectedIndex="{Binding Path=SelectedFilter}" />
 
-        <UI:ModuleControl x:Name="FilterEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="85" Width="305" Margin="690,239,0,0"
+        <UI:ModuleControl x:Name="FilterEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="80" Width="320" Margin="658,184,0,0"
+                          TitleVisibility="Hidden"
                           Selectors="{Binding Path=FilterEnvSelectors}"
                           Titles="{Binding Path=FilterEnvNames, Mode=OneWay}"
                           Panels="{Binding Path=FilterEnvViews, Mode=OneWay}"
                           />
 
-        <UI:ModuleControl x:Name="RoutingModuleView" HorizontalAlignment="Left" VerticalAlignment="Top" Height="190" Width="635" Margin="5,239,0,0"
+        <UI:ModuleControl x:Name="RoutingModuleView" HorizontalAlignment="Left" VerticalAlignment="Top" Height="171" Width="601" Margin="5,269,0,0"
                           Selectors="{Binding Path=RoutingSelectors}"
                           Titles="{Binding Path=RoutingNames, Mode=OneWay}"
                           Panels="{Binding Path=RoutingViews, Mode=OneWay}" 
                           />
-        
-        <UI:Logo HorizontalAlignment="Left" Margin="571.35,312.86,0,0" VerticalAlignment="Top" Height="42.28" Width="188.938" RenderTransformOrigin="0.5,0.5">
+
+        <UI:Logo HorizontalAlignment="Left" Margin="547.406,335.65,0,0" VerticalAlignment="Top" Height="36.756" Width="170" RenderTransformOrigin="0.5,0.5">
             <UI:Logo.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -54,13 +57,13 @@
             </UI:Logo.RenderTransform>
         </UI:Logo>
 
-        <UI:ModuleControl x:Name="SettingsModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="370" Margin="5,453,0,0"
+        <UI:ModuleControl x:Name="SettingsModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="374" Margin="5,465,0,0"
                           />
 
-        <UI:ModuleControl x:Name="EffectModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="305" Margin="380,453,0,0"
+        <UI:ModuleControl x:Name="EffectModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="157" Width="268" Margin="384,465,0,0"
                           />
 
-        <UI:ModuleControl x:Name="ModulatorModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="261" Width="305" Margin="690,349,0,0"
+        <UI:ModuleControl x:Name="ModulatorModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="243" Width="320" Margin="658,379,0,0"
                           Selectors="{Binding Path=ModulatorSelectors}"
                           Titles="{Binding Path=ModulatorNames, Mode=OneWay}"
                           Panels="{Binding Path=ModulatorViews, Mode=OneWay}"
