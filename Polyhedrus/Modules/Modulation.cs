@@ -11,19 +11,19 @@ namespace Polyhedrus.Modules
 
 		Osc1Pitch = 1,
 		Osc1Vol,
-		Osc1Wave,
+		Osc1Pos,
 
 		Osc2Pitch,
 		Osc2Vol,
-		Osc2Wave,
+		Osc2Pos,
 
 		Osc3Pitch,
 		Osc3Vol,
-		Osc3Wave,
+		Osc3Pos,
 
 		Osc4Pitch,
 		Osc4Vol,
-		Osc4Wave,
+		Osc4Pos,
 
 		Filter1Freq = 30,
 		Filter1Res,
@@ -103,16 +103,16 @@ namespace Polyhedrus.Modules
 			DestNames[ModDestination.None] = "None";
 			DestNames[ModDestination.Osc1Pitch] = "Oscillator 1 Pitch";
 			DestNames[ModDestination.Osc1Vol] = "Oscillator 1 Vol";
-			DestNames[ModDestination.Osc1Wave] = "Oscillator 1 Wave";
+			DestNames[ModDestination.Osc1Pos] = "Oscillator 1 Position";
 			DestNames[ModDestination.Osc2Pitch] = "Oscillator 2 Pitch";
 			DestNames[ModDestination.Osc2Vol] = "Oscillator 2 Vol";
-			DestNames[ModDestination.Osc2Wave] = "Oscillator 2 Wave";
+			DestNames[ModDestination.Osc2Pos] = "Oscillator 2 Position";
 			DestNames[ModDestination.Osc3Pitch] = "Oscillator 3 Pitch";
 			DestNames[ModDestination.Osc3Vol] = "Oscillator 3 Vol";
-			DestNames[ModDestination.Osc3Wave] = "Oscillator 3 Wave";
+			DestNames[ModDestination.Osc3Pos] = "Oscillator 3 Position";
 			DestNames[ModDestination.Osc4Pitch] = "Oscillator 4 Pitch";
 			DestNames[ModDestination.Osc4Vol] = "Oscillator 4 Vol";
-			DestNames[ModDestination.Osc4Wave] = "Oscillator 4 Wave";
+			DestNames[ModDestination.Osc4Pos] = "Oscillator 4 Position";
 			DestNames[ModDestination.Filter1Freq] = "Filter 1 Freq";
 			DestNames[ModDestination.Filter1Res] = "Filter 1 Resonance";
 			DestNames[ModDestination.Filter1Vol] = "Filter 1 Volume";

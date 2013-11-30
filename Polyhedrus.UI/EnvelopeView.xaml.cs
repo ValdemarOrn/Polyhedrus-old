@@ -2,6 +2,7 @@
 using Polyhedrus.Parameters;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -16,44 +17,25 @@ using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
-	/// <summary>
-	/// Interaction logic for EnvelopeView.xaml
-	/// </summary>
+	[ViewProviderFor(typeof(AudioLib.Modules.Ahdsr))]
 	public partial class EnvelopeView : SynthModuleView
 	{
-		public EnvelopeView()
+		public EnvelopeView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
-			KnobA.ValueFormatter = Formatter;
-			KnobH.ValueFormatter = Formatter;
-			KnobD.ValueFormatter = Formatter;
-			KnobR.ValueFormatter = Formatter;
+			KnobA.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobH.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobD.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobR.ValueFormatter = Utils.Formatters.FormatEnvelope;
 		}
 
-		public EnvelopeView(SynthController ctrl, ModuleParams moduleId)
+		public EnvelopeView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
-
 			InitializeComponent();
-			KnobA.ValueFormatter = Formatter;
-			KnobH.ValueFormatter = Formatter;
-			KnobD.ValueFormatter = Formatter;
-			KnobR.ValueFormatter = Formatter;
-		}
-
-		string Formatter(double val)
-		{
-			var value = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
-
-			if(value < 10)
-				return String.Format("{0:0.00}ms", value);
-			else if (value < 100)
-				return String.Format("{0:0.0}ms", value);
-			else if (value < 1000)
-				return String.Format("{0:0}ms", value);
-			else
-				return String.Format("{0:0.00}s", value * 0.001);
+			KnobA.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobH.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobD.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobR.ValueFormatter = Utils.Formatters.FormatEnvelope;
 		}
 
 		private Visibility delayVisibility;

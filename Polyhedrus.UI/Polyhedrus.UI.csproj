@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Announcer.cs" />
+    <Compile Include="InsReduxView.xaml.cs">
+      <DependentUpon>InsReduxView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Knob2.xaml.cs">
       <DependentUpon>Knob2.xaml</DependentUpon>
     </Compile>
@@ -60,9 +63,6 @@
     <Compile Include="Models\ModRoutingVM.cs" />
     <Compile Include="Logo.xaml.cs">
       <DependentUpon>Logo.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ModKnob.xaml.cs">
-      <DependentUpon>ModKnob.xaml</DependentUpon>
     </Compile>
     <Compile Include="ModMatrixView.xaml.cs">
       <DependentUpon>ModMatrixView.xaml</DependentUpon>
@@ -97,12 +97,18 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Utils\Formatters.cs" />
     <Compile Include="ViewModel.cs" />
-    <Compile Include="WaveView.xaml.cs">
-      <DependentUpon>WaveView.xaml</DependentUpon>
+    <Compile Include="ViewProvider.cs" />
+    <Compile Include="WaveformView.xaml.cs">
+      <DependentUpon>WaveformView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="InsReduxView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Knob2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -112,10 +118,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MixerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ModKnob.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,7 +165,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WaveView.xaml">
+    <Page Include="WaveformView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

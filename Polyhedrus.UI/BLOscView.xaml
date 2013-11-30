@@ -51,7 +51,7 @@
         <ComboBox Grid.Row="1" Grid.ColumnSpan="4" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Wavetables}" 
                   Height="20" SelectedItem="{Binding ElementName=Main, Path=SelectedWavetable, Mode=TwoWay}" Style="{StaticResource ResourceKey=ComboBoxStyle}"/>
 
-        <UI:WaveView Grid.ColumnSpan="4" VerticalAlignment="Top" Height="80" Margin="5,35,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="Black"
+        <UI:WaveformView Grid.ColumnSpan="4" VerticalAlignment="Top" Height="80" Margin="5,35,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="Black"
                      Data="{Binding ElementName=Main, Path=WavetableData, Mode=OneWay}"/>
 
         <Grid Grid.ColumnSpan="4" Grid.Column="4" HorizontalAlignment="Right" Margin="0,35,10,0" Grid.Row="1" 

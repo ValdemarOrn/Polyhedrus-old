@@ -23,54 +23,62 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Attack}" ShowCenter="Hidden" 
-                    Caption="Attack" x:Name="KnobA" VerticalAlignment="Top" Grid.Column="0" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Delay}"
+                    Caption="Delay" x:Name="KnobDelay" VerticalAlignment="Top" Grid.Column="0" Grid.Row="0" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Attack}"
+                    Caption="Attack" x:Name="KnobA" VerticalAlignment="Top" Grid.Column="1" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Hold}" ShowCenter="Hidden" 
-                    Caption="Hold" x:Name="KnobH" VerticalAlignment="Top" Grid.Column="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Hold}"
+                    Caption="Hold" x:Name="KnobH" VerticalAlignment="Top" Grid.Column="2" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Decay}" ShowCenter="Hidden" 
-                    Caption="Decay" x:Name="KnobD" VerticalAlignment="Top" Grid.Column="2" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Decay}"
+                    Caption="Decay" x:Name="KnobD" VerticalAlignment="Top" Grid.Column="3" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Sustain}" ShowCenter="Hidden" 
-                    Caption="Sustain" x:Name="KnobS" VerticalAlignment="Top" Grid.Column="3" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Sustain}"
+                    Caption="Sustain" x:Name="KnobS" VerticalAlignment="Top" Grid.Column="4" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Release}" ShowCenter="Hidden" 
-                    Caption="Relase" x:Name="KnobR" VerticalAlignment="Top" Grid.Column="4" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Release}"
+                    Caption="Relase" x:Name="KnobR" VerticalAlignment="Top" Grid.Column="5" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
 
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Frequency}" ShowCenter="Hidden"
-                    Caption="Frequency" x:Name="KnobFreq" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Frequency}"
+                    Caption="Freq." x:Name="KnobFreq" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Phase}" ShowCenter="Hidden" 
-                    Caption="Phase" x:Name="KnobPhase" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Phase}"
+                    Caption="Phase" x:Name="KnobPhase" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Delay}" ShowCenter="Hidden" 
-                    Caption="Delay" x:Name="KnobDelay" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Offset}" Central="True" Min="-1" Max="1"
+                    Caption="Offset" x:Name="KnobOffset" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <local:Knob ShowValue="True" Value="{Binding ElementName=Main, Path=Offset}" ShowCenter="Visible" Min="-1" Max="1"
-                    Caption="Offset" x:Name="KnobOffset" VerticalAlignment="Top" Grid.Column="3" Grid.Row="1" Style="{StaticResource ResourceKey=KnobMedium}" />
-
-        <ComboBox Grid.Row="3" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Waveforms}" 
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Shape}" Central="True" Min="0" Max="1"
+                    Caption="Shape" x:Name="KnobShape" VerticalAlignment="Top" Grid.Column="3" Grid.Row="1" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        
+        <ComboBox Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" VerticalAlignment="Top" Margin="5,10,5,0" ItemsSource="{Binding ElementName=Main, Path=Waveforms}" 
                   Height="20" SelectedItem="{Binding ElementName=Main, Path=SelectedWaveform, Mode=TwoWay}"/>
         
-            <Grid Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Height="50" VerticalAlignment="Top" Margin="0,5,5,0">
+        <Grid Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top" Margin="0,5,5,0" HorizontalAlignment="Right"
+              Style="{StaticResource ResourceKey=SliderGrid}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="17*"/>
-                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label>Free Phase</Label>
             <Label Grid.Row="1">Tempo Sync</Label>
             <ToggleButton Grid.Column="1" IsChecked="{Binding ElementName=Main, Path=FreePhase, Mode=TwoWay}"></ToggleButton>
             <ToggleButton Grid.Column="1" Grid.Row="1" IsChecked="{Binding ElementName=Main, Path=TempoSync, Mode=TwoWay}"></ToggleButton>
         </Grid>
+
+        <UI:WaveformView Grid.ColumnSpan="3" VerticalAlignment="Top" Height="80" Margin="5,10,5,0" Grid.Row="2" BorderThickness="1" BorderBrush="Black"
+                     Data="{Binding ElementName=Main, Path=WaveformData, Mode=OneWay}"/>
 
     </Grid>
 </UI:SynthModuleView>

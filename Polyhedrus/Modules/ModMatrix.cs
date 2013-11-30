@@ -152,7 +152,6 @@ namespace Polyhedrus.Modules
 				case ModDestination.Filter1Freq:
 					Voice.Filter1.CutoffModulation = value;
 					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
-					// Voice.Filter1.UpdateCoefficients(); 
 					break;
 				case ModDestination.Filter1Pan:
 					Voice.Mixer.F1PanModulation = value;
@@ -168,7 +167,6 @@ namespace Polyhedrus.Modules
 				case ModDestination.Filter2Freq:
 					Voice.Filter2.CutoffModulation = value;
 					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
-					// Voice.Filter1.UpdateCoefficients(); 
 					break;
 				case ModDestination.Filter2Pan:
 					Voice.Mixer.F2PanModulation = value;
@@ -257,7 +255,7 @@ namespace Polyhedrus.Modules
 					Voice.Mixer.Osc1VolModulation = value;
 					UpdateMixer = true;
 					break;
-				case ModDestination.Osc1Wave:
+				case ModDestination.Osc1Pos:
 					// Add route
 					break;
 				case ModDestination.Osc2Pitch:
@@ -268,7 +266,7 @@ namespace Polyhedrus.Modules
 					Voice.Mixer.Osc2VolModulation = value;
 					UpdateMixer = true;
 					break;
-				case ModDestination.Osc2Wave:
+				case ModDestination.Osc2Pos:
 					// Add route
 					break;
 				case ModDestination.Osc3Pitch:
@@ -279,7 +277,7 @@ namespace Polyhedrus.Modules
 					Voice.Mixer.Osc3VolModulation = value;
 					UpdateMixer = true;
 					break;
-				case ModDestination.Osc3Wave:
+				case ModDestination.Osc3Pos:
 					// Add route
 					break;
 				case ModDestination.Osc4Pitch:
@@ -290,7 +288,7 @@ namespace Polyhedrus.Modules
 					Voice.Mixer.Osc4VolModulation = value;
 					UpdateMixer = true;
 					break;
-				case ModDestination.Osc4Wave:
+				case ModDestination.Osc4Pos:
 					// Add route
 					break;
 			}

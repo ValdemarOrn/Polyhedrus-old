@@ -17,20 +17,16 @@ using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
-	/// <summary>
-	/// Interaction logic for Oscillator.xaml
-	/// </summary>
+	[ViewProviderFor(typeof(Modules.BLOsc))]
 	public partial class BLOscView : SynthModuleView
 	{
-		public BLOscView()
+		public BLOscView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
 		}
 
-		public BLOscView(SynthController ctrl, ModuleParams moduleId)
+		public BLOscView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
 			Wavetables = Ctrl.Wavetables.ToArray();
 
 			InitializeComponent();

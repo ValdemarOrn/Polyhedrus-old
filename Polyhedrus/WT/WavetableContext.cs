@@ -9,10 +9,21 @@ namespace Polyhedrus.WT
 {
 	public static class WavetableContext
 	{
+		// Wavetable note and partial data
+		public static int[] PartialsCount = new int[128];
+		public static int[] WavetableNoteIndex = new int[128];
+		public static int[] PartialsPerWave;
+		public static int PartialsTableCount;
+
+		// Wavetable file and folder data
 		public static string TableDirectory { get; private set; }
 		public static Dictionary<string, string> AvailableWavetables { get; private set; }
 
-		public static void Setup()
+		/// <summary>
+		/// Generates any missing wavetable files using IWavetable classes. 
+		/// Loads a list of wavetable files available on disk.
+		/// </summary>
+		public static void SetupWavetables()
 		{
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			path = Path.Combine(path, "Polyhedrus\\Wavetables");
@@ -43,12 +54,52 @@ namespace Polyhedrus.WT
 					return file.Substring(0, file.Length - 6);
 				}, 
 				x => x);
+		}
 
-			/*
-			var tables = Directory.GetFiles(TableDirectory)
-				.Select(x => WavetableData.FromFile(x))
-				.ToList();*/
+		/// <summary>
+		/// Calculates how many partials each note should have
+		/// </summary>
+		/// <param name="samplerate"></param>
+		public static void CalculateIndexes(double samplerate)
+		{
+			var nyquist = samplerate * 0.5;
+			int i = 0;
+			int firstReduction = -1;
 
+			for (i = 0; i < 128; i++)
+			{
+				var hz = 440 * Math.Pow(2, (i - 69) / 12.0);
+				int maxParts = (int)(nyquist / hz);
+				if (maxParts >= 256)
+					PartialsCount[i] = 256;
+				else
+				{
+					PartialsCount[i] = maxParts;
+					if (firstReduction == -1)
+						firstReduction = i;
+				}
+			}
+
+			// break notes into groups of 4
+			for (i = firstReduction + 3; i < 128 - 4; i += 4)
+			{
+				PartialsCount[i - 3] = PartialsCount[i];
+				PartialsCount[i - 2] = PartialsCount[i];
+				PartialsCount[i - 1] = PartialsCount[i];
+			}
+
+			int index = 0;
+			// calculate note indexes
+			for (i = 1; i < 128; i++)
+			{
+				if (PartialsCount[i - 1] != PartialsCount[i])
+					index++;
+
+				WavetableNoteIndex[i] = index;
+			}
+
+			PartialsPerWave = PartialsCount.Distinct().ToArray();
+			PartialsTableCount = PartialsPerWave.Length;
 		}
 	}
 }

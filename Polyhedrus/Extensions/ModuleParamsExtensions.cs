@@ -8,42 +8,45 @@ namespace Polyhedrus
 {
 	public static class ModuleParamsExtensions
 	{
-		private static Dictionary<ModuleParams, string> Names = new Dictionary<ModuleParams, string>
+		private static Dictionary<ModuleId, string> Names = new Dictionary<ModuleId, string>
 		{
-			{ModuleParams.Osc1, "Oscillator 1"},
-			{ModuleParams.Osc2, "Oscillator 2"},
-			{ModuleParams.Osc3, "Oscillator 3"},
-			{ModuleParams.Osc4, "Oscillator 4"},
+			{ModuleId.Osc1, "Oscillator 1"},
+			{ModuleId.Osc2, "Oscillator 2"},
+			{ModuleId.Osc3, "Oscillator 3"},
+			{ModuleId.Osc4, "Oscillator 4"},
 
-			{ModuleParams.Filter1, "Filter 1"},
-			{ModuleParams.Filter2, "Filter 2"},
+			{ModuleId.Insert1, "Insert FX 1"},
+			{ModuleId.Insert2, "Insert FX 2"},
 
-			{ModuleParams.AmpEnv, "Amplifier Envelope"},
-			{ModuleParams.Filter1Env, "Filter 1 Envelope"},
-			{ModuleParams.Filter2Env, "Filter 2 Envelope"},
+			{ModuleId.Filter1, "Filter 1"},
+			{ModuleId.Filter2, "Filter 2"},
 
-			{ModuleParams.Modulator1, "Modulator 1"},
-			{ModuleParams.Modulator2, "Modulator 2"},
-			{ModuleParams.Modulator3, "Modulator 3"},
-			{ModuleParams.Modulator4, "Modulator 4"},
-			{ModuleParams.Modulator5, "Modulator 5"},
-			{ModuleParams.Modulator6, "Modulator 6"},
+			{ModuleId.AmpEnv, "Amp Envelope"},
+			{ModuleId.Filter1Env, "Filter 1 Envelope"},
+			{ModuleId.Filter2Env, "Filter 2 Envelope"},
 
-			{ModuleParams.Step1, "Step Sequencer 1"},
-			{ModuleParams.Step2, "Step Sequencer 2"},
+			{ModuleId.Modulator1, "Modulator 1"},
+			{ModuleId.Modulator2, "Modulator 2"},
+			{ModuleId.Modulator3, "Modulator 3"},
+			{ModuleId.Modulator4, "Modulator 4"},
+			{ModuleId.Modulator5, "Modulator 5"},
+			{ModuleId.Modulator6, "Modulator 6"},
 
-			{ModuleParams.FX1, "Effect 1"},
-			{ModuleParams.FX2, "Effect 2"},
-			{ModuleParams.FX3, "Effect 3"},
+			{ModuleId.Step1, "Sequencer 1"},
+			{ModuleId.Step2, "Sequencer 2"},
 
-			{ModuleParams.Mixer, "Mixer"},
-			{ModuleParams.ModMatrix, "Modulation Matrix"},
+			{ModuleId.FX1, "Effect 1"},
+			{ModuleId.FX2, "Effect 2"},
+			{ModuleId.FX3, "Effect 3"},
 
-			{ModuleParams.Arp, "Arpeggiator"},
-			{ModuleParams.Settings, "Settings"}
+			{ModuleId.Mixer, "Mixer"},
+			{ModuleId.ModMatrix, "Modulation Matrix"},
+
+			{ModuleId.Arp, "Arpeggiator"},
+			{ModuleId.Settings, "Settings"}
 		};
 
-		public static string GetName(this ModuleParams param)
+		public static string GetName(this ModuleId param)
 		{
 			return Names.ContainsKey(param) ? Names[param] : param.ToString();
 		}

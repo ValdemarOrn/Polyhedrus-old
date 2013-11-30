@@ -35,7 +35,17 @@ namespace Polyhedrus.UI
 		}
 
 		public SynthController Ctrl { get; set; }
-		public ModuleParams ModuleId { get; set; }
+		public ModuleId ModuleId { get; set; }
+
+
+		public SynthModuleView()
+		{ }
+
+		public SynthModuleView(SynthController ctrl, ModuleId moduleId)
+		{
+			Ctrl = ctrl;
+			ModuleId = moduleId;
+		}
 
 		#region Notify Change
 

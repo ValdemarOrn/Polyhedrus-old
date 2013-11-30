@@ -18,15 +18,15 @@ namespace Polyhedrus.UI
 	/// <summary>
 	/// Interaction logic for WaveView.xaml
 	/// </summary>
-	public partial class WaveView : UserControl
+	public partial class WaveformView : UserControl
 	{
 		public static readonly DependencyProperty DataProperty =
-			DependencyProperty.Register("Data", typeof(IEnumerable<double>), typeof(WaveView), new PropertyMetadata(null));
+			DependencyProperty.Register("Data", typeof(IEnumerable<double>), typeof(WaveformView), new PropertyMetadata(null));
 
 		public static readonly DependencyProperty PointsProperty =
-			DependencyProperty.Register("Points", typeof(PointCollection), typeof(WaveView), new PropertyMetadata(null));
+			DependencyProperty.Register("Points", typeof(PointCollection), typeof(WaveformView), new PropertyMetadata(null));
 
-		public WaveView()
+		public WaveformView()
 		{
 			InitializeComponent();
 

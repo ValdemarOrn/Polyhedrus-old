@@ -60,6 +60,7 @@ namespace Polyhedrus.Parameters
 		Phase,
 		Delay,
 		Offset,
+		Shape,
 
 		Wave,
 		FreePhase,

@@ -9,7 +9,7 @@
                 Title="MainWindow" Height="660" Width="995">
     <Grid Background="#FFE5E5E5">
 
-        <UI:ModuleControl x:Name="OscModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="215" Width="374" Margin="5,25,0,0"
+        <UI:ModuleControl x:Name="OscModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="200" Width="374" Margin="5,25,0,0"
                           Selectors="{Binding Path=OscSelectors}"
                           Titles="{Binding Path=OscNames, Mode=OneWay}"
                           Panels="{Binding Path=OscViews, Mode=OneWay}"
@@ -21,16 +21,11 @@
                           Panels="{Binding Path=AmpEnvViews, Mode=OneWay}"
                           Width="268" Margin="384,25,0,0" />
 
-        <Border BorderBrush="Black" Background="White" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Margin="384,110,0,0" Width="268" Height="130">
-            <Grid>
-                <Label FontWeight="Bold" Content="{Binding Path=AnnouncerCaption, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-25,0,0" />
-                <Label Content="{Binding Path=AnnouncerValue, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,25,0,0" />
-            </Grid>
-        </Border>
-
         <UI:ModuleControl x:Name="InsertFXModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="80" 
-                          Width="320" Margin="658,270,0,0" />
+                          Selectors="{Binding Path=InsertEffectSelectors}"
+                          Titles="{Binding Path=InsertEffectNames, Mode=OneWay}"
+                          Panels="{Binding Path=InsertEffectViews, Mode=OneWay}"
+                          Width="268" Margin="384,145,0,0" />
 
         <UI:ModuleControl x:Name="FilterModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="154" Width="320" Margin="658,25,0,0" 
                           Selectors="{Binding Path=FilterSelectors}"
@@ -46,7 +41,15 @@
                           SelectedIndex="{Binding ElementName=FilterModule, Path=SelectedIndex}"
                           />
 
-        <UI:ModuleControl x:Name="RoutingModuleView" HorizontalAlignment="Left" VerticalAlignment="Top" Height="171" Width="601" Margin="5,269,0,0"
+        <Border BorderBrush="Black" Background="White" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="658,270,0,0" Width="320" Height="80">
+            <Grid>
+                <Label FontWeight="Bold" Content="{Binding Path=AnnouncerCaption, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-25,0,0" />
+                <Label Content="{Binding Path=AnnouncerValue, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,25,0,0" />
+            </Grid>
+        </Border>
+        
+        <UI:ModuleControl x:Name="RoutingModuleView" HorizontalAlignment="Left" VerticalAlignment="Top" Height="185" Width="600" Margin="5,255,0,0"
                           Selectors="{Binding Path=RoutingSelectors}"
                           Titles="{Binding Path=RoutingNames, Mode=OneWay}"
                           Panels="{Binding Path=RoutingViews, Mode=OneWay}" 

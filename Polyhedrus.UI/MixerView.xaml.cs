@@ -15,20 +15,16 @@ using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
-	/// <summary>
-	/// Interaction logic for MixerView.xaml
-	/// </summary>
+	[ViewProviderFor(typeof(Modules.Mixer))]
 	public partial class MixerView : SynthModuleView
 	{
-		public MixerView()
+		public MixerView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
 		}
 
-		public MixerView(SynthController ctrl, ModuleParams moduleId)
+		public MixerView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
 			Func<double?, string> formatter = x =>
 			{
 				x = x ?? 1.0;

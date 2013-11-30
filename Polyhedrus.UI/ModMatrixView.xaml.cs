@@ -44,9 +44,7 @@ namespace Polyhedrus.UI
 		}
 	}
 
-	/// <summary>
-	/// Interaction logic for ModMatrixView.xaml
-	/// </summary>
+	[ViewProviderFor(typeof(Modules.ModMatrix))]
 	public partial class ModMatrixView : SynthModuleView
 	{
 		internal static ObservableCollection<Models.ListItem<ModSource>> _sources;
@@ -64,16 +62,13 @@ namespace Polyhedrus.UI
 		ObservableCollection<ModRoutingVM> _routes;
 		int _page;
 
-		public ModMatrixView()
+		public ModMatrixView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
 		}
 
-		public ModMatrixView(SynthController ctrl, ModuleParams moduleId)
+		public ModMatrixView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
-
 			var routes = new ObservableCollection<ModRoutingVM>(new ModRoutingVM[5]);
 			for (int i = 0; i < routes.Count; i++)
 			{

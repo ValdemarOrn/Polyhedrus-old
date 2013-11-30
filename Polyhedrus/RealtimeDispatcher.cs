@@ -53,9 +53,10 @@ namespace Polyhedrus
 		{
 			lock (WorkItems)
 			{
+				WorkCompleted.Reset();
+
 				QueueLength++;
 				WorkItems.Enqueue(item);
-				WorkCompleted.Reset();
 				Sema.Release();
 			}
 		}
@@ -77,13 +78,10 @@ namespace Polyhedrus
 				}
 				
 				Action(item);
-				
-				lock (WorkItems)
-				{
-					QueueLength--;
-					if (QueueLength == 0)
-						WorkCompleted.Set();
-				}
+
+				int len = Interlocked.Add(ref QueueLength, -1);
+				if (len == 0)
+					WorkCompleted.Set();
 			}
 		}
 

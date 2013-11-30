@@ -5,13 +5,13 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                      mc:Ignorable="d" 
                      xmlns:UI="clr-namespace:Polyhedrus.UI"
-                     x:Name="Main" Height="175" Width="625">
+                     x:Name="Main" d:DesignHeight="175" d:DesignWidth="600">
     <UI:SynthModuleView.Resources>
         <ResourceDictionary Source="PluginStyles.xaml"/>
     </UI:SynthModuleView.Resources>
     <Grid>
         
-        <Grid HorizontalAlignment="Stretch" Margin="10,5,10,15" VerticalAlignment="Stretch" Style="{StaticResource ResourceKey=ModMatrixStyle}">
+        <Grid HorizontalAlignment="Stretch" Margin="5,5,5,15" VerticalAlignment="Stretch" Style="{StaticResource ResourceKey=ModMatrixStyle}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="22" />
                 <RowDefinition Height="*" />

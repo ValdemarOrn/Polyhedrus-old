@@ -19,44 +19,32 @@ using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
+	[ViewProviderFor(typeof(Modules.Modulator))]
 	public partial class ModulatorView : SynthModuleView
 	{
-		public ModulatorView()
+		public ModulatorView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
-			KnobA.ValueFormatter = EnvFormatter;
-			KnobH.ValueFormatter = EnvFormatter;
-			KnobD.ValueFormatter = EnvFormatter;
-			KnobR.ValueFormatter = EnvFormatter;
+			KnobDelay.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobA.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobH.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobD.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobR.ValueFormatter = Utils.Formatters.FormatEnvelope;
 			KnobFreq.ValueFormatter = FreqFormatter;
 		}
 
-		public ModulatorView(SynthController ctrl, ModuleParams moduleId)
+		public ModulatorView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
 			Waveforms = Ctrl.LFOWaves.Select(x => new ListItem<LFO.Wave>(x.Key, x.Value)).ToArray();
 
 			InitializeComponent();
-			KnobA.ValueFormatter = EnvFormatter;
-			KnobH.ValueFormatter = EnvFormatter;
-			KnobD.ValueFormatter = EnvFormatter;
-			KnobR.ValueFormatter = EnvFormatter;
-			KnobDelay.ValueFormatter = EnvFormatter;
+			KnobDelay.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobA.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobH.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobD.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			KnobR.ValueFormatter = Utils.Formatters.FormatEnvelope;
+			
 			KnobFreq.ValueFormatter = FreqFormatter;
-		}
-
-		string EnvFormatter(double val)
-		{
-			double value = ValueTables.Get(val, ValueTables.Response4Dec) * 20000;
-			if (value < 10)
-				return String.Format("{0:0.00}ms", value);
-			else if (value < 100)
-				return String.Format("{0:0.0}ms", value);
-			else if (value < 1000)
-				return String.Format("{0:0}ms", value);
-			else
-				return String.Format("{0:0.00}s", value * 0.001);
 		}
 
 		string FreqFormatter(double val)
@@ -76,7 +64,7 @@ namespace Polyhedrus.UI
 			}
 		}
 
-		ListItem<LFO.Wave> _selectedWave;
+		ListItem<LFO.Wave> _selectedWaveform;
 		public ListItem<LFO.Wave> SelectedWaveform
 		{
 			get 
@@ -86,9 +74,32 @@ namespace Polyhedrus.UI
 			}
 			set
 			{
-				_selectedWave = value;
+				_selectedWaveform = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Wave, value.Value);
 				NotifyChange(() => SelectedWaveform);
+				NotifyChange(() => WaveformData);
+			}
+		}
+
+		public IEnumerable<double> WaveformData
+		{
+			get
+			{
+				if (SelectedWaveform == null)
+					return null;
+
+				return Enumerable.Range(0, 256).Select(x => LFO.GetSample(SelectedWaveform.Value, x / 255.0,
+					(SelectedWaveform.Value == LFO.Wave.SampleAndHold) ? x >> 4 : Shape));
+			}
+		}
+
+		public double Delay
+		{
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Delay); }
+			set
+			{
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Delay, value);
+				NotifyChange(() => Delay);
 			}
 		}
 
@@ -162,16 +173,6 @@ namespace Polyhedrus.UI
 			}
 		}
 
-		public double Delay
-		{
-			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Delay); }
-			set
-			{
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Delay, value);
-				NotifyChange(() => Delay);
-			}
-		}
-
 		public double Offset
 		{
 			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Offset); }
@@ -182,6 +183,16 @@ namespace Polyhedrus.UI
 			}
 		}
 
+		public double Shape
+		{
+			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Shape); }
+			set
+			{
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Shape, value);
+				NotifyChange(() => Shape);
+				NotifyChange(() => WaveformData);
+			}
+		}
 
 		public bool FreePhase
 		{

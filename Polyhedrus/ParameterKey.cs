@@ -8,7 +8,7 @@ namespace Polyhedrus
 {
 	public struct ParameterKey
 	{
-		public ModuleParams Module;
+		public ModuleId Module;
 		public Enum Parameter;
 
 		public int Key
@@ -19,7 +19,7 @@ namespace Polyhedrus
 			}
 		}
 
-		public ParameterKey(ModuleParams module, Enum parameter)
+		public ParameterKey(ModuleId module, Enum parameter)
 		{
 			Module = module;
 			Parameter = parameter;

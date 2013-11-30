@@ -1,6 +1,6 @@
 ﻿using AudioLib;
 using LowProfile.Fourier.Double;
-using Polyhedrus.Utils;
+using Polyhedrus.WT;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Polyhedrus.Modules
 			{
 				_samplerate = value;
 				_fsInv = 1.0 / _samplerate;
-				Wavetables.CalculateIndexes(value);
+				WavetableContext.CalculateIndexes(value);
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace Polyhedrus.Modules
 
 			for (int w = 0; w < WaveCount; w++)
 			{
-				newWavetable[w] = new double[Wavetables.WavetableCount][];
+				newWavetable[w] = new double[WavetableContext.PartialsTableCount][];
 				var baseWave = wavetable[w];
 
 				var complexIn = baseWave.Select(x => new Complex(x, 0)).ToArray();
@@ -89,9 +89,9 @@ namespace Polyhedrus.Modules
 				var ifft = new Complex[fft.Length];
 				trans.FFT(complexIn, fft);
 
-				for (int i = 0; i < Wavetables.WavetableCount; i++)
+				for (int i = 0; i < WavetableContext.PartialsTableCount; i++)
 				{
-					var partials = Wavetables.PartialsPerWave[i];
+					var partials = WavetableContext.PartialsPerWave[i];
 					for (int n = partials + 1; n < fft.Length - partials; n++)
 					{
 						fft[n].Real = 0;
@@ -153,7 +153,7 @@ namespace Polyhedrus.Modules
 			else if (note < 0)
 				note = 0;
 
-			WaveNumber = Wavetables.WavetableIndex[(int)note];
+			WaveNumber = WavetableContext.WavetableNoteIndex[(int)note];
 			var hz = AudioLib.Utils.Note2HzLookup(note);
 			double increment = hz * _fsInv;
 			Stepsize = increment;

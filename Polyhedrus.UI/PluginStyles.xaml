@@ -249,9 +249,6 @@
                 <Setter Property="HorizontalContentAlignment" Value="Right" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
             </Style>
-            <Style TargetType="ToggleButton" BasedOn="{StaticResource ResourceKey=ToggleStyle}">
-                <Setter Property="Margin" Value="4" />
-            </Style>
             <Style TargetType="ComboBox">
                 <Setter Property="Padding" Value="3,1,1,1" />
                 <Setter Property="BorderBrush" Value="{StaticResource ResourceKey=BorderColor}" />

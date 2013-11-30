@@ -1,0 +1,23 @@
+﻿<UI:SynthModuleView
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:UI="clr-namespace:Polyhedrus.UI" 
+             xmlns:local="clr-namespace:Polyhedrus.UI" x:Class="Polyhedrus.UI.InsReduxView" 
+             mc:Ignorable="d" 
+             x:Name="Main"
+             d:DesignHeight="65" d:DesignWidth="260">
+    <UI:SynthModuleView.Resources>
+        <ResourceDictionary Source="PluginStyles.xaml"/>
+    </UI:SynthModuleView.Resources>
+    <StackPanel Orientation="Horizontal" Margin="0">
+
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Reduce}" Min="1" Max="64" Steps="64"
+                    Caption="Reduce" x:Name="KnobReduce" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        
+        <local:Knob2 Value="{Binding ElementName=Main, Path=Bits}" Min="1" Max="16" Steps="16"
+                    Caption="Bits" x:Name="KnobBits" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
+
+    </StackPanel>
+</UI:SynthModuleView>

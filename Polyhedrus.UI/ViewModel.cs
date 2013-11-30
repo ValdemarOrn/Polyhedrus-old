@@ -1,4 +1,5 @@
-﻿using Polyhedrus.Parameters;
+﻿using Polyhedrus.Modules;
+using Polyhedrus.Parameters;
 using Polyhedrus.UI;
 using System;
 using System.Collections.Generic;
@@ -22,50 +23,17 @@ namespace Polyhedrus
 
 		public void Init()
 		{
-			OscViews = new ObservableCollection<Control>(new []
-			{
-				new BLOscView(Ctrl, ModuleParams.Osc1),
-				new BLOscView(Ctrl, ModuleParams.Osc2),
-				new BLOscView(Ctrl, ModuleParams.Osc3),
-				new BLOscView(Ctrl, ModuleParams.Osc4)
-			});
-
-			FilterViews = new ObservableCollection<Control>(new []
-			{
-				new CascadeFilterView(Ctrl, ModuleParams.Filter1),
-				new CascadeFilterView(Ctrl, ModuleParams.Filter2)
-			});
-
-			AmpEnvViews = new ObservableCollection<Control>(new []
-			{
-				new EnvelopeView(Ctrl, ModuleParams.AmpEnv) { DelayVisibility = System.Windows.Visibility.Collapsed }
-			});
-
-			FilterEnvViews = new ObservableCollection<Control>(new []
-			{
-				new EnvelopeView(Ctrl, ModuleParams.Filter1Env),
-				new EnvelopeView(Ctrl, ModuleParams.Filter2Env)
-			});
-
-			RoutingViews = new ObservableCollection<Control>(new Control[]
-			{
-				new MixerView(Ctrl, ModuleParams.Mixer),
-				new ModMatrixView(Ctrl, ModuleParams.ModMatrix)
-			});
-
-			ModulatorViews = new ObservableCollection<Control>(new[]
-			{
-				new ModulatorView(Ctrl, ModuleParams.Modulator1),
-				new ModulatorView(Ctrl, ModuleParams.Modulator2),
-				new ModulatorView(Ctrl, ModuleParams.Modulator3),
-				new ModulatorView(Ctrl, ModuleParams.Modulator4),
-				new ModulatorView(Ctrl, ModuleParams.Modulator5),
-				new ModulatorView(Ctrl, ModuleParams.Modulator6)
-			});
+			OscViews = new ObservableCollection<Control>();
+			AmpEnvViews = new ObservableCollection<Control>();
+			InsertEffectViews = new ObservableCollection<Control>();
+			FilterViews = new ObservableCollection<Control>();
+			FilterEnvViews = new ObservableCollection<Control>();
+			RoutingViews = new ObservableCollection<Control>();
+			ModulatorViews = new ObservableCollection<Control>();
 
 			OscNames = new ObservableCollection<string>(new string[] { "Osc 1", "Osc 2", "Osc 3", "Osc 4" });
 			AmpEnvNames = new ObservableCollection<string>(new string[] { "Amp Env" });
-			InsertFXNames = new ObservableCollection<string>(new string[] { "Insert 1", "Insert 2" });
+			InsertEffectNames = new ObservableCollection<string>(new string[] { "Insert 1", "Insert 2" });
 			FilterNames = new ObservableCollection<string>(new string[] { "Filter 1", "Filter 2" });
 			FilterEnvNames = new ObservableCollection<string>(new string[] { "Filter 1 Envelope", "Filter 2 Envelope" });
 			RoutingNames = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
@@ -75,34 +43,38 @@ namespace Polyhedrus
 
 			OscSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
 			AmpEnvSelectors = new ObservableCollection<string>(new string[] { "" });
-			InsertSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
+			InsertEffectSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
 			FilterSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
 			FilterEnvSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
 			RoutingSelectors = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
 			SettingsSelectors = new ObservableCollection<string>(new string[] { "" });
 			EffectsSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
 			ModulatorSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4", "5", "6" });
+
+			SetViews();
 		}
 
-		public ObservableCollection<string> OscNames { get; set; }
-		public ObservableCollection<string> AmpEnvNames { get; set; }
-		public ObservableCollection<string> InsertFXNames { get; set; }
-		public ObservableCollection<string> FilterNames { get; set; }
-		public ObservableCollection<string> FilterEnvNames { get; set; }
-		public ObservableCollection<string> RoutingNames { get; set; }
-		public ObservableCollection<string> SettingsNames { get; set; }
-		public ObservableCollection<string> EffectNames { get; set; }
-		public ObservableCollection<string> ModulatorNames { get; set; }
+		#region Properties
 
-		public ObservableCollection<string> OscSelectors { get; set; }
-		public ObservableCollection<string> AmpEnvSelectors { get; set; }
-		public ObservableCollection<string> InsertSelectors { get; set; }
-		public ObservableCollection<string> FilterSelectors { get; set; }
-		public ObservableCollection<string> FilterEnvSelectors { get; set; }
-		public ObservableCollection<string> RoutingSelectors { get; set; }
-		public ObservableCollection<string> SettingsSelectors { get; set; }
-		public ObservableCollection<string> EffectsSelectors { get; set; }
-		public ObservableCollection<string> ModulatorSelectors { get; set; }
+		public ObservableCollection<string> OscNames { get; private set; }
+		public ObservableCollection<string> AmpEnvNames { get; private set; }
+		public ObservableCollection<string> InsertEffectNames { get; private set; }
+		public ObservableCollection<string> FilterNames { get; private set; }
+		public ObservableCollection<string> FilterEnvNames { get; private set; }
+		public ObservableCollection<string> RoutingNames { get; private set; }
+		public ObservableCollection<string> SettingsNames { get; private set; }
+		public ObservableCollection<string> EffectNames { get; private set; }
+		public ObservableCollection<string> ModulatorNames { get; private set; }
+
+		public ObservableCollection<string> OscSelectors { get; private set; }
+		public ObservableCollection<string> AmpEnvSelectors { get; private set; }
+		public ObservableCollection<string> InsertEffectSelectors { get; private set; }
+		public ObservableCollection<string> FilterSelectors { get; private set; }
+		public ObservableCollection<string> FilterEnvSelectors { get; private set; }
+		public ObservableCollection<string> RoutingSelectors { get; private set; }
+		public ObservableCollection<string> SettingsSelectors { get; private set; }
+		public ObservableCollection<string> EffectsSelectors { get; private set; }
+		public ObservableCollection<string> ModulatorSelectors { get; private set; }
 
 		private ObservableCollection<Control> _oscViews;
 		public ObservableCollection<Control> OscViews
@@ -116,6 +88,13 @@ namespace Polyhedrus
 		{
 			get { return _ampEnvViews; }
 			set { _ampEnvViews = value; NotifyChange(() => AmpEnvViews); }
+		}
+
+		private ObservableCollection<Control> _insertEffectViews;
+		public ObservableCollection<Control> InsertEffectViews
+		{
+			get { return _insertEffectViews; }
+			set { _insertEffectViews = value; NotifyChange(() => InsertEffectViews); }
 		}
 
 		private ObservableCollection<Control> _filterViews;
@@ -194,6 +173,41 @@ namespace Polyhedrus
 			set { announcerValue = value; NotifyChange(() => AnnouncerValue); }
 		}
 
+		#endregion
+
+		private void SetViews()
+		{
+			var types = Ctrl.ModuleTypes;
+			Func<ModuleId, SynthModuleView> findView = x => ViewProvider.GetView(types[x], Ctrl, x);
+
+			
+			OscViews.Add(findView(ModuleId.Osc1));
+			OscViews.Add(findView(ModuleId.Osc2));
+			OscViews.Add(findView(ModuleId.Osc3));
+			OscViews.Add(findView(ModuleId.Osc4));
+
+			AmpEnvViews.Add(findView(ModuleId.AmpEnv));
+			(AmpEnvViews[0] as EnvelopeView).DelayVisibility = System.Windows.Visibility.Collapsed;
+
+			InsertEffectViews.Add(findView(ModuleId.Insert1));
+			InsertEffectViews.Add(findView(ModuleId.Insert2));
+
+			FilterViews.Add(findView(ModuleId.Filter1));
+			FilterViews.Add(findView(ModuleId.Filter2));
+
+			FilterEnvViews.Add(findView(ModuleId.Filter1Env));
+			FilterEnvViews.Add(findView(ModuleId.Filter2Env));
+
+			RoutingViews.Add(findView(ModuleId.Mixer));
+			RoutingViews.Add(findView(ModuleId.ModMatrix));
+
+			ModulatorViews.Add(findView(ModuleId.Modulator1));
+			ModulatorViews.Add(findView(ModuleId.Modulator2));
+			ModulatorViews.Add(findView(ModuleId.Modulator3));
+			ModulatorViews.Add(findView(ModuleId.Modulator4));
+			ModulatorViews.Add(findView(ModuleId.Modulator5));
+			ModulatorViews.Add(findView(ModuleId.Modulator6));
+		}
 
 		#region Notify Change
 

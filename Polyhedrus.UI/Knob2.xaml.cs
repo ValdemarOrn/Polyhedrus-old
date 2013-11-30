@@ -72,6 +72,10 @@ namespace Polyhedrus.UI
 				Announce(true);
 			});
 
+			prop = DependencyPropertyDescriptor.FromProperty(MinProperty, this.GetType());
+			prop.AddValueChanged(this, (s, e) => Update());
+			prop = DependencyPropertyDescriptor.FromProperty(MaxProperty, this.GetType());
+			prop.AddValueChanged(this, (s, e) => Update());
 			prop = DependencyPropertyDescriptor.FromProperty(InnerPaddingProperty, this.GetType());
 			prop.AddValueChanged(this, (s, e) => Update());
 
@@ -378,7 +382,7 @@ namespace Polyhedrus.UI
 		private double GetExternalValue(double val)
 		{
 			if (Steps == 0)
-				return internalValue;
+				return val;
 
 			var delta = (val - Min) / (Max - Min);
 			var adjusted = Math.Round(delta * (Steps - 1));

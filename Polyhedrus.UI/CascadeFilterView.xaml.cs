@@ -15,20 +15,16 @@ using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
-	/// <summary>
-	/// Interaction logic for LadderFilter.xaml
-	/// </summary>
+	[ViewProviderFor(typeof(AudioLib.Modules.CascadeFilter))]
 	public partial class CascadeFilterView : SynthModuleView
 	{
-		public CascadeFilterView()
+		public CascadeFilterView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
 		}
 
-		public CascadeFilterView(SynthController ctrl, ModuleParams moduleId)
+		public CascadeFilterView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Ctrl = ctrl;
-			ModuleId = moduleId;
 			InitializeComponent();
 		}
 

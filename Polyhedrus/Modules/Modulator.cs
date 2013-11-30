@@ -74,6 +74,9 @@ namespace Polyhedrus.Modules
 				case ModulatorParams.Offset:
 					OffsetValue = val;
 					break;
+				case ModulatorParams.Shape:
+					Lfo.Shape = val;
+					break;
 				case ModulatorParams.Phase:
 					Lfo.StartPhase = val;
 					break;

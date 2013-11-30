@@ -1,7 +1,6 @@
 ﻿using AudioLib;
 using Polyhedrus.Modules;
 using Polyhedrus.Parameters;
-using Polyhedrus.Utils;
 using Polyhedrus.WT;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace Polyhedrus
 		public SynthController()
 		{
 			LowProfile.Fourier.Double.TransformNative.Setup();
-			WavetableContext.Setup();
+			WavetableContext.SetupWavetables();
 
 			Dispatcher = new RealtimeDispatcher<Voice>(4, 1000, System.Threading.ThreadPriority.Highest, x => x.Process(ProcessSampleCount));
 			Parameters = new Dictionary<ParameterKey, object>();
@@ -53,39 +52,82 @@ namespace Polyhedrus
 			get { return AudioLib.Modules.LFO.WaveNames; }
 		}
 
-		public WavetableData GetWavetable(ModuleParams module)
+		public Dictionary<ModuleId, Type> ModuleTypes
+		{
+			get
+			{
+				var v = Voices[0];
+
+				return new Dictionary<ModuleId, Type>()
+				{
+					{ ModuleId.AmpEnv, v.AmpEnv.GetType() },
+
+					{ ModuleId.Filter1, v.Filter1.GetType() },
+					{ ModuleId.Filter1Env, v.Filter1Env.GetType() },
+					{ ModuleId.Filter2, v.Filter2.GetType() },
+					{ ModuleId.Filter2Env, v.Filter2Env.GetType() },
+
+					//{ ModuleParams.FX1, v.asd.GetType() },
+					//{ ModuleParams.FX2, v.asd.GetType() },
+					//{ ModuleParams.FX3, v.asd.GetType() },
+
+					{ ModuleId.Insert1, v.Ins1.GetType() },
+					{ ModuleId.Insert2, v.Ins2.GetType() },
+
+					{ ModuleId.Mixer, v.Mixer.GetType() },
+					{ ModuleId.ModMatrix, v.ModMatrix.GetType() },
+
+					{ ModuleId.Modulator1, v.Mod1.GetType() },
+					{ ModuleId.Modulator2, v.Mod2.GetType() },
+					{ ModuleId.Modulator3, v.Mod3.GetType() },
+					{ ModuleId.Modulator4, v.Mod4.GetType() },
+					{ ModuleId.Modulator5, v.Mod5.GetType() },
+					{ ModuleId.Modulator6, v.Mod6.GetType() },
+
+					{ ModuleId.Osc1, v.Osc1.GetType() },
+					{ ModuleId.Osc2, v.Osc2.GetType() },
+					{ ModuleId.Osc3, v.Osc3.GetType() },
+					{ ModuleId.Osc4, v.Osc4.GetType() },
+
+					//{ ModuleParams.Step1, v.asd.GetType() },
+					//{ ModuleParams.Step2, v.asd.GetType() }
+				};
+			}
+		}
+
+		public WavetableData GetWavetable(ModuleId module)
 		{
 			switch (module)
 			{
-				case ModuleParams.Osc1:
+				case ModuleId.Osc1:
 					return osc1Wavetable;
-				case ModuleParams.Osc2:
+				case ModuleId.Osc2:
 					return osc2Wavetable;
-				case ModuleParams.Osc3:
+				case ModuleId.Osc3:
 					return osc3Wavetable;
-				case ModuleParams.Osc4:
+				case ModuleId.Osc4:
 					return osc4Wavetable;
 				default:
 					return null;
 			}
 		}
 		
-		public void SetWavetable(ModuleParams module, string wavetableName)
+		public void SetWavetable(ModuleId module, string wavetableName)
 		{
 			var wt = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
 
 			switch (module)
 			{
-				case ModuleParams.Osc1:
+				case ModuleId.Osc1:
 					osc1Wavetable = wt;
 					break;
-				case ModuleParams.Osc2:
+				case ModuleId.Osc2:
 					osc2Wavetable = wt;
 					break;
-				case ModuleParams.Osc3:
+				case ModuleId.Osc3:
 					osc3Wavetable = wt;
 					break;
-				case ModuleParams.Osc4:
+				case ModuleId.Osc4:
 					osc4Wavetable = wt;
 					break;
 			}
@@ -170,12 +212,9 @@ namespace Polyhedrus
 					buffer[1][j] += voice.OutputBuffer[1][j];
 				}
 			}
-
-			//for (int i = 0; i < Voices.Length; i++)
-				//Voices[i].Process(buffer);
 		}
 
-		public void SetParameter(ModuleParams module, Enum parameter, object value)
+		public void SetParameter(ModuleId module, Enum parameter, object value)
 		{
 			Parameters[new ParameterKey(module, parameter)] = value;
 
@@ -183,7 +222,7 @@ namespace Polyhedrus
 				voice.SetParameter(module, parameter, value);
 		}
 
-		public object GetParameter(ModuleParams module, Enum parameter)
+		public object GetParameter(ModuleId module, Enum parameter)
 		{
 			var idx = new ParameterKey(module, parameter);
 			if(Parameters.ContainsKey(idx))

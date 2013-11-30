@@ -17,9 +17,9 @@ namespace Polyhedrus.UI.Models
 		/// </summary>
 		public ModRoute Model;
 		public SynthController Ctrl;
-		public ModuleParams ModuleId;
+		public ModuleId ModuleId;
 
-		public ModRoutingVM(SynthController ctrl, ModuleParams moduleId)
+		public ModRoutingVM(SynthController ctrl, ModuleId moduleId)
 		{
 			Model = new ModRoute();
 			Ctrl = ctrl;

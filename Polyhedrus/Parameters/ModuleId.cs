@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Polyhedrus.Parameters
 {
-	public enum ModuleParams
+	public enum ModuleId
 	{
 		Osc1 = 1,
 		Osc2,
