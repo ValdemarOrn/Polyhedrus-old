@@ -180,6 +180,21 @@ namespace Polyhedrus
 			}
 		}
 
+		private string announcerCaption;
+		public string AnnouncerCaption
+		{
+			get { return announcerCaption; }
+			set { announcerCaption = value; NotifyChange(() => AnnouncerCaption); }
+		}
+
+		private string announcerValue;
+		public string AnnouncerValue
+		{
+			get { return announcerValue; }
+			set { announcerValue = value; NotifyChange(() => AnnouncerValue); }
+		}
+
+
 		#region Notify Change
 
 		public event PropertyChangedEventHandler PropertyChanged;

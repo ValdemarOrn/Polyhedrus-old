@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ModuleParamsExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Modules\BLOsc.cs" />
     <Compile Include="Modules\IEffect.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Parameters\ModuleParams.cs" />
     <Compile Include="Parameters\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealtimeDispatcher.cs" />
     <Compile Include="SynthController.cs" />
     <Compile Include="SynthControllerDefaults.cs" />
     <Compile Include="Utils\Wavetables.cs" />

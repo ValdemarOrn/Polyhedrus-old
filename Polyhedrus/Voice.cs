@@ -29,12 +29,12 @@ namespace Polyhedrus
 		public Mixer Mixer;
 
 		public Dictionary<ModuleParams, object> ModuleMap;
-		
+		public double[][] OutputBuffer;
 		// ----------------------------Voice Specific Parameters ----------------------------
 
 		double[] AmpEnvBuffer, Filter1EnvBuffer, Filter2EnvBuffer;
 		double[] Path1Buffer, Path2Buffer;
-		double[] OutputBuffer;
+		double[] ProcessBuffer;
 
 		public Voice()
 		{
@@ -46,7 +46,10 @@ namespace Polyhedrus
 			
 			Path1Buffer = new double[Bufsize];
 			Path2Buffer = new double[Bufsize];
-			OutputBuffer = new double[Bufsize];
+			ProcessBuffer = new double[Bufsize];
+			OutputBuffer = new double[2][];
+			OutputBuffer[0] = new double[48000];
+			OutputBuffer[1] = new double[48000];
 
 			ModuleMap = new Dictionary<ModuleParams, object>();
 
@@ -88,6 +91,11 @@ namespace Polyhedrus
 			Mod5.UpdateStepsize();
 			Mod6.UpdateStepsize();
 			Mixer.Update();
+		}
+
+		public BLOsc GetOsc(ModuleParams module)
+		{
+			return ModuleMap[module] as BLOsc;
 		}
 
 		private void RegisterModules()
@@ -211,24 +219,29 @@ namespace Polyhedrus
 			}
 		}
 
-		public void Process(double[][] buffer)
+		public void Process(int length)
 		{
 			lock (lockObject)
 			{
+				if (OutputBuffer[0].Length < length)
+				{
+					OutputBuffer[0] = new double[2 * length];
+					OutputBuffer[1] = new double[2 * length];
+				}
+
 				IsActive = (AmpEnv.Output > 0.00001 || AmpEnv.Gate);
 
 				if(!IsActive)
 				{
-					for (int i = 0; i < buffer[0].Length; i++)
+					for (int i = 0; i < length; i++)
 					{
-						buffer[0][i] += 0;
-						buffer[1][i] += 0;
+						OutputBuffer[0][i] = 0;
+						OutputBuffer[1][i] = 0;
 					}
-
 					return;
 				}
 
-				for (int i = 0; i < buffer[0].Length; i += Bufsize)
+				for (int i = 0; i < length; i += Bufsize)
 				{
 					var f1Env = ModMatrix.Filter1EnvMod;
 					var f2Env = ModMatrix.Filter2EnvMod;
@@ -271,11 +284,11 @@ namespace Polyhedrus
 
 					for (int n = 0; n < Bufsize; n++)
 					{
-						OutputBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
-						OutputBuffer[n] *= Mixer.OutputVolume * AmpEnvBuffer[n];
+						ProcessBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
+						ProcessBuffer[n] *= Mixer.OutputVolume * AmpEnvBuffer[n];
 
-						buffer[0][i + n] += OutputBuffer[n];
-						buffer[1][i + n] += OutputBuffer[n];
+						OutputBuffer[0][i + n] = ProcessBuffer[n];
+						OutputBuffer[1][i + n] = ProcessBuffer[n];
 					}
 				}
 			}

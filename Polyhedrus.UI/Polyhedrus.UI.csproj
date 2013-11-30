@@ -49,6 +49,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Announcer.cs" />
     <Compile Include="Knob2.xaml.cs">
       <DependentUpon>Knob2.xaml</DependentUpon>
     </Compile>

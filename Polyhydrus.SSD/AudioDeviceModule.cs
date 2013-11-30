@@ -74,7 +74,10 @@ namespace Polyhedrus
 			}
 		}
 
-		public void DisposeDevice() { }
+		public void DisposeDevice()
+		{
+			Controller.Dispose();
+		}
 
 		public void Start() { }
 

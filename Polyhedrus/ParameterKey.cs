@@ -34,5 +34,10 @@ namespace Polyhedrus
 		{
 			return (obj.GetType() == typeof(ParameterKey)) && Key == ((ParameterKey)obj).Key;
 		}
+
+		public override string ToString()
+		{
+			return Module.ToString() + " " + Parameter.ToString();
+		}
 	}
 }

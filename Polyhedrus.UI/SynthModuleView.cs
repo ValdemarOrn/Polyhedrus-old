@@ -4,12 +4,36 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Polyhedrus.UI
 {
 	public class SynthModuleView : UserControl, INotifyPropertyChanged
 	{
+		private static Dictionary<DependencyObject, SynthModuleView> Parents = new Dictionary<DependencyObject, SynthModuleView>();
+
+		public static SynthModuleView FindParentSynthModule(DependencyObject child)
+		{
+			if (Parents.ContainsKey(child))
+				return Parents[child];
+
+			DependencyObject current = child;
+
+			while (current != null)
+			{
+				if (current is SynthModuleView)
+				{
+					Parents[child] = current as SynthModuleView;
+					return current as SynthModuleView;
+				}
+
+				current = System.Windows.Media.VisualTreeHelper.GetParent(current);
+			}
+
+			return null;
+		}
+
 		public SynthController Ctrl { get; set; }
 		public ModuleParams ModuleId { get; set; }
 

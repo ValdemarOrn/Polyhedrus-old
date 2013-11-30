@@ -34,6 +34,7 @@ namespace Polyhedrus.UI
 			Wavetables = Ctrl.Wavetables.ToArray();
 
 			InitializeComponent();
+
 			KnobOctave.ValueFormatter = Formatter;
 			KnobSemi.ValueFormatter = Formatter;
 			KnobCent.ValueFormatter = Formatter;

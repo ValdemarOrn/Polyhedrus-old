@@ -17,20 +17,25 @@ namespace Polyhedrus
 		long TriggerIndex;
 		int Polyphony { get { return Voices.Length; } }
 		Dictionary<ParameterKey, object> Parameters;
+		RealtimeDispatcher<Voice> Dispatcher;
 
 		private WavetableData osc1Wavetable;
 		private WavetableData osc2Wavetable;
 		private WavetableData osc3Wavetable;
 		private WavetableData osc4Wavetable;
 
+		private volatile int ProcessSampleCount;
+
 		public SynthController()
 		{
 			LowProfile.Fourier.Double.TransformNative.Setup();
 			WavetableContext.Setup();
+
+			Dispatcher = new RealtimeDispatcher<Voice>(4, 1000, System.Threading.ThreadPriority.Highest, x => x.Process(ProcessSampleCount));
 			Parameters = new Dictionary<ParameterKey, object>();
 			TriggerIndex = 1;
 			Notes = new List<MidiNote>(32);
-			Voices = new Voice[6];
+			Voices = new Voice[16];
 
 			for(int i = 0; i < Voices.Length; i++)
 				Voices[i] = new Voice();
@@ -67,48 +72,30 @@ namespace Polyhedrus
 		
 		public void SetWavetable(ModuleParams module, string wavetableName)
 		{
-			switch(module)
+			var wt = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
+
+			switch (module)
 			{
 				case ModuleParams.Osc1:
-					osc1Wavetable = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
-					for (int i = 0; i < Voices.Length; i++)
-					{
-						if (i == 0)
-							Voices[0].Osc1.SetWave(osc1Wavetable.Data);
-						else
-							Voices[i].Osc1.Wavetable = Voices[0].Osc1.Wavetable;
-					}
-					return;
+					osc1Wavetable = wt;
+					break;
 				case ModuleParams.Osc2:
-					osc2Wavetable = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
-					for (int i = 0; i < Voices.Length; i++)
-					{
-						if (i == 0)
-							Voices[0].Osc2.SetWave(osc2Wavetable.Data);
-						else
-							Voices[i].Osc2.Wavetable = Voices[0].Osc2.Wavetable;
-					}
-					return;
+					osc2Wavetable = wt;
+					break;
 				case ModuleParams.Osc3:
-					osc3Wavetable = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
-					for (int i = 0; i < Voices.Length; i++)
-					{
-						if (i == 0)
-							Voices[0].Osc3.SetWave(osc3Wavetable.Data);
-						else
-							Voices[i].Osc3.Wavetable = Voices[0].Osc3.Wavetable;
-					}
-					return;
+					osc3Wavetable = wt;
+					break;
 				case ModuleParams.Osc4:
-					osc4Wavetable = WavetableData.FromFile(WavetableContext.AvailableWavetables[wavetableName]);
-					for (int i = 0; i < Voices.Length; i++)
-					{
-						if (i == 0)
-							Voices[0].Osc4.SetWave(osc4Wavetable.Data);
-						else
-							Voices[i].Osc4.Wavetable = Voices[0].Osc4.Wavetable;
-					}
-					return;
+					osc4Wavetable = wt;
+					break;
+			}
+
+			for (int i = 0; i < Voices.Length; i++)
+			{
+				if (i == 0)
+					Voices[0].GetOsc(module).SetWave(wt.Data);
+				else
+					Voices[i].GetOsc(module).Wavetable = Voices[0].GetOsc(module).Wavetable;
 			}
 		}
 
@@ -168,8 +155,24 @@ namespace Polyhedrus
 
 		public void Process(double[][] buffer)
 		{
-			for(int i = 0; i < Voices.Length; i++)
-				Voices[i].Process(buffer);
+			var len = buffer[0].Length;
+			ProcessSampleCount = len;
+			Dispatcher.QueueWorkItems(Voices);
+			Dispatcher.WaitAll();
+
+			for (int i = 0; i < Voices.Length; i++)
+			{
+				var voice = Voices[i];
+
+				for (int j = 0; j < len; j++)
+				{
+					buffer[0][j] += voice.OutputBuffer[0][j];
+					buffer[1][j] += voice.OutputBuffer[1][j];
+				}
+			}
+
+			//for (int i = 0; i < Voices.Length; i++)
+				//Voices[i].Process(buffer);
 		}
 
 		public void SetParameter(ModuleParams module, Enum parameter, object value)
@@ -195,10 +198,21 @@ namespace Polyhedrus
 			foreach (var para in defaultParams)
 				SetParameter(para.Key.Module, para.Key.Parameter, para.Value);
 
-			SetWavetable(ModuleParams.Osc1, "Sawtooth Wave");
-			SetWavetable(ModuleParams.Osc2, "Sawtooth Wave");
-			SetWavetable(ModuleParams.Osc3, "Sawtooth Wave");
-			SetWavetable(ModuleParams.Osc4, "Sawtooth Wave");
+			var wt = WavetableData.FromFile(WavetableContext.AvailableWavetables["Sawtooth Wave"]);
+			osc1Wavetable = wt;
+			osc2Wavetable = wt;
+			osc3Wavetable = wt;
+			osc4Wavetable = wt;
+			Voices[0].Osc1.SetWave(wt.Data);
+			var table = Voices[0].Osc1.Wavetable;
+
+			for (int i = 0; i < Voices.Length; i++)
+			{
+				Voices[i].Osc1.Wavetable = table;
+				Voices[i].Osc2.Wavetable = table;
+				Voices[i].Osc3.Wavetable = table;
+				Voices[i].Osc4.Wavetable = table;
+			}
 		}
 
 		private int FindAvailableVoice(int note)
@@ -249,6 +263,16 @@ namespace Polyhedrus
 				if (Notes[i].Note == note)
 					Notes.RemoveAt(i);
 			}
+		}
+
+		public void Dispose()
+		{
+			Dispatcher.Dispose();
+		}
+
+		~SynthController()
+		{
+			Dispose();
 		}
 	}
 }

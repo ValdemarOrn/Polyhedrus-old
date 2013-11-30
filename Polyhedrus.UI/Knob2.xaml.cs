@@ -53,18 +53,23 @@ namespace Polyhedrus.UI
 		private double internalValue;
 		private bool disableInternalUpdate;
 
+		private static Func<double, string> DefaultFormatter = x => string.Format(CultureInfo.InvariantCulture, "{0:0.00}", x);
+
 		public Knob2()
 		{
+			ValueFormatter = DefaultFormatter;
+			Delta = 0.005;
 			InitializeComponent();
 
-			Delta = 0.005;
-
 			var prop = DependencyPropertyDescriptor.FromProperty(ValueProperty, this.GetType());
-			prop.AddValueChanged(this, (s, e) => Update());
 			prop.AddValueChanged(this, (s, e) =>
 			{
+				Update();
+
 				if (!disableInternalUpdate)
 					internalValue = Value;
+
+				Announce(true);
 			});
 
 			prop = DependencyPropertyDescriptor.FromProperty(InnerPaddingProperty, this.GetType());
@@ -214,6 +219,13 @@ namespace Polyhedrus.UI
 			private set { _path4 = value; NotifyChange(() => Path4); }
 		}
 
+		private void Announce(bool timeout)
+		{
+			var parentView = SynthModuleView.FindParentSynthModule(this);
+			var caption = (parentView != null) ? parentView.ModuleId.GetName() + " " + Caption : Caption;
+			this.SendAnnouncement(caption, valueFormatter(Value), timeout);
+		}
+
 		private void Update()
 		{
 			var delta = (Value - Min) / (Max - Min);
@@ -322,6 +334,8 @@ namespace Polyhedrus.UI
 
 		private void OnMouseMove(object sender, MouseEventArgs e)
 		{
+			Announce(true);
+
 			if (Mouse.LeftButton == MouseButtonState.Released)
 			{
 				Selected = false;
