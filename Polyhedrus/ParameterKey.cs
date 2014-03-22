@@ -32,7 +32,7 @@ namespace Polyhedrus
 
 		public override bool Equals(object obj)
 		{
-			return (obj.GetType() == typeof(ParameterKey)) && Key == ((ParameterKey)obj).Key;
+			return (obj is ParameterKey) && Key == ((ParameterKey)obj).Key;
 		}
 
 		public override string ToString()

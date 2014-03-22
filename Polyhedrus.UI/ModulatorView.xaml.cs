@@ -4,18 +4,8 @@ using Polyhedrus.Parameters;
 using Polyhedrus.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Polyhedrus.UI
 {
@@ -35,7 +25,7 @@ namespace Polyhedrus.UI
 
 		public ModulatorView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Waveforms = Ctrl.LFOWaves.Select(x => new ListItem<LFO.Wave>(x.Key, x.Value)).ToArray();
+			Waveforms = LFO.WaveNames.Select(x => new ListItem<LFO.Wave>(x.Key, x.Value)).ToArray();
 
 			InitializeComponent();
 			KnobDelay.ValueFormatter = Utils.Formatters.FormatEnvelope;
@@ -47,24 +37,14 @@ namespace Polyhedrus.UI
 			KnobFreq.ValueFormatter = FreqFormatter;
 		}
 
-		string FreqFormatter(double val)
+		private static string FreqFormatter(double val)
 		{
-			double value = ValueTables.Get(val, ValueTables.Response3Dec) * 50;
-			return String.Format("{0:0.00}", value);
+			var value = ValueTables.Get(val, ValueTables.Response3Dec) * 50;
+			return String.Format(CultureInfo.InvariantCulture, "{0:0.00} Hz", value);
 		}
 
-		IEnumerable<ListItem<LFO.Wave>> _waveforms;
-		public IEnumerable<ListItem<LFO.Wave>> Waveforms
-		{
-			get { return _waveforms; }
-			set
-			{
-				_waveforms = value;
-				NotifyChange(() => Waveforms);
-			}
-		}
+		public IEnumerable<ListItem<LFO.Wave>> Waveforms { get; set; }
 
-		ListItem<LFO.Wave> _selectedWaveform;
 		public ListItem<LFO.Wave> SelectedWaveform
 		{
 			get 
@@ -74,7 +54,6 @@ namespace Polyhedrus.UI
 			}
 			set
 			{
-				_selectedWaveform = value;
 				Ctrl.SetParameter(ModuleId, ModulatorParams.Wave, value.Value);
 				NotifyChange(() => SelectedWaveform);
 				NotifyChange(() => WaveformData);
@@ -155,10 +134,15 @@ namespace Polyhedrus.UI
 
 		public double Frequency
 		{
-			get { return (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Frequency); }
+			get
+			{ 
+				var actual = (double)Ctrl.GetParameter(ModuleId, ModulatorParams.Frequency);
+				return ValueTables.FindIndex(actual / 50, ValueTables.Response3Dec);
+			}
 			set
 			{
-				Ctrl.SetParameter(ModuleId, ModulatorParams.Frequency, value);
+				var val = ValueTables.Get((double)value, ValueTables.Response3Dec) * 50;
+				Ctrl.SetParameter(ModuleId, ModulatorParams.Frequency, val);
 				NotifyChange(() => Frequency);
 			}
 		}

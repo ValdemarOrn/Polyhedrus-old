@@ -53,13 +53,23 @@ namespace Polyhedrus.UI
 		public static readonly DependencyProperty TitleVisibilityProperty =
 			DependencyProperty.Register("TitleVisibility", typeof(Visibility), typeof(ModuleControl), new PropertyMetadata(Visibility.Visible));
 
+		public static readonly DependencyProperty AvailableOptionsProperty =
+			DependencyProperty.Register("AvailableOptions", typeof(ObservableCollection<string>), typeof(ModuleControl), new PropertyMetadata(null));
+
+		public static readonly DependencyProperty SelectedOptionProperty =
+			DependencyProperty.Register("SelectedOption", typeof(string), typeof(ModuleControl), new PropertyMetadata(null));
+
 		public ModuleControl()
 		{
 			InitializeComponent();
 
 			var prop = DependencyPropertyDescriptor.FromProperty(PanelsProperty, this.GetType());
 			prop.AddValueChanged(this, (s, e) => 
-				NotifyChange(() => Panel));
+			{
+				Panels.CollectionChanged += (a, b) => 
+					NotifyChange(() => Panel);
+				NotifyChange(() => Panel);
+			});
 
 			prop = DependencyPropertyDescriptor.FromProperty(SelectorsProperty, this.GetType());
 
@@ -108,6 +118,18 @@ namespace Polyhedrus.UI
 		{
 			get { return (Visibility)GetValue(TitleVisibilityProperty); }
 			set { SetValue(TitleVisibilityProperty, value); }
+		}
+
+		public ObservableCollection<string> AvailableOptions
+		{
+			get { return (ObservableCollection<string>)GetValue(AvailableOptionsProperty); }
+			set { SetValue(AvailableOptionsProperty, value); }
+		}
+
+		public string SelectedOption
+		{
+			get { return (string)GetValue(SelectedOptionProperty); }
+			set { SetValue(SelectedOptionProperty, value); }
 		}
 
 		public string Title

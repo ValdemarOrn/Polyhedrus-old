@@ -7,7 +7,8 @@ namespace Polyhedrus.Modules
 {
 	public sealed class InsRedux : IInsEffect
 	{
-		public double[] OutputBuffer { get { return OutputBuffer; } }
+		public double Samplerate { get; set; }
+		public double[] OutputBuffer { get { return Output; } }
 		public double[] Parameters { get; private set; }
 
 		private int Redux { get { return (int)(Parameters[0] + 0.001); } }
@@ -19,6 +20,7 @@ namespace Polyhedrus.Modules
 
 		public InsRedux(double samplerate, int bufferSize)
 		{
+			Samplerate = samplerate;
 			Parameters = new double[2];
 			Output = new double[bufferSize];
 			Parameters[0] = 1;

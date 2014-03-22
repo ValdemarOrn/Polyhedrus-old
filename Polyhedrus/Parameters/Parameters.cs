@@ -7,13 +7,16 @@ namespace Polyhedrus.Parameters
 {
 	public enum OscParams
 	{
-		Octave = 1,
+		Note = 1,
+		Octave,
 		Semi,
 		Cent,
+		Modulation,
 		Position,
 		Phase,
 		Volume,
 		FreePhase,
+		Wavetable
 	}
 
 	public enum FilterParams
@@ -123,9 +126,7 @@ namespace Polyhedrus.Parameters
 
 	public enum SettingsParams
 	{
-		Volume = 1,
-		Pan,
-		Stereo,
+		Stereo = 1,
 		Unison,
 		Voices,
 		UnisonSpread,

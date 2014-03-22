@@ -11,16 +11,18 @@ namespace Polyhedrus
 {
 	public sealed class Voice
 	{
-		const int Bufsize = 16;
+		public const int Bufsize = 16;
 		object lockObject = new object();
 
 		public bool IsActive;
 		public long TriggerIndex;
 		public int Note;
 
+		public Dictionary<ModuleId, object> Modules { get; private set; }
+
 		// ---------------------------- Synth Parts ----------------------------
 
-		public BLOsc Osc1, Osc2, Osc3, Osc4;
+		public IOscillator Osc1, Osc2, Osc3, Osc4;
 		public IInsEffect Ins1, Ins2;
 		public CascadeFilter Filter1, Filter2;
 		public Ahdsr AmpEnv, Filter1Env, Filter2Env;
@@ -29,38 +31,40 @@ namespace Polyhedrus
 		public ModMatrix ModMatrix;
 		public Mixer Mixer;
 
-		public Dictionary<ModuleId, object> ModuleMap;
+		
 		public double[][] OutputBuffer;
 		// ----------------------------Voice Specific Parameters ----------------------------
 
-		double[] AmpEnvBuffer, Filter1EnvBuffer, Filter2EnvBuffer;
-		double[] Path1Buffer, Path2Buffer;
-		double[] ProcessBuffer;
+		double[] ampEnvBuffer, filter1EnvBuffer, filter2EnvBuffer;
+		double[] path1Buffer, path2Buffer;
+		double[] processBuffer;
 
 		public Voice()
 		{
-			double samplerate = 48000;
+			const double samplerate = 48000.0;
 
-			AmpEnvBuffer = new double[Bufsize];
-			Filter1EnvBuffer = new double[Bufsize];
-			Filter2EnvBuffer = new double[Bufsize];
+			ampEnvBuffer = new double[Bufsize];
+			filter1EnvBuffer = new double[Bufsize];
+			filter2EnvBuffer = new double[Bufsize];
 			
-			Path1Buffer = new double[Bufsize];
-			Path2Buffer = new double[Bufsize];
-			ProcessBuffer = new double[Bufsize];
+			path1Buffer = new double[Bufsize];
+			path2Buffer = new double[Bufsize];
+			processBuffer = new double[Bufsize];
 			OutputBuffer = new double[2][];
 			OutputBuffer[0] = new double[48000];
 			OutputBuffer[1] = new double[48000];
 
-			ModuleMap = new Dictionary<ModuleId, object>();
+			Modules = new Dictionary<ModuleId, object>();
 
-			Osc1 = new BLOsc(samplerate, Bufsize);
-			Osc2 = new BLOsc(samplerate, Bufsize);
-			Osc3 = new BLOsc(samplerate, Bufsize);
-			Osc4 = new BLOsc(samplerate, Bufsize);
+			Osc1 = new BlOsc(samplerate, Bufsize);
+			Osc2 = new BlOsc(samplerate, Bufsize);
+			Osc3 = new BlOsc(samplerate, Bufsize);
+			Osc4 = new BlOsc(samplerate, Bufsize);
 
-			Ins1 = new InsRedux(samplerate, Bufsize);
-			Ins2 = new InsRedux(samplerate, Bufsize);
+			//Ins1 = new InsRedux(samplerate, Bufsize);
+			//Ins2 = new InsRedux(samplerate, Bufsize);
+			Ins1 = new InsDistortion(samplerate, Bufsize);
+			Ins2 = new InsDistortion(samplerate, Bufsize);
 
 			Filter1 = new CascadeFilter(samplerate, Bufsize);
 			Filter2 = new CascadeFilter(samplerate, Bufsize);
@@ -77,15 +81,11 @@ namespace Polyhedrus
 			Mod6 = new Modulator(samplerate);
 
 			MidiInput = new MidiInput();
-			ModMatrix = new Modules.ModMatrix(this);
-			Mixer = new Modules.Mixer();
+			ModMatrix = new ModMatrix(this);
+			Mixer = new Mixer();
 
-			RegisterModules();
+			RefreshModuleObjects();
 
-			Osc1.UpdateStepsize();
-			Osc2.UpdateStepsize();
-			Osc3.UpdateStepsize();
-			Osc4.UpdateStepsize();
 			Filter1.UpdateCoefficients();
 			Filter2.UpdateCoefficients();
 			Mod1.UpdateStepsize();
@@ -97,32 +97,27 @@ namespace Polyhedrus
 			Mixer.Update();
 		}
 
-		public BLOsc GetOsc(ModuleId module)
+		public void RefreshModuleObjects()
 		{
-			return ModuleMap[module] as BLOsc;
-		}
-
-		private void RegisterModules()
-		{
-			ModuleMap[ModuleId.Osc1] = Osc1;
-			ModuleMap[ModuleId.Osc2] = Osc2;
-			ModuleMap[ModuleId.Osc3] = Osc3;
-			ModuleMap[ModuleId.Osc4] = Osc4;
-			ModuleMap[ModuleId.Insert1] = Ins1;
-			ModuleMap[ModuleId.Insert2] = Ins2;
-			ModuleMap[ModuleId.Filter1] = Filter1;
-			ModuleMap[ModuleId.Filter2] = Filter2;
-			ModuleMap[ModuleId.AmpEnv] = AmpEnv;
-			ModuleMap[ModuleId.Filter1Env] = Filter1Env;
-			ModuleMap[ModuleId.Filter2Env] = Filter2Env;
-			ModuleMap[ModuleId.Modulator1] = Mod1;
-			ModuleMap[ModuleId.Modulator2] = Mod2;
-			ModuleMap[ModuleId.Modulator3] = Mod3;
-			ModuleMap[ModuleId.Modulator4] = Mod4;
-			ModuleMap[ModuleId.Modulator5] = Mod5;
-			ModuleMap[ModuleId.Modulator6] = Mod6;
-			ModuleMap[ModuleId.ModMatrix] = ModMatrix;
-			ModuleMap[ModuleId.Mixer] = Mixer;
+			Modules[ModuleId.Osc1] = Osc1;
+			Modules[ModuleId.Osc2] = Osc2;
+			Modules[ModuleId.Osc3] = Osc3;
+			Modules[ModuleId.Osc4] = Osc4;
+			Modules[ModuleId.Insert1] = Ins1;
+			Modules[ModuleId.Insert2] = Ins2;
+			Modules[ModuleId.Filter1] = Filter1;
+			Modules[ModuleId.Filter2] = Filter2;
+			Modules[ModuleId.AmpEnv] = AmpEnv;
+			Modules[ModuleId.Filter1Env] = Filter1Env;
+			Modules[ModuleId.Filter2Env] = Filter2Env;
+			Modules[ModuleId.Modulator1] = Mod1;
+			Modules[ModuleId.Modulator2] = Mod2;
+			Modules[ModuleId.Modulator3] = Mod3;
+			Modules[ModuleId.Modulator4] = Mod4;
+			Modules[ModuleId.Modulator5] = Mod5;
+			Modules[ModuleId.Modulator6] = Mod6;
+			Modules[ModuleId.ModMatrix] = ModMatrix;
+			Modules[ModuleId.Mixer] = Mixer;
 		}
 
 		public void ResetEnvelopes()
@@ -144,16 +139,10 @@ namespace Polyhedrus
 
 			Note = note;
 			MidiInput.Note = note;
-			Osc1.Note = note;
-			Osc2.Note = note;
-			Osc3.Note = note;
-			Osc4.Note = note;
-
-			Osc1.UpdateStepsize();
-			Osc2.UpdateStepsize();
-			Osc3.UpdateStepsize();
-			Osc4.UpdateStepsize();
-
+			Osc1.SetParameter(OscParams.Note, note);
+			Osc2.SetParameter(OscParams.Note, note);
+			Osc3.SetParameter(OscParams.Note, note);
+			Osc4.SetParameter(OscParams.Note, note);
 			SetGate(true);
 		}
 
@@ -161,6 +150,21 @@ namespace Polyhedrus
 		{
 			MidiInput.ReleaseVelocity = releaseVelocity / 127.0;
 			SetGate(false);
+		}
+
+		public void SetSamplerate(double samplerate)
+		{
+			Osc1.Samplerate = samplerate;
+			Osc2.Samplerate = samplerate;
+			Osc3.Samplerate = samplerate;
+			Osc4.Samplerate = samplerate;
+			Ins1.Samplerate = samplerate;
+			Ins2.Samplerate = samplerate;
+			Filter1.Samplerate = samplerate;
+			Filter2.Samplerate = samplerate;
+			AmpEnv.Samplerate = samplerate;
+			Filter1Env.Samplerate = samplerate;
+			Filter2Env.Samplerate = samplerate;
 		}
 
 		void SetGate(bool gate)
@@ -253,9 +257,9 @@ namespace Polyhedrus
 					var f2Env = ModMatrix.Filter2EnvMod;
 					for (int n = 0; n < Bufsize; n++)
 					{
-						AmpEnvBuffer[n] = AmpEnv.Process(1);
-						Filter1EnvBuffer[n] = Filter1Env.Process(1) * f1Env;
-						Filter2EnvBuffer[n] = Filter2Env.Process(1) * f2Env;
+						ampEnvBuffer[n] = AmpEnv.Process(1);
+						filter1EnvBuffer[n] = Filter1Env.Process(1) * f1Env;
+						filter2EnvBuffer[n] = Filter2Env.Process(1) * f2Env;
 					}
 
 					// Process modulation
@@ -274,30 +278,30 @@ namespace Polyhedrus
 
 					for(int n = 0; n < Bufsize; n++)
 					{
-						Path1Buffer[n] =  Osc1.OutputBuffer[n] * Mixer.Osc1Vol * (1.0 - Mixer.Osc1Mix)
+						path1Buffer[n] =  Osc1.OutputBuffer[n] * Mixer.Osc1Vol * (1.0 - Mixer.Osc1Mix)
 										+ Osc2.OutputBuffer[n] * Mixer.Osc2Vol * (1.0 - Mixer.Osc2Mix)
 										+ Osc3.OutputBuffer[n] * Mixer.Osc3Vol * (1.0 - Mixer.Osc3Mix) 
 										+ Osc4.OutputBuffer[n] * Mixer.Osc4Vol * (1.0 - Mixer.Osc4Mix);
 
-						Path2Buffer[n] =  Osc1.OutputBuffer[n] * Mixer.Osc1Vol * Mixer.Osc1Mix
+						path2Buffer[n] =  Osc1.OutputBuffer[n] * Mixer.Osc1Vol * Mixer.Osc1Mix
 										+ Osc2.OutputBuffer[n] * Mixer.Osc2Vol * Mixer.Osc2Mix
 										+ Osc3.OutputBuffer[n] * Mixer.Osc3Vol * Mixer.Osc3Mix
 										+ Osc4.OutputBuffer[n] * Mixer.Osc4Vol * Mixer.Osc4Mix;
 					}
 
-					Path1Buffer = Ins1.Process(Path1Buffer);
-					Path2Buffer = Ins2.Process(Path2Buffer);
+					path1Buffer = Ins1.Process(path1Buffer);
+					path2Buffer = Ins2.Process(path2Buffer);
 
-					Filter1.Process(Path1Buffer, Filter1EnvBuffer);
-					Filter2.Process(Path2Buffer, Filter2EnvBuffer);
+					Filter1.Process(path1Buffer, filter1EnvBuffer);
+					Filter2.Process(path2Buffer, filter2EnvBuffer);
 
 					for (int n = 0; n < Bufsize; n++)
 					{
-						ProcessBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
-						ProcessBuffer[n] *= Mixer.OutputVolume * AmpEnvBuffer[n];
+						processBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
+						processBuffer[n] *= Mixer.OutputVolume * ampEnvBuffer[n];
 
-						OutputBuffer[0][i + n] = ProcessBuffer[n];
-						OutputBuffer[1][i + n] = ProcessBuffer[n];
+						OutputBuffer[0][i + n] = processBuffer[n];
+						OutputBuffer[1][i + n] = processBuffer[n];
 					}
 				}
 			}
@@ -310,38 +314,24 @@ namespace Polyhedrus
 				switch (module)
 				{
 					case ModuleId.Osc1:
-						SetParameterOsc(module, parameter, value);
-						break;
 					case ModuleId.Osc2:
-						SetParameterOsc(module, parameter, value);
-						break;
 					case ModuleId.Osc3:
-						SetParameterOsc(module, parameter, value);
-						break;
 					case ModuleId.Osc4:
 						SetParameterOsc(module, parameter, value);
 						break;
 
 					case ModuleId.Insert1:
-						SetParameterInsert(module, parameter, value);
-						break;
 					case ModuleId.Insert2:
 						SetParameterInsert(module, parameter, value);
 						break;
 
 					case ModuleId.Filter1:
-						SetParameterFilter(module, parameter, value);
-						break;
 					case ModuleId.Filter2:
 						SetParameterFilter(module, parameter, value);
 						break;
 
 					case ModuleId.AmpEnv:
-						SetParameterEnv(module, parameter, value);
-						break;
 					case ModuleId.Filter1Env:
-						SetParameterEnv(module, parameter, value);
-						break;
 					case ModuleId.Filter2Env:
 						SetParameterEnv(module, parameter, value);
 						break;
@@ -351,20 +341,10 @@ namespace Polyhedrus
 						break;
 
 					case ModuleId.Modulator1:
-						SetParameterModulator(module, parameter, value);
-						break;
 					case ModuleId.Modulator2:
-						SetParameterModulator(module, parameter, value);
-						break;
 					case ModuleId.Modulator3:
-						SetParameterModulator(module, parameter, value);
-						break;
 					case ModuleId.Modulator4:
-						SetParameterModulator(module, parameter, value);
-						break;
 					case ModuleId.Modulator5:
-						SetParameterModulator(module, parameter, value);
-						break;
 					case ModuleId.Modulator6:
 						SetParameterModulator(module, parameter, value);
 						break;
@@ -378,53 +358,44 @@ namespace Polyhedrus
 
 		private void SetParameterOsc(ModuleId module, Enum parameter, object value)
 		{
-			BLOsc osc = ModuleMap[module] as BLOsc;
-			OscParams para = (OscParams)parameter;
-			double val = Convert.ToDouble(value);
+			var osc = (IOscillator)Modules[module];
+			var para = (OscParams)parameter;
 
 			switch (para)
 			{
 				case OscParams.Octave:
-					osc.Octave = (int)val;
-					break;
 				case OscParams.Semi:
-					osc.Semi = (int)val;
-					break;
 				case OscParams.Cent:
-					osc.Cent = (int)val;
-					break;
 				case OscParams.Position:
-					osc.TablePosition = (double)val;
-					break;
 				case OscParams.Phase:
-					// Todo
+				case OscParams.Wavetable:
+				case OscParams.FreePhase:
+					osc.SetParameter(para, value);
 					break;
 				case OscParams.Volume:
 					switch(module)
 					{
 						case ModuleId.Osc1:
-							Mixer.Osc1VolParam = val;
+							Mixer.Osc1VolParam = Convert.ToDouble(value);
 							break;
 						case ModuleId.Osc2:
-							Mixer.Osc2VolParam = val;
+							Mixer.Osc2VolParam = Convert.ToDouble(value);
 							break;
 						case ModuleId.Osc3:
-							Mixer.Osc3VolParam = val;
+							Mixer.Osc3VolParam = Convert.ToDouble(value);
 							break;
 						case ModuleId.Osc4:
-							Mixer.Osc4VolParam = val;
+							Mixer.Osc4VolParam = Convert.ToDouble(value);
 							break;
 					}
 					Mixer.Update();
 					break;
 			}
-
-			osc.UpdateStepsize();
 		}
 
 		private void SetParameterInsert(ModuleId module, Enum parameter, object value)
 		{
-			var insEffect = ModuleMap[module] as IInsEffect;
+			var insEffect = (IInsEffect)Modules[module];
 			var para = (InsertParams)parameter;
 			double val = Convert.ToDouble(value);
 			var index = (int)para - 1;
@@ -437,8 +408,8 @@ namespace Polyhedrus
 
 		private void SetParameterFilter(ModuleId module, Enum parameter, object value)
 		{
-			var filter = ModuleMap[module] as CascadeFilter;
-			FilterParams para = (FilterParams)parameter;
+			var filter = (CascadeFilter)Modules[module];
+			var para = (FilterParams)parameter;
 			double val = Convert.ToDouble(value);
 
 			switch (para)
@@ -480,8 +451,8 @@ namespace Polyhedrus
 
 		private void SetParameterEnv(ModuleId module, Enum parameter, object value)
 		{
-			var env = ModuleMap[module] as Ahdsr;
-			EnvParams para = (EnvParams)parameter;
+			var env = (Ahdsr)Modules[module];
+			var para = (EnvParams)parameter;
 			double val = Convert.ToDouble(value);
 
 			if(para != EnvParams.Sustain) // 2ms - 20sec range
@@ -545,14 +516,11 @@ namespace Polyhedrus
 
 		private void SetParameterModulator(ModuleId module, Enum parameter, object value)
 		{
-			var mod = ModuleMap[module] as Modulator;
-			ModulatorParams para = (ModulatorParams)parameter;
+			var mod = (Modulator)Modules[module];
+			var para = (ModulatorParams)parameter;
 
 			if (para == ModulatorParams.Attack || para == ModulatorParams.Hold || para == ModulatorParams.Decay || para == ModulatorParams.Release || para == ModulatorParams.Delay) // 2ms - 20sec range
 				value = ValueTables.Get((double)value, ValueTables.Response4Dec) * 20000;
-			
-			if(para == ModulatorParams.Frequency)
-				value = ValueTables.Get((double)value, ValueTables.Response3Dec) * 50;
 
 			mod.SetParameter(para, value);
 			mod.UpdateStepsize();
@@ -560,8 +528,8 @@ namespace Polyhedrus
 
 		private void SetParameterModMatrix(ModuleId module, Enum parameter, object value)
 		{
-			ModMatrixParams para = (ModMatrixParams)parameter;
-			ModRoute route = (ModRoute)value;
+			var para = (ModMatrixParams)parameter;
+			var route = (ModRoute)value;
 
 			ModMatrix.UpdateRoute(route);
 		}

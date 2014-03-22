@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Polyhedrus.Parameters;
 
 namespace Polyhedrus.Modules
 {
@@ -248,8 +249,7 @@ namespace Polyhedrus.Modules
 					UpdateMixer = true;
 					break;
 				case ModDestination.Osc1Pitch:
-					Voice.Osc1.Modulation = value;
-					Voice.Osc1.UpdateStepsize();
+					Voice.Osc1.SetParameter(OscParams.Modulation, value);
 					break;
 				case ModDestination.Osc1Vol:
 					Voice.Mixer.Osc1VolModulation = value;
@@ -259,8 +259,7 @@ namespace Polyhedrus.Modules
 					// Add route
 					break;
 				case ModDestination.Osc2Pitch:
-					Voice.Osc2.Modulation = value;
-					Voice.Osc2.UpdateStepsize();
+					Voice.Osc2.SetParameter(OscParams.Modulation, value);
 					break;
 				case ModDestination.Osc2Vol:
 					Voice.Mixer.Osc2VolModulation = value;
@@ -270,8 +269,7 @@ namespace Polyhedrus.Modules
 					// Add route
 					break;
 				case ModDestination.Osc3Pitch:
-					Voice.Osc3.Modulation = value;
-					Voice.Osc3.UpdateStepsize();
+					Voice.Osc3.SetParameter(OscParams.Modulation, value);
 					break;
 				case ModDestination.Osc3Vol:
 					Voice.Mixer.Osc3VolModulation = value;
@@ -281,8 +279,7 @@ namespace Polyhedrus.Modules
 					// Add route
 					break;
 				case ModDestination.Osc4Pitch:
-					Voice.Osc4.Modulation = value;
-					Voice.Osc4.UpdateStepsize();
+					Voice.Osc4.SetParameter(OscParams.Modulation, value);
 					break;
 				case ModDestination.Osc4Vol:
 					Voice.Mixer.Osc4VolModulation = value;

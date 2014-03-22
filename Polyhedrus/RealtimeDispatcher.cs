@@ -8,13 +8,13 @@ namespace Polyhedrus
 {
 	public class RealtimeDispatcher<T> : IDisposable
 	{
-		ManualResetEvent WorkCompleted;
-		Semaphore Sema;
-		Thread[] WorkerThreads;
-		Action<T> Action;
-		Queue<T> WorkItems;
-		volatile int QueueLength;
-		volatile bool Stopping;
+		ManualResetEvent workCompleted;
+		Semaphore sema;
+		Thread[] workerThreads;
+		Action<T> action;
+		Queue<T> workItems;
+		int queueLength;
+		volatile bool stopping;
 
 		public int NumberOfWorkers { get; private set; }
 		public int MaxQueueSize { get; private set; }
@@ -22,102 +22,102 @@ namespace Polyhedrus
 
 		public RealtimeDispatcher(int numberOfWorkers, int maxQueueSize, ThreadPriority workerPriority, Action<T> action)
 		{
-			WorkCompleted = new ManualResetEvent(false);
-			Sema = new Semaphore(0, maxQueueSize);
-			Action = action;
-			WorkItems = new Queue<T>(maxQueueSize);
+			workCompleted = new ManualResetEvent(false);
+			sema = new Semaphore(0, maxQueueSize);
+			this.action = action;
+			workItems = new Queue<T>(maxQueueSize);
 			NumberOfWorkers = numberOfWorkers;
 			MaxQueueSize = maxQueueSize;
 			WorkerPriority = workerPriority;
-			Stopping = true;
+			stopping = true;
 
 			Start();
 		}
 
 		public void QueueWorkItems(T[] items)
 		{
-			lock (WorkItems)
+			lock (workItems)
 			{
-				WorkCompleted.Reset();
+				workCompleted.Reset();
 
 				for (int i = 0; i < items.Length; i++)
 				{
-					QueueLength++;
-					WorkItems.Enqueue(items[i]);	
-					Sema.Release();
+					Interlocked.Add(ref queueLength, 1);
+					workItems.Enqueue(items[i]);	
+					sema.Release();
 				}
 			}
 		}
 
 		public void QueueWorkItem(T item)
 		{
-			lock (WorkItems)
+			lock (workItems)
 			{
-				WorkCompleted.Reset();
+				workCompleted.Reset();
 
-				QueueLength++;
-				WorkItems.Enqueue(item);
-				Sema.Release();
+				Interlocked.Add(ref queueLength, 1);
+				workItems.Enqueue(item);
+				sema.Release();
 			}
 		}
 
 		private void WorkLoop()
 		{
-			while (!Stopping)
+			while (!stopping)
 			{
-				Sema.WaitOne();
+				sema.WaitOne();
 
-				if (Stopping)
+				if (stopping)
 					return;
 
 				T item;
 
-				lock (WorkItems)
+				lock (workItems)
 				{
-					item = WorkItems.Dequeue();
+					item = workItems.Dequeue();
 				}
 				
-				Action(item);
+				action(item);
 
-				int len = Interlocked.Add(ref QueueLength, -1);
+				int len = Interlocked.Add(ref queueLength, -1);
 				if (len == 0)
-					WorkCompleted.Set();
+					workCompleted.Set();
 			}
 		}
 
 		public void Start()
 		{
-			if (!Stopping)
+			if (!stopping)
 				return;
 
-			Stopping = false;
+			stopping = false;
 
-			WorkerThreads = Enumerable
+			workerThreads = Enumerable
 				.Range(0, NumberOfWorkers)
 				.Select(x => new Thread(WorkLoop) { Priority = WorkerPriority })
 				.ToArray();
 
-			foreach (var thread in WorkerThreads)
+			foreach (var thread in workerThreads)
 				thread.Start();
 		}
 
 		public void Stop()
 		{
-			if (Stopping)
+			if (stopping)
 				return;
 
-			Stopping = true;
+			stopping = true;
 
-			for (int i = 0; i < WorkerThreads.Length; i++)
-				Sema.Release();
+			for (int i = 0; i < workerThreads.Length; i++)
+				sema.Release();
 
-			while (WorkerThreads.Any(x => x.ThreadState != ThreadState.Stopped))
+			while (workerThreads.Any(x => x.ThreadState != ThreadState.Stopped))
 				Thread.Sleep(1);
 		}
 
 		public void WaitAll()
 		{
-			WorkCompleted.WaitOne();
+			workCompleted.WaitOne();
 		}
 
 		public void Dispose()

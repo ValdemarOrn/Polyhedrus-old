@@ -4,11 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using LowProfile.Fourier.Double;
 
 namespace Polyhedrus.WT
 {
 	public static class WavetableContext
 	{
+		public const int WaveSize = 2048;
+
+		public static Dictionary<string, double[][][]> wavetables = new Dictionary<string, double[][][]>();
+
 		// Wavetable note and partial data
 		public static int[] PartialsCount = new int[128];
 		public static int[] WavetableNoteIndex = new int[128];
@@ -17,7 +22,7 @@ namespace Polyhedrus.WT
 
 		// Wavetable file and folder data
 		public static string TableDirectory { get; private set; }
-		public static Dictionary<string, string> AvailableWavetables { get; private set; }
+		public static Dictionary<string, string> WavetableFiles { get; private set; }
 
 		/// <summary>
 		/// Generates any missing wavetable files using IWavetable classes. 
@@ -26,12 +31,11 @@ namespace Polyhedrus.WT
 		public static void SetupWavetables()
 		{
 			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			path = Path.Combine(path, "Polyhedrus\\Wavetables");
+			path = Path.Combine(path, "Polyhedrus", "Wavetables");
 			Directory.CreateDirectory(path);
 			TableDirectory = path;
 
 			// Create waves if they are missing
-
 			Assembly
 				.GetExecutingAssembly()
 				.GetExportedTypes()
@@ -46,7 +50,7 @@ namespace Polyhedrus.WT
 						x.WriteFile(filename);
 				});
 
-			AvailableWavetables = Directory.GetFiles(TableDirectory)
+			WavetableFiles = Directory.GetFiles(TableDirectory)
 				.Where(x => x.ToLower().EndsWith(".wt.gz"))
 				.ToDictionary(x =>
 				{
@@ -63,10 +67,9 @@ namespace Polyhedrus.WT
 		public static void CalculateIndexes(double samplerate)
 		{
 			var nyquist = samplerate * 0.5;
-			int i = 0;
 			int firstReduction = -1;
 
-			for (i = 0; i < 128; i++)
+			for (var i = 0; i < 128; i++)
 			{
 				var hz = 440 * Math.Pow(2, (i - 69) / 12.0);
 				int maxParts = (int)(nyquist / hz);
@@ -81,7 +84,7 @@ namespace Polyhedrus.WT
 			}
 
 			// break notes into groups of 4
-			for (i = firstReduction + 3; i < 128 - 4; i += 4)
+			for (var i = firstReduction + 3; i < 128 - 4; i += 4)
 			{
 				PartialsCount[i - 3] = PartialsCount[i];
 				PartialsCount[i - 2] = PartialsCount[i];
@@ -90,7 +93,7 @@ namespace Polyhedrus.WT
 
 			int index = 0;
 			// calculate note indexes
-			for (i = 1; i < 128; i++)
+			for (var i = 1; i < 128; i++)
 			{
 				if (PartialsCount[i - 1] != PartialsCount[i])
 					index++;
@@ -100,6 +103,54 @@ namespace Polyhedrus.WT
 
 			PartialsPerWave = PartialsCount.Distinct().ToArray();
 			PartialsTableCount = PartialsPerWave.Length;
+		}
+
+		public static double[][][] TransformWavetable(double[][] wavetable)
+		{
+			var waveCount = wavetable.Length;
+			var newWavetable = new double[waveCount][][];
+			if (wavetable.Any(x => x.Length != WaveSize))
+				throw new Exception("Wave length must be " + WaveSize);
+
+			var trans = new TransformNative(WaveSize);
+
+			for (var w = 0; w < waveCount; w++)
+			{
+				newWavetable[w] = new double[PartialsTableCount][];
+				var baseWave = wavetable[w];
+
+				var complexIn = baseWave.Select(x => new Complex(x, 0)).ToArray();
+				var fft = new Complex[complexIn.Length];
+				var ifft = new Complex[fft.Length];
+				trans.FFT(complexIn, fft);
+
+				for (var i = 0; i < PartialsTableCount; i++)
+				{
+					var partials = PartialsPerWave[i];
+					for (var n = partials + 1; n < fft.Length - partials; n++)
+					{
+						fft[n].Real = 0;
+						fft[n].Imag = 0;
+					}
+
+					trans.IFFT(fft, ifft);
+					newWavetable[w][i] = ifft.Select(x => x.Real).ToArray();
+				}
+			}
+
+			return newWavetable;
+		}
+
+		public static double[][][] GetWavetable(string wavetableName)
+		{
+			// Todo: unused tables never get unloaded
+			if (wavetables.ContainsKey(wavetableName))
+				return wavetables[wavetableName];
+
+			var data = WavetableData.FromFile(WavetableFiles[wavetableName]);
+			var transformed = TransformWavetable(data.Data);
+			wavetables[wavetableName] = transformed;
+			return wavetables[wavetableName];
 		}
 	}
 }

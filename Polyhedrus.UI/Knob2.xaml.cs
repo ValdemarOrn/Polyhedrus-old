@@ -194,33 +194,33 @@ namespace Polyhedrus.UI
 			private set { brush3 = value; NotifyChange(() => Brush3); }
 		}
 
-		string _path1;
+		string path1;
 		public string Path1
 		{
 			//get { return "M 10,90 A 30,30 25 0 1 50,10"; }
-			get { return _path1; }
-			private set { _path1 = value; NotifyChange(() => Path1); }
+			get { return path1 ?? ""; }
+			private set { path1 = value; NotifyChange(() => Path1); }
 		}
 
-		string _path2;
+		string path2;
 		public string Path2
 		{
-			get { return _path2; }
-			private set { _path2 = value; NotifyChange(() => Path2); }
+			get { return path2 ?? ""; }
+			private set { path2 = value; NotifyChange(() => Path2); }
 		}
 
-		string _path3;
+		string path3;
 		public string Path3
 		{
-			get { return _path3; }
-			private set { _path3 = value; NotifyChange(() => Path3); }
+			get { return path3 ?? ""; }
+			private set { path3 = value; NotifyChange(() => Path3); }
 		}
 
-		string _path4;
+		string path4;
 		public string Path4
 		{
-			get { return _path4; }
-			private set { _path4 = value; NotifyChange(() => Path4); }
+			get { return path4 ?? ""; }
+			private set { path4 = value; NotifyChange(() => Path4); }
 		}
 
 		private void Announce(bool timeout)
@@ -232,12 +232,16 @@ namespace Polyhedrus.UI
 
 		private void Update()
 		{
-			var delta = (Value - Min) / (Max - Min);
-			var angle = delta * 360 * 0.75;
+			if (Value > Max)
+				Value = Max;
+			if (Value < Min)
+				Value = Min;
+
+			var state = (Value - Min) / (Max - Min);
+			var angle = state * 360 * 0.75;
 
 			var padding = InnerPadding + Thickness / 2;
 			var width = canvas.Width;
-			var height = canvas.Height;
 			var half = width / 2;
 			var radius = half - padding;
 
@@ -263,8 +267,8 @@ namespace Polyhedrus.UI
 
 			if (!Central)
 			{
-				var p1Large = delta > 2 / 3.0 ? "1" : "0";
-				var p2Large = delta < 1 / 3.0 ? "1" : "0";
+				var p1Large = state > 2 / 3.0 ? "1" : "0";
+				var p2Large = state < 1 / 3.0 ? "1" : "0";
 
 				Path1 = string.Format(CultureInfo.InvariantCulture, "M {0},{1} A {2},{2} {3} {6} 1 {4},{5}", startX, startY, radius, 135, mainX, mainY, p1Large);
 				Path2 = string.Format(CultureInfo.InvariantCulture, "M {0},{1} A {2},{2} {3} {6} 1 {4},{5}", mainX, mainY, radius, 135, endX, endY, p2Large);
@@ -273,7 +277,7 @@ namespace Polyhedrus.UI
 			}
 			else
 			{
-				if (delta <= 0.5)
+				if (state <= 0.5)
 				{
 					Path1 = string.Format(CultureInfo.InvariantCulture, "M {0},{1} A {2},{2} {3} 0 1 {4},{5}", startX, startY, radius, 135, mainX, mainY);
 					Path2 = string.Format(CultureInfo.InvariantCulture, "M {0},{1} A {2},{2} {3} 0 1 {4},{5}", mainX, mainY, radius, 135, midX, midY);

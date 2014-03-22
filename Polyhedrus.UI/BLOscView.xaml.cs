@@ -1,36 +1,24 @@
-﻿using Polyhedrus.Parameters;
+﻿using System.Linq;
+using Polyhedrus.Parameters;
 using Polyhedrus.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Polyhedrus.WT;
 
 namespace Polyhedrus.UI
 {
-	[ViewProviderFor(typeof(Modules.BLOsc))]
-	public partial class BLOscView : SynthModuleView
+	[ViewProviderFor(typeof(Modules.BlOsc))]
+	public partial class BlOscView : SynthModuleView
 	{
-		public BLOscView() : base(null, (ModuleId)0)
+		public BlOscView() : base(null, (ModuleId)0)
 		{
 			InitializeComponent();
 		}
 
-		public BLOscView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
+		public BlOscView(SynthController ctrl, ModuleId moduleId) : base(ctrl, moduleId)
 		{
-			Wavetables = Ctrl.Wavetables.ToArray();
-
 			InitializeComponent();
-
+			
 			KnobOctave.ValueFormatter = Formatter;
 			KnobSemi.ValueFormatter = Formatter;
 			KnobCent.ValueFormatter = Formatter;
@@ -41,38 +29,29 @@ namespace Polyhedrus.UI
 			return val.ToString("+0;-0");
 		}
 
-		IEnumerable<string> _wavetables;
 		public IEnumerable<string> Wavetables
 		{
-			get { return _wavetables; }
-			set
-			{
-				_wavetables = value;
-				NotifyChange(() => Wavetables);
-			}
+			get { return WavetableContext.WavetableFiles.Keys.ToArray(); }
 		}
 
-		string _selectedWavetable;
 		public string SelectedWavetable
 		{
 			get
 			{
-				return Ctrl.GetWavetable(ModuleId).Name;
+				return (string)Ctrl.GetParameter(ModuleId, OscParams.Wavetable);
 			}
 			set
 			{
-				_selectedWavetable = value;
-
 				new System.Threading.Thread(() =>
 				{
-					Ctrl.SetWavetable(ModuleId, value);
+					Ctrl.SetParameter(ModuleId, OscParams.Wavetable, value);
 					Action update = () =>
 					{
 						NotifyChange(() => SelectedWavetable);
 						NotifyChange(() => WavetableData);
 					};
 
-					this.Dispatcher.Invoke(update);
+					Dispatcher.Invoke(update);
 
 				}).Start();
 			}
@@ -80,13 +59,12 @@ namespace Polyhedrus.UI
 
 		public IEnumerable<double> WavetableData
 		{
-			get { return Ctrl.GetWavetable(ModuleId).Data[(int)Position]; }
+			get { return (WavetableContext.wavetables[SelectedWavetable])[(int)Position][0]; }
 		}
-	
 
 		public double Octave
 		{
-			get { return (double)(int)Ctrl.GetParameter(ModuleId, OscParams.Octave); }
+			get { return (int)Ctrl.GetParameter(ModuleId, OscParams.Octave); }
 			set 
 			{
 				Ctrl.SetParameter(ModuleId, OscParams.Octave, (int)value); 
@@ -96,7 +74,7 @@ namespace Polyhedrus.UI
 
 		public double Semi
 		{
-			get { return (double)(int)Ctrl.GetParameter(ModuleId, OscParams.Semi); }
+			get { return (int)Ctrl.GetParameter(ModuleId, OscParams.Semi); }
 			set 
 			{
 				Ctrl.SetParameter(ModuleId, OscParams.Semi, (int)value); 
@@ -106,7 +84,7 @@ namespace Polyhedrus.UI
 
 		public double Cent
 		{
-			get { return (double)(int)Ctrl.GetParameter(ModuleId, OscParams.Cent); }
+			get { return (int)Ctrl.GetParameter(ModuleId, OscParams.Cent); }
 			set 
 			{
 				Ctrl.SetParameter(ModuleId, OscParams.Cent, (int)value); 

@@ -25,6 +25,9 @@
                           Selectors="{Binding Path=InsertEffectSelectors}"
                           Titles="{Binding Path=InsertEffectNames, Mode=OneWay}"
                           Panels="{Binding Path=InsertEffectViews, Mode=OneWay}"
+                          SelectedIndex="{Binding Path=SelectedInsertEffect, Mode=TwoWay}"
+                          AvailableOptions="{Binding Path=InsertEffectOptions, Mode=OneWay}"
+                          SelectedOption="{Binding Path=SelectedInsertEffectOption, Mode=TwoWay}"
                           Width="268" Margin="384,145,0,0" />
 
         <UI:ModuleControl x:Name="FilterModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="154" Width="320" Margin="658,25,0,0" 

@@ -1,168 +1,141 @@
 ﻿using AudioLib;
-using LowProfile.Fourier.Double;
+using Polyhedrus.Parameters;
 using Polyhedrus.WT;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Polyhedrus.Modules
 {
-	public sealed class BLOsc
+	public sealed class BlOsc : IOscillator
 	{
-		public const int WaveSize = 2048;
+		private double fsInv;
+		private double samplerate;
+		
+		private double startPhase;
+		private int octave;
+		private int semi;
+		private int cent;
+		private int note;
+		private double modulation;
 
-		double _fsInv;
-		double _samplerate;
+		private double[][][] wavetable;
+		double tablePosition;
+		private int waveNumber;
+		private int tableA;
+		private int tableB;
+		private double tableMix;
+		private double accumulator;
+		private double stepsize;
+
+		private bool stepsizeDirty;
+
+		public BlOsc(double samplerate, int bufferSize)
+		{
+			OutputBuffer = new double[bufferSize];
+			Samplerate = samplerate;
+			accumulator = 0;
+		}
+
 		public double Samplerate
 		{
-			get { return _samplerate; }
+			get { return samplerate; }
 			set
 			{
-				_samplerate = value;
-				_fsInv = 1.0 / _samplerate;
+				samplerate = value;
+				fsInv = 1.0 / samplerate;
 				WavetableContext.CalculateIndexes(value);
 			}
 		}
 
-		public double[][][] Wavetable;
-		public double Output;
-		public double[] OutputBuffer;
-
-		public double StartPhase;
-		public int Octave;
-		public int Semi;
-		public int Cent;
-		public int Note;
-		public double Modulation;
-
-		private int WaveNumber;
-		private int TableA;
-		private int TableB;
-		private double TableMix;
-		private double Accumulator;
-		private double Stepsize;
-
-		public BLOsc(double samplerate, int bufferSize)
-		{
-			OutputBuffer = new double[bufferSize];
-			Samplerate = samplerate;
-			Accumulator = 0;
-		}
-
-		double _tablePosition;
+		public double[] OutputBuffer { get; set; }
+		
 		public double TablePosition
 		{
-			get { return _tablePosition; }
+			get { return tablePosition; }
 			set
 			{
-				_tablePosition = value;
-				TableA = (int)_tablePosition;
-				TableB = (int)(_tablePosition + 1);
-				TableMix = _tablePosition - (double)TableA;
+				tablePosition = value;
+				tableA = (int)tablePosition;
+				tableB = (int)(tablePosition + 1);
+				tableMix = tablePosition - tableA;
 			}
 		}
 
-		public int WaveCount { get; private set; }
+		public void SetParameter(OscParams parameter, object val)
+		{
+			switch (parameter)
+			{
+				case OscParams.Modulation:
+					modulation = (double)val;
+					break;
+				case OscParams.Note:
+					note = (int)val;
+					break;
+				case OscParams.Octave:
+					octave = (int)val;
+					break;
+				case OscParams.Semi:
+					semi = (int)val;
+					break;
+				case OscParams.Cent:
+					cent = (int)val;
+					break;
+				case OscParams.Position:
+					TablePosition = (double)val;
+					break;
+				case OscParams.Phase:
+					startPhase = (double)val;
+					break;
+				case OscParams.Wavetable:
+					wavetable = WavetableContext.GetWavetable((string)val);
+					break;
+			}
+			stepsizeDirty = true;
+		}
 
 		public void Reset()
 		{
-			Accumulator = StartPhase;
-		}
-
-		public void SetWave(double[][] wavetable)
-		{
-			var WaveCount = wavetable.Length;
-			var newWavetable = new double[WaveCount][][];
-			if(wavetable.Any(x => x.Length != WaveSize))
-				throw new Exception("Wave length must be 2048");
-
-			var trans = new TransformNative(WaveSize);
-
-			for (int w = 0; w < WaveCount; w++)
-			{
-				newWavetable[w] = new double[WavetableContext.PartialsTableCount][];
-				var baseWave = wavetable[w];
-
-				var complexIn = baseWave.Select(x => new Complex(x, 0)).ToArray();
-				var fft = new Complex[complexIn.Length];
-				var ifft = new Complex[fft.Length];
-				trans.FFT(complexIn, fft);
-
-				for (int i = 0; i < WavetableContext.PartialsTableCount; i++)
-				{
-					var partials = WavetableContext.PartialsPerWave[i];
-					for (int n = partials + 1; n < fft.Length - partials; n++)
-					{
-						fft[n].Real = 0;
-						fft[n].Imag = 0;
-					}
-
-					trans.IFFT(fft, ifft);
-					newWavetable[w][i] = ifft.Select(x => x.Real).ToArray();
-				}
-			}
-
-			// replace after we have created the new table, no interruption in sound
-			Wavetable = newWavetable;
-		}
-
-		public double Process()
-		{
-			if (Wavetable == null)
-				return 0.0;
-
-			double waveA = Interpolate(Wavetable[TableA][WaveNumber], Accumulator);
-			double waveB = Interpolate(Wavetable[TableB][WaveNumber], Accumulator);
-			var output = waveA * (1 - TableMix) + waveB * TableMix;
-			Accumulator += Stepsize;
-			if (Accumulator > 1)
-				Accumulator -= 1;
-
-			Output = output;
-			return output;
+			accumulator = startPhase;
 		}
 
 		public void Process(int sampleCount)
 		{
-			if (Wavetable == null)
+			if (stepsizeDirty)
+				UpdateStepsize();
+
+			if (wavetable == null)
 			{
-				for (int i = 0; i < sampleCount; i++)
+				for (var i = 0; i < sampleCount; i++)
 					OutputBuffer[i] = 0.0;
 				return;
 			}
 
-			for (int i = 0; i < sampleCount; i++)
+			for (var i = 0; i < sampleCount; i++)
 			{
-				double waveA = Interpolate(Wavetable[TableA][WaveNumber], Accumulator);
-				double waveB = Interpolate(Wavetable[TableB][WaveNumber], Accumulator);
-				var output = waveA * (1 - TableMix) + waveB * TableMix;
-				Accumulator += Stepsize;
-				if (Accumulator > 1)
-					Accumulator -= 1;
+				double waveA = Interpolate(wavetable[tableA][waveNumber], accumulator);
+				double waveB = Interpolate(wavetable[tableB][waveNumber], accumulator);
+				var output = waveA * (1 - tableMix) + waveB * tableMix;
+				accumulator += stepsize;
+				if (accumulator > 1)
+					accumulator -= 1;
 
 				OutputBuffer[i] = output;
 			}
 		}
 
-		public void UpdateStepsize()
+		private void UpdateStepsize()
 		{
-			double note = Note + Octave * 12 + Semi + Cent * 0.01 + Modulation * 24;
-			if (note > 127)
-				note = 127;
-			else if (note < 0)
-				note = 0;
+			double pitch = note + octave * 12 + semi + cent * 0.01 + modulation * 24;
+			if (pitch > 127) pitch = 127;
+			else if (pitch < 0) pitch = 0;
 
-			WaveNumber = WavetableContext.WavetableNoteIndex[(int)note];
-			var hz = AudioLib.Utils.Note2HzLookup(note);
-			double increment = hz * _fsInv;
-			Stepsize = increment;
+			waveNumber = WavetableContext.WavetableNoteIndex[(int)pitch];
+			var hz = Utils.Note2HzLookup(pitch);
+			stepsize = hz * fsInv;
 		}
 
 		/// <summary>
 		/// Linear Interpolation between samples
 		/// </summary>
-		private double Interpolate(double[] table, double accumulator)
+		private static double Interpolate(double[] table, double accumulator)
 		{
 			var len = table.Length;
 			int indexA = (int)(accumulator * len);

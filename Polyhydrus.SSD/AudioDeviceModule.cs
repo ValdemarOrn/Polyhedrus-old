@@ -89,7 +89,7 @@ namespace Polyhedrus
 			{
 				Controller.Process(output);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				
 			}

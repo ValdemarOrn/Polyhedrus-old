@@ -67,8 +67,8 @@ namespace Polyhedrus.WT
 			var ms = new MemoryStream(raw);
 			ms.Position = 0;
 
-			System.IO.MemoryStream outStream = new System.IO.MemoryStream();
-			using (GZipStream tinyStream = new GZipStream(outStream, CompressionMode.Compress))
+			var outStream = new MemoryStream();
+			using (var tinyStream = new GZipStream(outStream, CompressionMode.Compress))
 			{
 				tinyStream.Write(raw, 0, raw.Length);
 			}
@@ -79,10 +79,10 @@ namespace Polyhedrus.WT
 		private static byte[] Decompress(byte[] gzip)
 		{
 			const int size = 4096;
-			byte[] buffer = new byte[size];
+			var buffer = new byte[size];
 
-			using (GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-			using (MemoryStream memory = new MemoryStream())
+			using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+			using (var memory = new MemoryStream())
 			{
 				int count = 1;
 				while (count > 0)

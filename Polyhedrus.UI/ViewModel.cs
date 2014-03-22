@@ -56,6 +56,34 @@ namespace Polyhedrus
 
 		#region Properties
 
+		public ObservableCollection<string> InsertEffectOptions 
+		{ 
+			get 
+			{
+				return new ObservableCollection<string>(InsEffect.Types.Select(x => ModuleNames.GetName(x))); 
+			}
+		}
+
+		public string SelectedInsertEffectOption
+		{
+			get 
+			{
+				var module = SelectedInsertEffect == 0 ? ModuleId.Insert1 : ModuleId.Insert2;
+				var type = Ctrl.ModuleTypes[module];
+				return ModuleNames.GetName(type);
+			} 
+			set
+			{
+				var module = SelectedInsertEffect == 0 ? ModuleId.Insert1 : ModuleId.Insert2;
+				var type = ModuleNames.GetType(value);
+				if (type == null)
+					return;
+
+				Ctrl.SetModuleType(module, type);
+				InsertEffectViews[SelectedInsertEffect] = ViewProvider.GetView(Ctrl.ModuleTypes[module], Ctrl, module);
+			}
+		}
+
 		public ObservableCollection<string> OscNames { get; private set; }
 		public ObservableCollection<string> AmpEnvNames { get; private set; }
 		public ObservableCollection<string> InsertEffectNames { get; private set; }
@@ -148,6 +176,18 @@ namespace Polyhedrus
 			}
 		}
 
+		private int _selectedInsertEffect;
+		public int SelectedInsertEffect
+		{
+			get { return _selectedInsertEffect; }
+			set
+			{
+				_selectedInsertEffect = value;
+				NotifyChange(() => SelectedInsertEffect);
+				NotifyChange(() => SelectedInsertEffectOption);
+			}
+		}
+
 		private int _selectedModulator;
 		public int SelectedModulator
 		{
@@ -177,8 +217,7 @@ namespace Polyhedrus
 
 		private void SetViews()
 		{
-			var types = Ctrl.ModuleTypes;
-			Func<ModuleId, SynthModuleView> findView = x => ViewProvider.GetView(types[x], Ctrl, x);
+			Func<ModuleId, SynthModuleView> findView = x => ViewProvider.GetView(Ctrl.ModuleTypes[x], Ctrl, x);
 
 			
 			OscViews.Add(findView(ModuleId.Osc1));
