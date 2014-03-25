@@ -13,7 +13,9 @@
                           Selectors="{Binding Path=OscSelectors}"
                           Titles="{Binding Path=OscNames, Mode=OneWay}"
                           Panels="{Binding Path=OscViews, Mode=OneWay}"
-                          SelectedIndex="{Binding Path=SelectedOsc, Mode=TwoWay}" />
+                          SelectedIndex="{Binding Path=SelectedOsc, Mode=TwoWay}"
+                          AvailableOptions="{Binding Path=OscillatorOptions, Mode=OneWay}"
+                          SelectedOption="{Binding Path=SelectedOscillatorOption, Mode=TwoWay}" />
 
         <UI:ModuleControl x:Name="AmpEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" ShowComboBox="Collapsed" Height="80" 
                           Selectors="{Binding Path=AmpEnvSelectors}"

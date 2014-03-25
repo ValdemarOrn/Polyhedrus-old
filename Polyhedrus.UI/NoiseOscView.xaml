@@ -3,7 +3,7 @@
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                         xmlns:NetSynth="clr-namespace:Polyhedrus" x:Class="Polyhedrus.UI.BlOscView" 
+                         xmlns:NetSynth="clr-namespace:Polyhedrus" x:Class="Polyhedrus.UI.NoiseOscView" 
                          mc:Ignorable="d"
                          xmlns:UI="clr-namespace:Polyhedrus.UI"
                          x:Name="Main"
@@ -27,33 +27,21 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <UI:Knob2 Caption="Octave" Grid.Column="0" Central="True" Min="-3" Max="3" Steps="7"
-                 x:Name="KnobOctave" Value="{Binding ElementName=Main, Path=Octave}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
+        <UI:Knob2 Caption="Rate" Grid.Column="0" Min="0" Max="1" Steps="501"
+                 Value="{Binding ElementName=Main, Path=Rate}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <UI:Knob2 Caption="Semi" Grid.Column="1" Central="True" Min="-12" Max="12" Steps="25"
-                 x:Name="KnobSemi" Value="{Binding ElementName=Main, Path=Semi}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
-
-        <UI:Knob2 Caption="Cent" Grid.Column="2" Central="True" Min="-100" Max="100" Steps="201"
-                 x:Name="KnobCent" Value="{Binding ElementName=Main, Path=Cent}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
-
-        <UI:Knob2 Caption="Position" Grid.Column="3" Grid.ColumnSpan="2"  Min="0" Max="62" Steps="621"
-                 Value="{Binding ElementName=Main, Path=Position}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
-
-        <UI:Knob2 Caption="Phase" Grid.Column="5" Min="0" Max="1" Steps="1001"
-                 Value="{Binding ElementName=Main, Path=Phase}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
-
-        <UI:Knob2 Caption="Mix" Grid.Column="6" Min="0" Max="1" Steps="1001" x:Name="MixKnob"
+        <UI:Knob2 Caption="Mix" Grid.Column="1" Min="0" Max="1" Steps="1001" x:Name="MixKnob"
                  Value="{Binding ElementName=Main, Path=Mix}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
-        
-        <UI:Knob2 Caption="Volume" Grid.Column="7" Min="0" Max="1" Steps="1001" x:Name="VolumeKnob"
+
+        <UI:Knob2 Caption="Volume" Grid.Column="2" Min="0" Max="1" Steps="1001" x:Name="VolumeKnob"
                  Value="{Binding ElementName=Main, Path=Volume}" VerticalAlignment="Top" Style="{StaticResource ResourceKey=Knob2Medium}" />
 
-        <ComboBox Grid.Row="1" Grid.ColumnSpan="4" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=Wavetables}" 
-                  Height="20" SelectedItem="{Binding ElementName=Main, Path=SelectedWavetable, Mode=TwoWay}" Style="{StaticResource ResourceKey=ComboBoxStyle}"/>
+        <ComboBox Grid.Row="1" Grid.ColumnSpan="4" VerticalAlignment="Top" Margin="5,8,0,0" ItemsSource="{Binding ElementName=Main, Path=NoiseTypes}" 
+                  Height="20" SelectedItem="{Binding ElementName=Main, Path=NoiseType, Mode=TwoWay}" Style="{StaticResource ResourceKey=ComboBoxStyle}"/>
 
         <UI:WaveformView Grid.ColumnSpan="4" VerticalAlignment="Top" Height="80" Margin="5,35,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="Black"
                      Data="{Binding ElementName=Main, Path=WavetableData, Mode=OneWay}"/>
-
+        
         <Grid Grid.ColumnSpan="4" Grid.Column="4" HorizontalAlignment="Right" Margin="0,35,10,0" Grid.Row="1" 
               VerticalAlignment="Top" Width="165" Style="{StaticResource ResourceKey=SliderGrid}">
             <Grid.ColumnDefinitions>
@@ -71,16 +59,9 @@
             <UI:Slider Value="{Binding ElementName=VolumeKnob, Path=Value}" 
                        HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0" />
 
-            <Label Content="Count" Grid.Row="1"></Label>
-            <UI:Slider Value="{Binding ElementName=VolumeKnob, Path=Value}"
-                       HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="1" />
-
-            <Label Content="Spread" Grid.Row="2"></Label>
-            <UI:Slider Value="{Binding ElementName=VolumeKnob, Path=Value}"
-                       HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2" />
-
-            <Label Content="Free Phase" Grid.Row="3"></Label>
-            <ToggleButton Grid.Column="1" Grid.Row="3" />
+            <Label Content="Keytrack" Grid.Row="1"></Label>
+            <ToggleButton IsChecked="{Binding ElementName=Main, Path=Keytrack}"
+                Grid.Column="1" Grid.Row="1" />
 
         </Grid>
 

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Polyhedrus.Modules
 {
+	[ModuleName("Redux")]
 	public sealed class InsRedux : IInsEffect
 	{
 		public double Samplerate { get; set; }
@@ -28,17 +29,18 @@ namespace Polyhedrus.Modules
 			Update();
 		}
 
-		public void Update()
+		public void SetParameter(Parameters.InsertParams parameter, object value)
 		{
-			if (Redux < 1) // Redux must be 1....n
+			var idx = (int)parameter - 1;
+			if (idx < 0 || idx >= Parameters.Length)
 				return;
 
-			Increment = (uint)(UInt32.MaxValue / Redux) + 1;
+			Parameters[idx] = (double)value;
+			Update();
 		}
 
 		public double[] Process(double[] input)
 		{
-			var redux = Redux;
 			var bitMultiplier = 1 << Bits;
 			var bitMultuplierInv = 1.0 / bitMultiplier;
 			var incr = Increment;
@@ -58,6 +60,14 @@ namespace Polyhedrus.Modules
 			}
 
 			return Output;
+		}
+
+		private void Update()
+		{
+			if (Redux < 1) // Redux must be 1....n
+				return;
+
+			Increment = (uint)(UInt32.MaxValue / Redux) + 1;
 		}
 	}
 }

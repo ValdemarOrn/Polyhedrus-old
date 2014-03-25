@@ -9,11 +9,10 @@ namespace Polyhedrus.Modules
 	public interface IOscillator
 	{
 		double Samplerate { get; set; }
-		double[] OutputBuffer { get; set; }
-		double TablePosition { get; set; }
+		double[] OutputBuffer { get; }
 
 		void SetParameter(OscParams parameter, object value);
 		void Reset();
-		void Process(int sampleCount);
+		double[] Process(int sampleCount);
 	}
 }

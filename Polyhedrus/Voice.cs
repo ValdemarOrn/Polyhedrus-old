@@ -11,10 +11,10 @@ namespace Polyhedrus
 {
 	public sealed class Voice
 	{
-		public const int Bufsize = 16;
-		object lockObject = new object();
-
-		public bool IsActive;
+		private int bufsize;
+		private double samplerate;
+		private object lockObject = new object();
+		
 		public long TriggerIndex;
 		public int Note;
 
@@ -24,7 +24,7 @@ namespace Polyhedrus
 
 		public IOscillator Osc1, Osc2, Osc3, Osc4;
 		public IInsEffect Ins1, Ins2;
-		public CascadeFilter Filter1, Filter2;
+		public IFilter Filter1, Filter2;
 		public Ahdsr AmpEnv, Filter1Env, Filter2Env;
 		public Modulator Mod1, Mod2, Mod3, Mod4, Mod5, Mod6;
 		public MidiInput MidiInput;
@@ -39,35 +39,38 @@ namespace Polyhedrus
 		double[] path1Buffer, path2Buffer;
 		double[] processBuffer;
 
-		public Voice()
-		{
-			const double samplerate = 48000.0;
+		public bool IsActive { get { return AmpEnv.Output > 0.00001 || AmpEnv.Gate; } }
 
-			ampEnvBuffer = new double[Bufsize];
-			filter1EnvBuffer = new double[Bufsize];
-			filter2EnvBuffer = new double[Bufsize];
+		public Voice(double samplerate, int bufferSize)
+		{
+			this.samplerate = samplerate;
+			bufsize = bufferSize;
+
+			ampEnvBuffer = new double[bufsize];
+			filter1EnvBuffer = new double[bufsize];
+			filter2EnvBuffer = new double[bufsize];
 			
-			path1Buffer = new double[Bufsize];
-			path2Buffer = new double[Bufsize];
-			processBuffer = new double[Bufsize];
+			path1Buffer = new double[bufsize];
+			path2Buffer = new double[bufsize];
+			processBuffer = new double[bufsize];
 			OutputBuffer = new double[2][];
 			OutputBuffer[0] = new double[48000];
 			OutputBuffer[1] = new double[48000];
 
 			Modules = new Dictionary<ModuleId, object>();
 
-			Osc1 = new BlOsc(samplerate, Bufsize);
-			Osc2 = new BlOsc(samplerate, Bufsize);
-			Osc3 = new BlOsc(samplerate, Bufsize);
-			Osc4 = new BlOsc(samplerate, Bufsize);
+			Osc1 = new MultiOsc(samplerate, bufsize);
+			Osc2 = new BlOsc(samplerate, bufsize);
+			Osc3 = new BlOsc(samplerate, bufsize);
+			Osc4 = new BlOsc(samplerate, bufsize);
 
 			//Ins1 = new InsRedux(samplerate, Bufsize);
 			//Ins2 = new InsRedux(samplerate, Bufsize);
-			Ins1 = new InsDistortion(samplerate, Bufsize);
-			Ins2 = new InsDistortion(samplerate, Bufsize);
+			Ins1 = new InsDistortion(samplerate, bufsize);
+			Ins2 = new InsDistortion(samplerate, bufsize);
 
-			Filter1 = new CascadeFilter(samplerate, Bufsize);
-			Filter2 = new CascadeFilter(samplerate, Bufsize);
+			Filter1 = new CascadeFilter(samplerate, bufsize);
+			Filter2 = new CascadeFilter(samplerate, bufsize);
 
 			AmpEnv = new Ahdsr(samplerate);
 			Filter1Env = new Ahdsr(samplerate);
@@ -86,8 +89,6 @@ namespace Polyhedrus
 
 			RefreshModuleObjects();
 
-			Filter1.UpdateCoefficients();
-			Filter2.UpdateCoefficients();
 			Mod1.UpdateStepsize();
 			Mod2.UpdateStepsize();
 			Mod3.UpdateStepsize();
@@ -239,23 +240,11 @@ namespace Polyhedrus
 					OutputBuffer[1] = new double[2 * length];
 				}
 
-				IsActive = (AmpEnv.Output > 0.00001 || AmpEnv.Gate);
-
-				if(!IsActive)
-				{
-					for (int i = 0; i < length; i++)
-					{
-						OutputBuffer[0][i] = 0;
-						OutputBuffer[1][i] = 0;
-					}
-					return;
-				}
-
-				for (int i = 0; i < length; i += Bufsize)
+				for (int i = 0; i < length; i += bufsize)
 				{
 					var f1Env = ModMatrix.Filter1EnvMod;
 					var f2Env = ModMatrix.Filter2EnvMod;
-					for (int n = 0; n < Bufsize; n++)
+					for (int n = 0; n < bufsize; n++)
 					{
 						ampEnvBuffer[n] = AmpEnv.Process(1);
 						filter1EnvBuffer[n] = Filter1Env.Process(1) * f1Env;
@@ -263,20 +252,20 @@ namespace Polyhedrus
 					}
 
 					// Process modulation
-					Mod1.Process(Bufsize);
-					Mod2.Process(Bufsize);
-					Mod3.Process(Bufsize);
-					Mod4.Process(Bufsize);
-					Mod5.Process(Bufsize);
-					Mod6.Process(Bufsize);
+					Mod1.Process(bufsize);
+					Mod2.Process(bufsize);
+					Mod3.Process(bufsize);
+					Mod4.Process(bufsize);
+					Mod5.Process(bufsize);
+					Mod6.Process(bufsize);
 					ModMatrix.Process();
 
-					Osc1.Process(Bufsize);
-					Osc2.Process(Bufsize);
-					Osc3.Process(Bufsize);
-					Osc4.Process(Bufsize);
+					Osc1.Process(bufsize);
+					Osc2.Process(bufsize);
+					Osc3.Process(bufsize);
+					Osc4.Process(bufsize);
 
-					for(int n = 0; n < Bufsize; n++)
+					for(int n = 0; n < bufsize; n++)
 					{
 						path1Buffer[n] =  Osc1.OutputBuffer[n] * Mixer.Osc1Vol * (1.0 - Mixer.Osc1Mix)
 										+ Osc2.OutputBuffer[n] * Mixer.Osc2Vol * (1.0 - Mixer.Osc2Mix)
@@ -295,7 +284,7 @@ namespace Polyhedrus
 					Filter1.Process(path1Buffer, filter1EnvBuffer);
 					Filter2.Process(path2Buffer, filter2EnvBuffer);
 
-					for (int n = 0; n < Bufsize; n++)
+					for (int n = 0; n < bufsize; n++)
 					{
 						processBuffer[n] = Filter1.OutputBuffer[n] * Mixer.F1Vol + Filter2.OutputBuffer[n] * Mixer.F2Vol;
 						processBuffer[n] *= Mixer.OutputVolume * ampEnvBuffer[n];
@@ -370,6 +359,7 @@ namespace Polyhedrus
 				case OscParams.Phase:
 				case OscParams.Wavetable:
 				case OscParams.FreePhase:
+				case OscParams.Keytrack:
 					osc.SetParameter(para, value);
 					break;
 				case OscParams.Volume:
@@ -397,13 +387,7 @@ namespace Polyhedrus
 		{
 			var insEffect = (IInsEffect)Modules[module];
 			var para = (InsertParams)parameter;
-			double val = Convert.ToDouble(value);
-			var index = (int)para - 1;
-			if (index >= 0 && index < insEffect.Parameters.Length)
-			{
-				insEffect.Parameters[index] = val;
-				insEffect.Update();
-			}
+			insEffect.SetParameter(para, value);
 		}
 
 		private void SetParameterFilter(ModuleId module, Enum parameter, object value)
@@ -414,39 +398,25 @@ namespace Polyhedrus
 
 			switch (para)
 			{
-				case FilterParams.Cutoff:
-					filter.CutoffKnob = val;
-					break;
-				case FilterParams.Resonance:
-					filter.Resonance = val;
-					break;
-				case FilterParams.Tracking:
-					//filter.
-					break;
 				case FilterParams.Envelope:
 					if(module == ModuleId.Filter1)
 						ModMatrix.Filter1EnvMod = val;
 					else
 						ModMatrix.Filter2EnvMod = val;
 					break;
+				case FilterParams.Tracking:
+					//filter.
+					break;
+				case FilterParams.Cutoff:
+				case FilterParams.Resonance:
 				case FilterParams.X:
-					filter.VX = val;
-					break;
 				case FilterParams.A:
-					filter.VA = val;
-					break;
 				case FilterParams.B:
-					filter.VB = val;
-					break;
 				case FilterParams.C:
-					filter.VC = val;
-					break;
 				case FilterParams.D:
-					filter.VD = val;
+					filter.SetParameter(para, val);
 					break;
 			}
-
-			filter.UpdateCoefficients();
 		}
 
 		private void SetParameterEnv(ModuleId module, Enum parameter, object value)

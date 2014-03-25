@@ -151,7 +151,7 @@ namespace Polyhedrus.Modules
 			switch (dest)
 			{
 				case ModDestination.Filter1Freq:
-					Voice.Filter1.CutoffModulation = value;
+					Voice.Filter1.SetParameter(FilterParams.CutoffModulation, value);
 					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
 					break;
 				case ModDestination.Filter1Pan:
@@ -159,14 +159,14 @@ namespace Polyhedrus.Modules
 					UpdateMixer = true;
 					break;
 				case ModDestination.Filter1Res:
-					Voice.Filter1.ResonanceModulation = value;
+					Voice.Filter1.SetParameter(FilterParams.ResonanceModulation, value);
 					break;
 				case ModDestination.Filter1Vol:
 					Voice.Mixer.F1VolModulation = value;
 					UpdateMixer = true;
 					break;
 				case ModDestination.Filter2Freq:
-					Voice.Filter2.CutoffModulation = value;
+					Voice.Filter2.SetParameter(FilterParams.CutoffModulation, value);
 					// Filters get updated after ModMatrix finishes, because the filter envs run every cycle
 					break;
 				case ModDestination.Filter2Pan:
@@ -174,7 +174,7 @@ namespace Polyhedrus.Modules
 					UpdateMixer = true;
 					break;
 				case ModDestination.Filter2Res:
-					Voice.Filter2.ResonanceModulation = value;
+					Voice.Filter2.SetParameter(FilterParams.ResonanceModulation, value);
 					break;
 				case ModDestination.Filter2Vol:
 					Voice.Mixer.F2VolModulation = value;

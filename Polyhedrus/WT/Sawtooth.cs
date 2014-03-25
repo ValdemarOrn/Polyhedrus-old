@@ -7,11 +7,13 @@ namespace Polyhedrus.WT
 {
 	public class Sawtooth : IWavetable
 	{
+		public const string WavetableName = "Sawtooth Wave";
+
 		public WavetableData Create(int samplesPerWave)
 		{
 			var tableCount = 64;
 			var waveLen = samplesPerWave;
-			var output = new WavetableData { Name = "Sawtooth Wave", Data = new double[tableCount][] };
+			var output = new WavetableData { Name = WavetableName, Data = new double[tableCount][] };
 
 			for (int num = 0; num < tableCount; num++)
 			{

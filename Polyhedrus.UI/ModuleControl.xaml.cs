@@ -35,26 +35,30 @@ namespace Polyhedrus.UI
 	/// </summary>
 	public partial class ModuleControl : UserControl, INotifyPropertyChanged
 	{
-		static internal DependencyProperty PanelsProperty = DependencyProperty.Register("Panels", typeof(ObservableCollection<Control>), typeof(ModuleControl),
+		public static readonly DependencyProperty PanelsProperty = 
+			DependencyProperty.Register("Panels", typeof(ObservableCollection<Control>), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		static internal DependencyProperty SelectorsProperty = DependencyProperty.Register("Selectors", typeof(ObservableCollection<string>), typeof(ModuleControl),
+		public static readonly DependencyProperty SelectorsProperty =
+			DependencyProperty.Register("Selectors", typeof(string[]), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		static internal DependencyProperty TitlesProperty = DependencyProperty.Register("Titles", typeof(ObservableCollection<string>), typeof(ModuleControl),
+		public static readonly DependencyProperty TitlesProperty =
+			DependencyProperty.Register("Titles", typeof(string[]), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		static internal DependencyProperty ShowComboBoxProperty = DependencyProperty.Register("ShowComboBox", typeof(Visibility), typeof(ModuleControl),
+		public static readonly DependencyProperty ShowComboBoxProperty = 
+			DependencyProperty.Register("ShowComboBox", typeof(Visibility), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(Visibility.Collapsed, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		static internal DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(ModuleControl),
+		public static readonly DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(ModuleControl),
 			new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 		public static readonly DependencyProperty TitleVisibilityProperty =
 			DependencyProperty.Register("TitleVisibility", typeof(Visibility), typeof(ModuleControl), new PropertyMetadata(Visibility.Visible));
 
 		public static readonly DependencyProperty AvailableOptionsProperty =
-			DependencyProperty.Register("AvailableOptions", typeof(ObservableCollection<string>), typeof(ModuleControl), new PropertyMetadata(null));
+			DependencyProperty.Register("AvailableOptions", typeof(string[]), typeof(ModuleControl), new PropertyMetadata(null));
 
 		public static readonly DependencyProperty SelectedOptionProperty =
 			DependencyProperty.Register("SelectedOption", typeof(string), typeof(ModuleControl), new PropertyMetadata(null));
@@ -63,7 +67,7 @@ namespace Polyhedrus.UI
 		{
 			InitializeComponent();
 
-			var prop = DependencyPropertyDescriptor.FromProperty(PanelsProperty, this.GetType());
+			var prop = DependencyPropertyDescriptor.FromProperty(PanelsProperty, GetType());
 			prop.AddValueChanged(this, (s, e) => 
 			{
 				Panels.CollectionChanged += (a, b) => 
@@ -71,13 +75,11 @@ namespace Polyhedrus.UI
 				NotifyChange(() => Panel);
 			});
 
-			prop = DependencyPropertyDescriptor.FromProperty(SelectorsProperty, this.GetType());
-
-			prop = DependencyPropertyDescriptor.FromProperty(TitlesProperty, this.GetType());
+			prop = DependencyPropertyDescriptor.FromProperty(TitlesProperty, GetType());
 			prop.AddValueChanged(this, (s, e) => 
 				NotifyChange(() => Title));
 
-			prop = DependencyPropertyDescriptor.FromProperty(SelectedIndexProperty, this.GetType());
+			prop = DependencyPropertyDescriptor.FromProperty(SelectedIndexProperty, GetType());
 			prop.AddValueChanged(this, (s, e) => 
 				NotifyChange(() => Title));
 			prop.AddValueChanged(this, (s, e) => 
@@ -90,15 +92,15 @@ namespace Polyhedrus.UI
 			set { SetValue(PanelsProperty, value); }
 		}
 
-		public ObservableCollection<string> Selectors
+		public string[] Selectors
 		{
-			get { return (ObservableCollection<string>)base.GetValue(SelectorsProperty); }
+			get { return (string[])GetValue(SelectorsProperty); }
 			set { SetValue(SelectorsProperty, value); }
 		}
 
-		public ObservableCollection<string> Titles
+		public string[] Titles
 		{
-			get { return (ObservableCollection<string>)base.GetValue(TitlesProperty); }
+			get { return (string[])GetValue(TitlesProperty); }
 			set { SetValue(TitlesProperty, value); }
 		}
 
@@ -120,9 +122,9 @@ namespace Polyhedrus.UI
 			set { SetValue(TitleVisibilityProperty, value); }
 		}
 
-		public ObservableCollection<string> AvailableOptions
+		public string[] AvailableOptions
 		{
-			get { return (ObservableCollection<string>)GetValue(AvailableOptionsProperty); }
+			get { return (string[])GetValue(AvailableOptionsProperty); }
 			set { SetValue(AvailableOptionsProperty, value); }
 		}
 
@@ -134,7 +136,7 @@ namespace Polyhedrus.UI
 
 		public string Title
 		{
-			get { return Titles.Eval(x => x[SelectedIndex], ""); }
+			get { return Titles.Eval(x => x.Skip(SelectedIndex).FirstOrDefault(), ""); }
 		}
 
 		public Control Panel
@@ -170,7 +172,8 @@ namespace Polyhedrus.UI
 
 		private void Label_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			SelectedIndex = Selectors.IndexOf((sender as Label).Content as string);
+			var str = (string)((Label)sender).Content;
+			SelectedIndex = Selectors.IndexOf(x => x == str);
 		}
 	}
 }

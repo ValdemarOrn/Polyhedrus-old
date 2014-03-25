@@ -13,11 +13,11 @@ namespace Polyhedrus
 {
 	public class ViewModel : INotifyPropertyChanged
 	{
-		SynthController Ctrl;
+		SynthController ctrl;
 
 		public ViewModel(SynthController ctrl)
 		{
-			Ctrl = ctrl;
+			this.ctrl = ctrl;
 			Init();
 		}
 
@@ -31,170 +31,191 @@ namespace Polyhedrus
 			RoutingViews = new ObservableCollection<Control>();
 			ModulatorViews = new ObservableCollection<Control>();
 
-			OscNames = new ObservableCollection<string>(new string[] { "Osc 1", "Osc 2", "Osc 3", "Osc 4" });
-			AmpEnvNames = new ObservableCollection<string>(new string[] { "Amp Env" });
-			InsertEffectNames = new ObservableCollection<string>(new string[] { "Insert 1", "Insert 2" });
-			FilterNames = new ObservableCollection<string>(new string[] { "Filter 1", "Filter 2" });
-			FilterEnvNames = new ObservableCollection<string>(new string[] { "Filter 1 Envelope", "Filter 2 Envelope" });
-			RoutingNames = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
-			SettingsNames = new ObservableCollection<string>(new string[] { "Settings" });
-			EffectNames = new ObservableCollection<string>(new string[] { "FX 1", "FX 2", "FX 3", "FX 4" });
-			ModulatorNames = new ObservableCollection<string>(new string[] { "Modulator 1", "Modulator 2", "Modulator 3", "Modulator 4", "Modulator 5", "Modulator 6" });
+			OscNames = new [] { "Osc 1", "Osc 2", "Osc 3", "Osc 4" };
+			AmpEnvNames = new [] { "Amp Env" };
+			InsertEffectNames = new [] { "Insert 1", "Insert 2" };
+			FilterNames = new [] { "Filter 1", "Filter 2" };
+			FilterEnvNames = new [] { "Filter 1 Envelope", "Filter 2 Envelope" };
+			RoutingNames = new [] { "Routing", "Modulation" };
+			SettingsNames = new [] { "Settings" };
+			EffectNames = new [] { "FX 1", "FX 2", "FX 3", "FX 4" };
+			ModulatorNames = new [] { "Modulator 1", "Modulator 2", "Modulator 3", "Modulator 4", "Modulator 5", "Modulator 6" };
+			
+			OscSelectors = new [] { "1", "2", "3", "4" };
+			AmpEnvSelectors = new [] { "" };
+			InsertEffectSelectors = new [] { "1", "2" };
+			FilterSelectors = new [] { "1", "2" };
+			FilterEnvSelectors = new [] { "1", "2" };
+			RoutingSelectors = new [] { "Routing", "Modulation" };
+			SettingsSelectors = new [] { "" };
+			EffectsSelectors = new [] { "1", "2", "3", "4" };
+			ModulatorSelectors = new [] { "1", "2", "3", "4", "5", "6" };
 
-			OscSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
-			AmpEnvSelectors = new ObservableCollection<string>(new string[] { "" });
-			InsertEffectSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
-			FilterSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
-			FilterEnvSelectors = new ObservableCollection<string>(new string[] { "1", "2" });
-			RoutingSelectors = new ObservableCollection<string>(new string[] { "Routing", "Modulation" });
-			SettingsSelectors = new ObservableCollection<string>(new string[] { "" });
-			EffectsSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4" });
-			ModulatorSelectors = new ObservableCollection<string>(new string[] { "1", "2", "3", "4", "5", "6" });
+			InsertEffectOptions = ModuleType.InsertEffectTypes.Select(ModuleType.GetName).ToArray();
+			OscillatorOptions = ModuleType.OscillatorTypes.Select(ModuleType.GetName).ToArray();
 
 			SetViews();
 		}
 
 		#region Properties
 
-		public ObservableCollection<string> InsertEffectOptions 
-		{ 
-			get 
-			{
-				return new ObservableCollection<string>(InsEffect.Types.Select(x => ModuleNames.GetName(x))); 
-			}
-		}
-
 		public string SelectedInsertEffectOption
 		{
 			get 
 			{
-				var module = SelectedInsertEffect == 0 ? ModuleId.Insert1 : ModuleId.Insert2;
-				var type = Ctrl.ModuleTypes[module];
-				return ModuleNames.GetName(type);
+				var module = (ModuleId)((int)ModuleId.Insert1 + SelectedInsertEffect);
+				var type = ctrl.ModuleTypes[module];
+				return ModuleType.GetName(type);
 			} 
 			set
 			{
-				var module = SelectedInsertEffect == 0 ? ModuleId.Insert1 : ModuleId.Insert2;
-				var type = ModuleNames.GetType(value);
+				var module = (ModuleId)((int)ModuleId.Insert1 + SelectedInsertEffect);
+				var type = ModuleType.GetType(value);
 				if (type == null)
 					return;
 
-				Ctrl.SetModuleType(module, type);
-				InsertEffectViews[SelectedInsertEffect] = ViewProvider.GetView(Ctrl.ModuleTypes[module], Ctrl, module);
+				ctrl.SetModuleType(module, type);
+				InsertEffectViews[SelectedInsertEffect] = ViewProvider.GetView(type, ctrl, module);
+				NotifyChange(() => SelectedInsertEffectOption);
 			}
 		}
 
-		public ObservableCollection<string> OscNames { get; private set; }
-		public ObservableCollection<string> AmpEnvNames { get; private set; }
-		public ObservableCollection<string> InsertEffectNames { get; private set; }
-		public ObservableCollection<string> FilterNames { get; private set; }
-		public ObservableCollection<string> FilterEnvNames { get; private set; }
-		public ObservableCollection<string> RoutingNames { get; private set; }
-		public ObservableCollection<string> SettingsNames { get; private set; }
-		public ObservableCollection<string> EffectNames { get; private set; }
-		public ObservableCollection<string> ModulatorNames { get; private set; }
-
-		public ObservableCollection<string> OscSelectors { get; private set; }
-		public ObservableCollection<string> AmpEnvSelectors { get; private set; }
-		public ObservableCollection<string> InsertEffectSelectors { get; private set; }
-		public ObservableCollection<string> FilterSelectors { get; private set; }
-		public ObservableCollection<string> FilterEnvSelectors { get; private set; }
-		public ObservableCollection<string> RoutingSelectors { get; private set; }
-		public ObservableCollection<string> SettingsSelectors { get; private set; }
-		public ObservableCollection<string> EffectsSelectors { get; private set; }
-		public ObservableCollection<string> ModulatorSelectors { get; private set; }
-
-		private ObservableCollection<Control> _oscViews;
-		public ObservableCollection<Control> OscViews
+		public string SelectedOscillatorOption
 		{
-			get { return _oscViews; }
-			set { _oscViews = value; NotifyChange(() => OscViews); }
-		}
-
-		private ObservableCollection<Control> _ampEnvViews;
-		public ObservableCollection<Control> AmpEnvViews
-		{
-			get { return _ampEnvViews; }
-			set { _ampEnvViews = value; NotifyChange(() => AmpEnvViews); }
-		}
-
-		private ObservableCollection<Control> _insertEffectViews;
-		public ObservableCollection<Control> InsertEffectViews
-		{
-			get { return _insertEffectViews; }
-			set { _insertEffectViews = value; NotifyChange(() => InsertEffectViews); }
-		}
-
-		private ObservableCollection<Control> _filterViews;
-		public ObservableCollection<Control> FilterViews
-		{
-			get { return _filterViews; }
-			set { _filterViews = value; NotifyChange(() => FilterViews); }
-		}
-
-		private ObservableCollection<Control> _filterEnvViews;
-		public ObservableCollection<Control> FilterEnvViews
-		{
-			get { return _filterEnvViews; }
-			set { _filterEnvViews = value; NotifyChange(() => FilterEnvViews); }
-		}
-
-		private ObservableCollection<Control> _routingViews;
-		public ObservableCollection<Control> RoutingViews
-		{
-			get { return _routingViews; }
-			set { _routingViews = value; NotifyChange(() => RoutingViews); }
-		}
-
-		private ObservableCollection<Control> _modulatorViews;
-		public ObservableCollection<Control> ModulatorViews
-		{
-			get { return _modulatorViews; }
-			set { _modulatorViews = value; NotifyChange(() => ModulatorViews); }
-		}
-
-
-		private int _selectedOsc;
-		public int SelectedOsc
-		{
-			get { return _selectedOsc; }
-			set 
+			get
 			{
-				_selectedOsc = value; 
-				NotifyChange(() => SelectedOsc); 
+				var module = (ModuleId)((int)ModuleId.Osc1 + SelectedOsc);
+				var type = ctrl.ModuleTypes[module];
+				return ModuleType.GetName(type);
 			}
-		}
-
-		private int _selectedFilter;
-		public int SelectedFilter
-		{
-			get { return _selectedFilter; }
 			set
 			{
-				_selectedFilter = value;
+				var module = (ModuleId)((int)ModuleId.Osc1 + SelectedOsc);
+				var type = ModuleType.GetType(value);
+				if (type == null)
+					return;
+
+				ctrl.SetModuleType(module, type);
+				OscViews[SelectedOsc] = ViewProvider.GetView(type, ctrl, module);
+				NotifyChange(() => SelectedOscillatorOption);
+			}
+		}
+
+		public string[] OscNames { get; private set; }
+		public string[] AmpEnvNames { get; private set; }
+		public string[] InsertEffectNames { get; private set; }
+		public string[] FilterNames { get; private set; }
+		public string[] FilterEnvNames { get; private set; }
+		public string[] RoutingNames { get; private set; }
+		public string[] SettingsNames { get; private set; }
+		public string[] EffectNames { get; private set; }
+		public string[] ModulatorNames { get; private set; }
+
+		public string[] OscSelectors { get; private set; }
+		public string[] AmpEnvSelectors { get; private set; }
+		public string[] InsertEffectSelectors { get; private set; }
+		public string[] FilterSelectors { get; private set; }
+		public string[] FilterEnvSelectors { get; private set; }
+		public string[] RoutingSelectors { get; private set; }
+		public string[] SettingsSelectors { get; private set; }
+		public string[] EffectsSelectors { get; private set; }
+		public string[] ModulatorSelectors { get; private set; }
+
+		public string[] InsertEffectOptions { get; private set; }
+		public string[] OscillatorOptions { get; private set; }
+
+		private ObservableCollection<Control> oscViews;
+		public ObservableCollection<Control> OscViews
+		{
+			get { return oscViews; }
+			set { oscViews = value; NotifyChange(() => OscViews); }
+		}
+
+		private ObservableCollection<Control> ampEnvViews;
+		public ObservableCollection<Control> AmpEnvViews
+		{
+			get { return ampEnvViews; }
+			set { ampEnvViews = value; NotifyChange(() => AmpEnvViews); }
+		}
+
+		private ObservableCollection<Control> insertEffectViews;
+		public ObservableCollection<Control> InsertEffectViews
+		{
+			get { return insertEffectViews; }
+			set { insertEffectViews = value; NotifyChange(() => InsertEffectViews); }
+		}
+
+		private ObservableCollection<Control> filterViews;
+		public ObservableCollection<Control> FilterViews
+		{
+			get { return filterViews; }
+			set { filterViews = value; NotifyChange(() => FilterViews); }
+		}
+
+		private ObservableCollection<Control> filterEnvViews;
+		public ObservableCollection<Control> FilterEnvViews
+		{
+			get { return filterEnvViews; }
+			set { filterEnvViews = value; NotifyChange(() => FilterEnvViews); }
+		}
+
+		private ObservableCollection<Control> routingViews;
+		public ObservableCollection<Control> RoutingViews
+		{
+			get { return routingViews; }
+			set { routingViews = value; NotifyChange(() => RoutingViews); }
+		}
+
+		private ObservableCollection<Control> modulatorViews;
+		public ObservableCollection<Control> ModulatorViews
+		{
+			get { return modulatorViews; }
+			set { modulatorViews = value; NotifyChange(() => ModulatorViews); }
+		}
+
+
+		private int selectedOsc;
+		public int SelectedOsc
+		{
+			get { return selectedOsc; }
+			set 
+			{
+				selectedOsc = value; 
+				NotifyChange(() => SelectedOsc);
+				NotifyChange(() => SelectedOscillatorOption);
+			}
+		}
+
+		private int selectedFilter;
+		public int SelectedFilter
+		{
+			get { return selectedFilter; }
+			set
+			{
+				selectedFilter = value;
 				NotifyChange(() => SelectedFilter);
 			}
 		}
 
-		private int _selectedInsertEffect;
+		private int selectedInsertEffect;
 		public int SelectedInsertEffect
 		{
-			get { return _selectedInsertEffect; }
+			get { return selectedInsertEffect; }
 			set
 			{
-				_selectedInsertEffect = value;
+				selectedInsertEffect = value;
 				NotifyChange(() => SelectedInsertEffect);
 				NotifyChange(() => SelectedInsertEffectOption);
 			}
 		}
 
-		private int _selectedModulator;
+		private int selectedModulator;
 		public int SelectedModulator
 		{
-			get { return _selectedModulator; }
+			get { return selectedModulator; }
 			set
 			{
-				_selectedModulator = value;
+				selectedModulator = value;
 				NotifyChange(() => SelectedModulator);
 			}
 		}
@@ -217,16 +238,15 @@ namespace Polyhedrus
 
 		private void SetViews()
 		{
-			Func<ModuleId, SynthModuleView> findView = x => ViewProvider.GetView(Ctrl.ModuleTypes[x], Ctrl, x);
+			Func<ModuleId, SynthModuleView> findView = x => ViewProvider.GetView(ctrl.ModuleTypes[x], ctrl, x);
 
-			
 			OscViews.Add(findView(ModuleId.Osc1));
 			OscViews.Add(findView(ModuleId.Osc2));
 			OscViews.Add(findView(ModuleId.Osc3));
 			OscViews.Add(findView(ModuleId.Osc4));
 
 			AmpEnvViews.Add(findView(ModuleId.AmpEnv));
-			(AmpEnvViews[0] as EnvelopeView).DelayVisibility = System.Windows.Visibility.Collapsed;
+			((EnvelopeView)AmpEnvViews[0]).DelayVisibility = System.Windows.Visibility.Collapsed;
 
 			InsertEffectViews.Add(findView(ModuleId.Insert1));
 			InsertEffectViews.Add(findView(ModuleId.Insert2));

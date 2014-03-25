@@ -25,8 +25,26 @@ namespace Polyhedrus
 			data[OscParams.Phase] = 0.0;
 			data[OscParams.Volume] = 0.0;
 			data[OscParams.FreePhase] = true;
+			data[OscParams.Keytrack] = true;
 			data[OscParams.Wavetable] = "Sawtooth Wave";
-			data[OscParams.FreePhase] = false;
+
+			data = new Dictionary<Enum, object>();
+			DefaultSettings[typeof(MultiOsc)] = data;
+			data[OscParams.Octave] = 0;
+			data[OscParams.Semi] = 0;
+			data[OscParams.Cent] = 0;
+			data[OscParams.Position] = 0.0;
+			data[OscParams.Phase] = 0.0;
+			data[OscParams.Volume] = 0.0;
+			data[OscParams.FreePhase] = true;
+			data[OscParams.Keytrack] = true;
+
+			data = new Dictionary<Enum, object>();
+			DefaultSettings[typeof(NoiseOsc)] = data;
+			data[OscParams.Position] = 1.0;
+			data[OscParams.Volume] = 0.0;
+			data[OscParams.Keytrack] = false;
+			data[OscParams.Wavetable] = "White Noise";
 
 			data = new Dictionary<Enum, object>();
 			DefaultSettings[typeof(InsRedux)] = data;
@@ -73,7 +91,7 @@ namespace Polyhedrus
 			data[ModulatorParams.Delay] = 0.0;
 			data[ModulatorParams.Offset] = 0.0;
 			data[ModulatorParams.Shape] = 0.5;
-			data[ModulatorParams.Wave] = AudioLib.Modules.LFO.Wave.Sine;
+			data[ModulatorParams.Wave] = LFO.Wave.Sine;
 			data[ModulatorParams.FreePhase] = true;
 			data[ModulatorParams.TempoSync] = false;
 

@@ -4,12 +4,14 @@ using Polyhedrus.WT;
 
 namespace Polyhedrus.Modules
 {
+	[ModuleName("Wavetable Oscillator")]
 	public sealed class BlOsc : IOscillator
 	{
 		private double fsInv;
 		private double samplerate;
 		
 		private double startPhase;
+		private bool keytrack;
 		private int octave;
 		private int semi;
 		private int cent;
@@ -32,6 +34,7 @@ namespace Polyhedrus.Modules
 			OutputBuffer = new double[bufferSize];
 			Samplerate = samplerate;
 			accumulator = 0;
+			stepsizeDirty = true;
 		}
 
 		public double Samplerate
@@ -41,13 +44,12 @@ namespace Polyhedrus.Modules
 			{
 				samplerate = value;
 				fsInv = 1.0 / samplerate;
-				WavetableContext.CalculateIndexes(value);
 			}
 		}
 
 		public double[] OutputBuffer { get; set; }
 		
-		public double TablePosition
+		private double TablePosition
 		{
 			get { return tablePosition; }
 			set
@@ -65,6 +67,9 @@ namespace Polyhedrus.Modules
 			{
 				case OscParams.Modulation:
 					modulation = (double)val;
+					break;
+				case OscParams.Keytrack:
+					keytrack = (bool)val;
 					break;
 				case OscParams.Note:
 					note = (int)val;
@@ -96,7 +101,7 @@ namespace Polyhedrus.Modules
 			accumulator = startPhase;
 		}
 
-		public void Process(int sampleCount)
+		public double[] Process(int sampleCount)
 		{
 			if (stepsizeDirty)
 				UpdateStepsize();
@@ -105,13 +110,14 @@ namespace Polyhedrus.Modules
 			{
 				for (var i = 0; i < sampleCount; i++)
 					OutputBuffer[i] = 0.0;
-				return;
+
+				return OutputBuffer;
 			}
 
 			for (var i = 0; i < sampleCount; i++)
 			{
-				double waveA = Interpolate(wavetable[tableA][waveNumber], accumulator);
-				double waveB = Interpolate(wavetable[tableB][waveNumber], accumulator);
+				double waveA = WavetableContext.Interpolate(wavetable[tableA][waveNumber], accumulator);
+				double waveB = WavetableContext.Interpolate(wavetable[tableB][waveNumber], accumulator);
 				var output = waveA * (1 - tableMix) + waveB * tableMix;
 				accumulator += stepsize;
 				if (accumulator > 1)
@@ -119,6 +125,8 @@ namespace Polyhedrus.Modules
 
 				OutputBuffer[i] = output;
 			}
+
+			return OutputBuffer;
 		}
 
 		private void UpdateStepsize()
@@ -130,23 +138,7 @@ namespace Polyhedrus.Modules
 			waveNumber = WavetableContext.WavetableNoteIndex[(int)pitch];
 			var hz = Utils.Note2HzLookup(pitch);
 			stepsize = hz * fsInv;
+			stepsizeDirty = false;
 		}
-
-		/// <summary>
-		/// Linear Interpolation between samples
-		/// </summary>
-		private static double Interpolate(double[] table, double accumulator)
-		{
-			var len = table.Length;
-			int indexA = (int)(accumulator * len);
-			int indexB = (indexA == len - 1) ? 0 : indexA + 1;
-			double subsampleIndex = accumulator * len - indexA;
-
-			double a = table[indexA];
-			double b = table[indexB];
-			double val = a * (1 - subsampleIndex) + b * subsampleIndex;
-			return val;
-		}
-		
 	}
 }

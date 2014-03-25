@@ -12,10 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Polyhedrus.Modules;
 
 namespace Polyhedrus.UI
 {
-	[ViewProviderFor(typeof(AudioLib.Modules.CascadeFilter))]
+	[ViewProviderFor(typeof(CascadeFilter))]
 	public partial class CascadeFilterView : SynthModuleView
 	{
 		public CascadeFilterView() : base(null, (ModuleId)0)

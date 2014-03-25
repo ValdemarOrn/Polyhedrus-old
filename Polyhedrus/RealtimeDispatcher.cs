@@ -22,7 +22,7 @@ namespace Polyhedrus
 
 		public RealtimeDispatcher(int numberOfWorkers, int maxQueueSize, ThreadPriority workerPriority, Action<T> action)
 		{
-			workCompleted = new ManualResetEvent(false);
+			workCompleted = new ManualResetEvent(true);
 			sema = new Semaphore(0, maxQueueSize);
 			this.action = action;
 			workItems = new Queue<T>(maxQueueSize);
@@ -38,14 +38,14 @@ namespace Polyhedrus
 		{
 			lock (workItems)
 			{
+				var len = items.Length;
 				workCompleted.Reset();
+				Interlocked.Add(ref queueLength, len);
 
-				for (int i = 0; i < items.Length; i++)
-				{
-					Interlocked.Add(ref queueLength, 1);
-					workItems.Enqueue(items[i]);	
-					sema.Release();
-				}
+				for (int i = 0; i < len; i++)
+					workItems.Enqueue(items[i]);
+
+				sema.Release(len);
 			}
 		}
 

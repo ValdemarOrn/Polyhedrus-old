@@ -8,6 +8,7 @@ using Polyhedrus.WT;
 namespace Polyhedrus.UI
 {
 	[ViewProviderFor(typeof(Modules.BlOsc))]
+	[ViewProviderFor(typeof(Modules.MultiOsc))]
 	public partial class BlOscView : SynthModuleView
 	{
 		public BlOscView() : base(null, (ModuleId)0)
@@ -59,7 +60,11 @@ namespace Polyhedrus.UI
 
 		public IEnumerable<double> WavetableData
 		{
-			get { return (WavetableContext.wavetables[SelectedWavetable])[(int)Position][0]; }
+			get
+			{
+				var wt = SelectedWavetable != null ? WavetableContext.wavetables[SelectedWavetable] : null;
+				return wt != null ? wt[(int)Position][0] : null;
+			}
 		}
 
 		public double Octave
@@ -110,6 +115,15 @@ namespace Polyhedrus.UI
 			{
 				Ctrl.SetParameter(ModuleId, OscParams.Phase, value);
 				NotifyChange(() => Phase);
+			}
+		}
+
+		public double Mix
+		{
+			get { return 0.0; }
+			set
+			{
+
 			}
 		}
 

@@ -152,5 +152,21 @@ namespace Polyhedrus.WT
 			wavetables[wavetableName] = transformed;
 			return wavetables[wavetableName];
 		}
+
+		/// <summary>
+		/// Linear Interpolation between samples
+		/// </summary>
+		public static double Interpolate(double[] table, double accumulator)
+		{
+			var len = table.Length;
+			int indexA = (int)(accumulator * len);
+			int indexB = (indexA == len - 1) ? 0 : indexA + 1;
+			double subsampleIndex = accumulator * len - indexA;
+
+			double a = table[indexA];
+			double b = table[indexB];
+			double val = a * (1 - subsampleIndex) + b * subsampleIndex;
+			return val;
+		}
 	}
 }

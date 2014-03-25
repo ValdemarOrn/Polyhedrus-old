@@ -8,6 +8,7 @@ namespace Polyhedrus.Parameters
 	public enum OscParams
 	{
 		Note = 1,
+		Keytrack,
 		Octave,
 		Semi,
 		Cent,
@@ -22,7 +23,9 @@ namespace Polyhedrus.Parameters
 	public enum FilterParams
 	{
 		Cutoff = 1,
+		CutoffModulation,
 		Resonance,
+		ResonanceModulation,
 		Gain,
 		Tracking,
 		Envelope,

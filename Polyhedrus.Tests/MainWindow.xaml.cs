@@ -24,7 +24,7 @@ namespace Polyhedrus.Tests
 		{
 			InitializeComponent();
 
-			var Controller = new SynthController();
+			var Controller = new SynthController(48000, 16);
 			var VM = new ViewModel(Controller);
 			var View = new SynthView(VM);
 

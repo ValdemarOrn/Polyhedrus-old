@@ -11,6 +11,7 @@ namespace Polyhedrus
 {
 	public sealed class SynthController
 	{
+		private int bufferSize;
 		private Voice[] voices;
 		private List<MidiNote> notes;
 		private long triggerIndex;
@@ -19,8 +20,11 @@ namespace Polyhedrus
 
 		private volatile int processSampleCount;
 
-		public SynthController()
+		public SynthController(double samplerate, int bufferSize)
 		{
+			Samplerate = samplerate;
+			this.bufferSize = bufferSize;
+
 			LowProfile.Fourier.Double.TransformNative.Setup();
 			WavetableContext.SetupWavetables();
 
@@ -34,9 +38,10 @@ namespace Polyhedrus
 			triggerIndex = 1;
 			notes = new List<MidiNote>(64);
 			voices = new Voice[64];
+			WavetableContext.CalculateIndexes(Samplerate);
 
 			for(var i = 0; i < voices.Length; i++)
-				voices[i] = new Voice();
+				voices[i] = new Voice(Samplerate, bufferSize);
 
 			RefreshModuleTypes();
 			SetDefaults();
@@ -48,20 +53,23 @@ namespace Polyhedrus
 
 		public void SetModuleType(ModuleId module, Type moduleType)
 		{
+			if (moduleType == ModuleTypes[module])
+				return;
+
 			foreach(var voice in voices)
 			{
-				if (module == ModuleId.Insert1 && ModuleTypes[ModuleId.Insert1] != moduleType)
-				{
-					voice.Ins1 = moduleType
-						.GetConstructor(new[] { typeof(double), typeof(int) })
-						.Invoke(new object[] { Samplerate, Voice.Bufsize }) as IInsEffect;
-				}
-				if (module == ModuleId.Insert2 && ModuleTypes[ModuleId.Insert2] != moduleType)
-				{
-					voice.Ins2 = moduleType
-						.GetConstructor(new[] { typeof(double), typeof(int) })
-						.Invoke(new object[] { Samplerate, Voice.Bufsize }) as IInsEffect;
-				}
+				if (module == ModuleId.Insert1)
+					voice.Ins1 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
+				if (module == ModuleId.Insert2)
+					voice.Ins2 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
+				if (module == ModuleId.Osc1)
+					voice.Osc1 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+				if (module == ModuleId.Osc2)
+					voice.Osc2 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+				if (module == ModuleId.Osc3)
+					voice.Osc3 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+				if (module == ModuleId.Osc4)
+					voice.Osc4 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
 			}
 
 			RefreshModuleTypes();
@@ -110,7 +118,7 @@ namespace Polyhedrus
 
 		public void SetPitchWheel(double value)
 		{
-			for (int i = 0; i < voices.Length; i++)
+			for (var i = 0; i < voices.Length; i++)
 				voices[i].MidiInput.PitchBend = value;
 		}
 
@@ -118,14 +126,26 @@ namespace Polyhedrus
 		{
 			var len = buffer[0].Length;
 			processSampleCount = len;
-			dispatcher.QueueWorkItems(voices);
-			dispatcher.WaitAll();
+			var activeVoices = new List<Voice>();
 
-			for (int i = 0; i < voices.Length; i++)
+			for (var i = 0; i < voices.Length; i++)
 			{
-				var voice = voices[i];
+				if (voices[i].IsActive)
+					activeVoices.Add(voices[i]);
+			}
 
-				for (int j = 0; j < len; j++)
+			var voiceArray = activeVoices.ToArray();
+			var voiceCount = voiceArray.Length;
+			if (voiceCount > 0)
+			{
+				dispatcher.QueueWorkItems(voiceArray);
+				dispatcher.WaitAll();
+			}
+
+			for (var i = 0; i < voiceCount; i++)
+			{
+				var voice = voiceArray[i];
+				for (var j = 0; j < len; j++)
 				{
 					buffer[0][j] += voice.OutputBuffer[0][j];
 					buffer[1][j] += voice.OutputBuffer[1][j];
@@ -239,12 +259,7 @@ namespace Polyhedrus
 
 		private int FindAvailableVoice(int note)
 		{
-			// First, check if this note is already playing
-			for (var i = 0; i < voices.Length; i++)
-				if (voices[i].Note == note)
-					return i;
-
-			// Next, look for inactive voices
+			// Look for inactive voices
 			for (var i = 0; i < voices.Length; i++)
 				if (!voices[i].IsActive)
 					return i;

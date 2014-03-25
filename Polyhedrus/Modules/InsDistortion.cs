@@ -5,9 +5,7 @@ using System.Text;
 
 namespace Polyhedrus.Modules
 {
-	/// <summary>
-	/// Todo: These are very dirty approximations. Will replace with actually good algos when I have time
-	/// </summary>
+	[ModuleName("Distortion")]
 	public sealed class InsDistortion : IInsEffect
 	{
 		public enum GainMode
@@ -80,12 +78,14 @@ namespace Polyhedrus.Modules
 			Update();
 		}
 
-		public void Update()
-		{ 
-			inGain = Parameters[0];
-			outGain = Parameters[1];
-			bias = Parameters[2];
-			mode = (GainMode)(int)Parameters[3];
+		public void SetParameter(Parameters.InsertParams parameter, object value)
+		{
+			var idx = (int)parameter - 1;
+			if (idx < 0 || idx >= Parameters.Length)
+				return;
+
+			Parameters[idx] = (double)value;
+			Update();
 		}
 
 		public double[] Process(double[] input)
@@ -132,6 +132,14 @@ namespace Polyhedrus.Modules
 				output[i] = temp[i] * outGain;
 
 			return output;
+		}
+
+		private void Update()
+		{
+			inGain = Parameters[0];
+			outGain = Parameters[1];
+			bias = Parameters[2];
+			mode = (GainMode)(int)Parameters[3];
 		}
 
 		private void Scale(double[] input)

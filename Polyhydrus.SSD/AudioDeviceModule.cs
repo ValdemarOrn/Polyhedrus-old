@@ -35,7 +35,7 @@ namespace Polyhedrus
 			DevInfo = new DeviceInfo();
 			ParameterInfo = new Parameter[1];
 			PortInfo = new Port[1];
-			Controller = new SynthController();
+			Controller = new SynthController(Samplerate, 16);
 
 			VM = new ViewModel(Controller);
 		}

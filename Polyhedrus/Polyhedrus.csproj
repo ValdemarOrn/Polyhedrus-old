@@ -46,9 +46,11 @@
     <Compile Include="Extensions\ModuleParamsExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="ModuleNames.cs" />
-    <Compile Include="Modules\InsEffect.cs" />
+    <Compile Include="Modules\CascadeFilter.cs" />
+    <Compile Include="Modules\ModuleType.cs" />
     <Compile Include="Modules\IOscillator.cs" />
+    <Compile Include="Modules\MultiOsc.cs" />
+    <Compile Include="Modules\NoiseOsc.cs" />
     <Compile Include="ParameterDefaults.cs" />
     <Compile Include="ModuleKey.cs" />
     <Compile Include="Modules\BlOsc.cs" />
