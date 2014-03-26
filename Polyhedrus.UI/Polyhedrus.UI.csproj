@@ -51,6 +51,9 @@
   <ItemGroup>
     <Compile Include="Announcer.cs" />
     <Compile Include="Converters\AnyConverter.cs" />
+    <Compile Include="DualFilterView.xaml.cs">
+      <DependentUpon>DualFilterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InsDistortionView.xaml.cs">
       <DependentUpon>InsDistortionView.xaml</DependentUpon>
     </Compile>
@@ -112,6 +115,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DualFilterView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="InsDistortionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

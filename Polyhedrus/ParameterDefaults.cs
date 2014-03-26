@@ -72,6 +72,18 @@ namespace Polyhedrus
 			data[FilterParams.D] = 1.0;
 
 			data = new Dictionary<Enum, object>();
+			DefaultSettings[typeof(DualFilter)] = data;
+			data[FilterParams.Cutoff] = 0.5;
+			data[FilterParams.Resonance] = 0.0;
+			data[FilterParams.Gain] = 1.0;
+			data[FilterParams.Tracking] = 0.0;
+			data[FilterParams.Envelope] = 0.0;
+			data[FilterParams.CutoffOffset] = 0.0;
+			data[FilterParams.ResonanceOffset] = 0.0;
+			data[FilterParams.FilterAMode] = TwoPoleFilter.FilterMode.LowPass;
+			data[FilterParams.FilterBMode] = TwoPoleFilter.FilterMode.LowPass;
+
+			data = new Dictionary<Enum, object>();
 			DefaultSettings[typeof(Ahdsr)] = data;
 			data[EnvParams.Attack] = 0.05;
 			data[EnvParams.Hold] = 0.00;

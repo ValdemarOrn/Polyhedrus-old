@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="BorderColor" Color="#333" />
 
     <SolidColorBrush x:Key="PrimaryColor" Color="CornflowerBlue" />
+    <SolidColorBrush x:Key="PrimaryColorTransparent" Color="#806495ED" />
     <SolidColorBrush x:Key="SecondaryColor" Color="#333" />
     <SolidColorBrush x:Key="TextColor" Color="Black" />
     <SolidColorBrush x:Key="HoverColor" Color="#bbbbbb" />
@@ -56,6 +57,37 @@
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Foreground" Value="{StaticResource ResourceKey=PrimaryColor}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="ToggleButton" x:Key="ToggleButtonText">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Rectangle SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Fill="{TemplateBinding Background}"></Rectangle>
+                        <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="4,1,4,1" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{StaticResource ResourceKey=PrimaryColor}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ResourceKey=PrimaryColorTransparent}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

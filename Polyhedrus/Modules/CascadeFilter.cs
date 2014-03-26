@@ -5,33 +5,24 @@ using Polyhedrus.Parameters;
 
 namespace Polyhedrus.Modules
 {
-	public interface IFilter
-	{
-		double Samplerate { get; set; }
-		double[] OutputBuffer { get; }
-
-		void SetParameter(FilterParams parameter, object value);
-		void Process(double[] input, double[] cutoffModulationEnv);
-	}
-
 	public sealed class CascadeFilter : IFilter
 	{
 		const double Oversample = 4;
 
 		public double[] OutputBuffer { get; private set; }
 
-		private double CutoffKnob;
-		private double CutoffModulation;
-		private double CutoffModulationEnv;
+		private double cutoffKnob;
+		private double cutoffModulation;
+		private double cutoffModulationEnv;
 
-		private double ResonanceKnob;
-		private double ResonanceModulation;
+		private double resonanceKnob;
+		private double resonanceModulation;
 
-		private double Vx;
-		private double Va;
-		private double Vb;
-		private double Vc;
-		private double Vd;
+		private double vx;
+		private double va;
+		private double vb;
+		private double vc;
+		private double vd;
 
 		private double fsinv;
 		private double samplerate;
@@ -60,8 +51,8 @@ namespace Polyhedrus.Modules
 		{
 			Samplerate = samplerate;
 			OutputBuffer = new double[bufferSize];
-			CutoffKnob = 1;
-			Vd = 1;
+			cutoffKnob = 1;
+			vd = 1;
 			coefficientsDirty = true;
 		}
 
@@ -70,43 +61,43 @@ namespace Polyhedrus.Modules
 			switch (parameter)
 			{
 				case FilterParams.Cutoff:
-					CutoffKnob = (double)value;
+					cutoffKnob = (double)value;
 					break;
 				case FilterParams.CutoffModulation:
-					CutoffModulation = (double)value;
+					cutoffModulation = (double)value;
 					break;
 				case FilterParams.Resonance:
-					ResonanceKnob = (double)value;
+					resonanceKnob = (double)value;
 					break;
 				case FilterParams.ResonanceModulation:
-					ResonanceModulation = (double)value;
+					resonanceModulation = (double)value;
 					break;
 				case FilterParams.A:
-					Va = (double)value;
+					va = (double)value;
 					break;
 				case FilterParams.B:
-					Vb = (double)value;
+					vb = (double)value;
 					break;
 				case FilterParams.C:
-					Vc = (double)value;
+					vc = (double)value;
 					break;
 				case FilterParams.D:
-					Vd = (double)value;
+					vd = (double)value;
 					break;
 				case FilterParams.X:
-					Vx = (double)value;
+					vx = (double)value;
 					break;
 			}
 			
 			coefficientsDirty = true;
 		}
 
-		public void Process(double[] input, double[] cutoffModulationEnv)
+		public void Process(double[] input, double[] cutoffModEnv)
 		{
 			var outputBuf = OutputBuffer;
 			for (int i = 0; i < input.Length; i++)
 			{
-				CutoffModulationEnv = cutoffModulationEnv[i];
+				cutoffModulationEnv = cutoffModEnv[i];
 				UpdateCoefficients();
 				outputBuf[i] = Process(input[i]);
 			}
@@ -117,7 +108,7 @@ namespace Polyhedrus.Modules
 			if (coefficientsDirty)
 				UpdateCoefficients();
 
-			var reso = ResonanceKnob + ResonanceModulation;
+			var reso = resonanceKnob + resonanceModulation;
 			if (reso > 1)
 				reso = 1;
 			else if (reso < 0)
@@ -142,13 +133,13 @@ namespace Polyhedrus.Modules
 				feedback = Utils.TanhApprox(val);
 			}
 
-			var sample = (Vx * x + Va * a + Vb * b + Vc * c + Vd * d) * (1 - reso * 0.5);
+			var sample = (vx * x + va * a + vb * b + vc * c + vd * d) * (1 - reso * 0.5);
 			return sample;
 		}
 
 		private void UpdateCoefficients()
 		{
-			var value = CutoffKnob + CutoffModulation + CutoffModulationEnv;
+			var value = cutoffKnob + cutoffModulation + cutoffModulationEnv;
 			if (value > 1)
 				value = 1;
 			else if (value < 0)

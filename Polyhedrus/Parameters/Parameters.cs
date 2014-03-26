@@ -33,7 +33,11 @@ namespace Polyhedrus.Parameters
 		A,
 		B,
 		C,
-		D
+		D,
+		CutoffOffset,
+		ResonanceOffset,
+		FilterAMode,
+		FilterBMode
 	}
 
 	public enum EnvParams

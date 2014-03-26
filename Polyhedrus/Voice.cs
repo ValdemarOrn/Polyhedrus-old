@@ -69,8 +69,8 @@ namespace Polyhedrus
 			Ins1 = new InsDistortion(samplerate, bufsize);
 			Ins2 = new InsDistortion(samplerate, bufsize);
 
-			Filter1 = new CascadeFilter(samplerate, bufsize);
-			Filter2 = new CascadeFilter(samplerate, bufsize);
+			Filter1 = new DualFilter(samplerate, bufsize);
+			Filter2 = new DualFilter(samplerate, bufsize);
 
 			AmpEnv = new Ahdsr(samplerate);
 			Filter1Env = new Ahdsr(samplerate);
@@ -392,7 +392,7 @@ namespace Polyhedrus
 
 		private void SetParameterFilter(ModuleId module, Enum parameter, object value)
 		{
-			var filter = (CascadeFilter)Modules[module];
+			var filter = (IFilter)Modules[module];
 			var para = (FilterParams)parameter;
 			double val = Convert.ToDouble(value);
 
