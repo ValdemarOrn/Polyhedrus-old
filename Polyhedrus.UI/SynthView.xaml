@@ -36,7 +36,9 @@
                           Selectors="{Binding Path=FilterSelectors}"
                           Titles="{Binding Path=FilterNames, Mode=OneWay}"
                           Panels="{Binding Path=FilterViews, Mode=OneWay}"
-                          SelectedIndex="{Binding Path=SelectedFilter}" />
+                          SelectedIndex="{Binding Path=SelectedFilter}"
+                          AvailableOptions="{Binding Path=FilterOptions, Mode=OneWay}"
+                          SelectedOption="{Binding Path=SelectedFilterOption, Mode=TwoWay}" />
 
         <UI:ModuleControl x:Name="FilterEnvModule" HorizontalAlignment="Left" VerticalAlignment="Top" Height="80" Width="320" Margin="658,184,0,0"
                           TitleVisibility="Hidden"

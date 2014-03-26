@@ -58,18 +58,33 @@ namespace Polyhedrus
 
 			foreach(var voice in voices)
 			{
-				if (module == ModuleId.Insert1)
-					voice.Ins1 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
-				if (module == ModuleId.Insert2)
-					voice.Ins2 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
-				if (module == ModuleId.Osc1)
-					voice.Osc1 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
-				if (module == ModuleId.Osc2)
-					voice.Osc2 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
-				if (module == ModuleId.Osc3)
-					voice.Osc3 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
-				if (module == ModuleId.Osc4)
-					voice.Osc4 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+				switch (module)
+				{
+					case ModuleId.Insert1:
+						voice.Ins1 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Insert2:
+						voice.Ins2 = ModuleType.CreateNew<IInsEffect>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Osc1:
+						voice.Osc1 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Osc2:
+						voice.Osc2 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Osc3:
+						voice.Osc3 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Osc4:
+						voice.Osc4 = ModuleType.CreateNew<IOscillator>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Filter1:
+						voice.Filter1 = ModuleType.CreateNew<IFilter>(moduleType, Samplerate, bufferSize);
+						break;
+					case ModuleId.Filter2:
+						voice.Filter2 = ModuleType.CreateNew<IFilter>(moduleType, Samplerate, bufferSize);
+						break;
+				}
 			}
 
 			RefreshModuleTypes();
@@ -155,6 +170,11 @@ namespace Polyhedrus
 
 		public void SetParameter(ModuleId module, Enum parameter, object value)
 		{
+			SetParameter(module, Convert.ToInt32(parameter), value);
+		}
+
+		public void SetParameter(ModuleId module, int parameter, object value)
+		{
 			parameters.SetParameter(module, ModuleTypes[module], parameter, value);
 
 			foreach (var voice in voices)
@@ -163,10 +183,15 @@ namespace Polyhedrus
 
 		public object GetParameter(ModuleId module, Enum parameter)
 		{
+			return GetParameter(module, Convert.ToInt32(parameter));
+		}
+
+		public object GetParameter(ModuleId module, int parameter)
+		{
 			return parameters.GetParameter(module, ModuleTypes[module], parameter);
 		}
 
-		public void SetModuleParameters(ModuleId module, Dictionary<Enum, object> para, bool update = true)
+		public void SetModuleParameters(ModuleId module, Dictionary<int, object> para, bool update = true)
 		{
 			parameters.SetParameters(module, ModuleTypes[module], para);
 

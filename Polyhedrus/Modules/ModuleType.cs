@@ -19,6 +19,7 @@ namespace Polyhedrus.Modules
 
 			var insTypes = new List<Type>();
 			var oscTypes = new List<Type>();
+			var filterTypes = new List<Type>();
 
 			foreach (var cls in classes)
 			{
@@ -34,16 +35,21 @@ namespace Polyhedrus.Modules
 
 				if (typeof(IOscillator).IsAssignableFrom(cls))
 					oscTypes.Add(cls);
+
+				if (typeof(IFilter).IsAssignableFrom(cls))
+					filterTypes.Add(cls);
 			}
 
 			InsertEffectTypes = insTypes.ToArray();
 			OscillatorTypes = oscTypes.ToArray();
+			FilterTypes = filterTypes.ToArray();
 		}
 
 		private static Dictionary<string, Type> moduleNames = new Dictionary<string, Type>();
 
 		public static Type[] InsertEffectTypes { get; private set; }
 		public static Type[] OscillatorTypes { get; private set; }
+		public static Type[] FilterTypes { get; private set; }
 
 		public static T CreateNew<T>(Type moduleType, double samplerate, int bufferSize) where T : class
 		{

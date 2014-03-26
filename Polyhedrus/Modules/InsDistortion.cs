@@ -78,9 +78,9 @@ namespace Polyhedrus.Modules
 			Update();
 		}
 
-		public void SetParameter(Parameters.InsertParams parameter, object value)
+		public void SetParameter(int parameter, object value)
 		{
-			var idx = (int)parameter - 1;
+			var idx = parameter - 1;
 			if (idx < 0 || idx >= Parameters.Length)
 				return;
 

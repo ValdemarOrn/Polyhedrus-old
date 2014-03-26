@@ -101,13 +101,29 @@ namespace Polyhedrus.UI
 			}
 		}
 
+		public bool FourPole
+		{
+			get { return Ctrl.GetParameter(ModuleId, FilterParams.NumPoles).Equals(4); }
+			set
+			{
+				Ctrl.SetParameter(ModuleId, FilterParams.NumPoles, value ? 4 : 2);
+				NotifyChange(() => FourPole);
+			}
+		}
+
 		public TwoPoleFilter.FilterMode FilterAMode
 		{
 			get { return (TwoPoleFilter.FilterMode)Ctrl.GetParameter(ModuleId, FilterParams.FilterAMode); }
 			set
 			{
+				if (FilterAMode == value)
+					return;
+
 				Ctrl.SetParameter(ModuleId, FilterParams.FilterAMode, value);
 				NotifyChange(() => FilterAMode);
+				NotifyChange(() => F1Lp);
+				NotifyChange(() => F1Hp);
+				NotifyChange(() => F1Bp);
 			}
 		}
 
@@ -116,50 +132,52 @@ namespace Polyhedrus.UI
 			get { return (TwoPoleFilter.FilterMode)Ctrl.GetParameter(ModuleId, FilterParams.FilterBMode); }
 			set
 			{
+				if (FilterBMode == value)
+					return;
+
 				Ctrl.SetParameter(ModuleId, FilterParams.FilterBMode, value);
 				NotifyChange(() => FilterBMode);
+				NotifyChange(() => F2Lp);
+				NotifyChange(() => F2Hp);
+				NotifyChange(() => F2Bp);
 			}
 		}
 
-		private void FilterTypeClicked(object sender, RoutedEventArgs e)
+		public bool F1Lp
 		{
-			if (sender.Equals(ToggleFALowPass))
-			{
-				FilterAMode = TwoPoleFilter.FilterMode.LowPass;
-				ToggleFAHighPass.IsChecked = false;
-				ToggleFABandPass.IsChecked = false;
-			}
-			else if (sender.Equals(ToggleFAHighPass))
-			{
-				FilterAMode = TwoPoleFilter.FilterMode.HighPass;
-				ToggleFALowPass.IsChecked = false;
-				ToggleFABandPass.IsChecked = false;
-			}
-			else if (sender.Equals(ToggleFABandPass))
-			{
-				FilterAMode = TwoPoleFilter.FilterMode.BandPass;
-				ToggleFALowPass.IsChecked = false;
-				ToggleFAHighPass.IsChecked = false;
-			}
+			get { return FilterAMode == TwoPoleFilter.FilterMode.LowPass; }
+			set { FilterAMode = TwoPoleFilter.FilterMode.LowPass; }
+		}
 
-			else if (sender.Equals(ToggleFBLowPass))
-			{
-				FilterBMode = TwoPoleFilter.FilterMode.LowPass;
-				ToggleFBHighPass.IsChecked = false;
-				ToggleFBBandPass.IsChecked = false;
-			}
-			else if (sender.Equals(ToggleFBHighPass))
-			{
-				FilterBMode = TwoPoleFilter.FilterMode.HighPass;
-				ToggleFBLowPass.IsChecked = false;
-				ToggleFBBandPass.IsChecked = false;
-			}
-			else if (sender.Equals(ToggleFBBandPass))
-			{
-				FilterBMode = TwoPoleFilter.FilterMode.BandPass;
-				ToggleFBLowPass.IsChecked = false;
-				ToggleFBHighPass.IsChecked = false;
-			}
+		public bool F1Hp
+		{
+			get { return FilterAMode == TwoPoleFilter.FilterMode.HighPass; }
+			set { FilterAMode = TwoPoleFilter.FilterMode.HighPass; }
+		}
+
+		public bool F1Bp
+		{
+			get { return FilterAMode == TwoPoleFilter.FilterMode.BandPass; }
+			set { FilterAMode = TwoPoleFilter.FilterMode.BandPass; }
+		}
+
+
+		public bool F2Lp
+		{
+			get { return FilterBMode == TwoPoleFilter.FilterMode.LowPass; }
+			set { FilterBMode = TwoPoleFilter.FilterMode.LowPass; }
+		}
+
+		public bool F2Hp
+		{
+			get { return FilterBMode == TwoPoleFilter.FilterMode.HighPass; }
+			set { FilterBMode = TwoPoleFilter.FilterMode.HighPass; }
+		}
+
+		public bool F2Bp
+		{
+			get { return FilterBMode == TwoPoleFilter.FilterMode.BandPass; }
+			set { FilterBMode = TwoPoleFilter.FilterMode.BandPass; }
 		}
 	}
 }

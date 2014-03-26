@@ -29,6 +29,7 @@ namespace Polyhedrus.Parameters
 		Gain,
 		Tracking,
 		Envelope,
+		NumPoles,
 		X,
 		A,
 		B,

@@ -8,6 +8,7 @@ using Polyhedrus.Parameters;
 
 namespace Polyhedrus.Modules
 {
+	[ModuleName("Dual Filter")]
 	public class DualFilter : IFilter
 	{
 		private double samplerate;
@@ -22,6 +23,7 @@ namespace Polyhedrus.Modules
 		private double resonanceKnob;
 		private double resonanceModulation;
 
+		private bool fourPole;
 		private double cutoffOffset;
 		private double resonanceOffset;
 
@@ -68,6 +70,9 @@ namespace Polyhedrus.Modules
 				case FilterParams.ResonanceModulation:
 					resonanceModulation = (double)value;
 					break;
+				case FilterParams.NumPoles:
+					fourPole = value.Equals(4);
+					break;
 
 				case FilterParams.CutoffOffset:
 					cutoffOffset = (double)value;
@@ -98,13 +103,14 @@ namespace Polyhedrus.Modules
 			}
 		}
 
-		private double Process(double input)
+		private double Process(double value)
 		{
 			if (coefficientsDirty)
 				UpdateCoefficients();
 
-			var sample = filterA.Process(input);
-			return sample;
+			value = filterA.Process(value);
+			if (fourPole) value = filterB.Process(value);
+			return value;
 		}
 
 		private void UpdateCoefficients()

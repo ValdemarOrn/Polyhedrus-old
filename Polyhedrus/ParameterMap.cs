@@ -12,40 +12,40 @@ namespace Polyhedrus
 		{
 			public ModuleId Module;
 			public Type ModuleType;
-			public Enum Key;
+			public int Key;
 			public object Value;
 		}
 
-		public Dictionary<ModuleKey, Dictionary<Enum, object>> Parameters { get; private set; }
+		public Dictionary<ModuleKey, Dictionary<int, object>> Parameters { get; private set; }
 
 		public ParameterMap()
 		{
-			Parameters = new Dictionary<ModuleKey, Dictionary<Enum, object>>();
+			Parameters = new Dictionary<ModuleKey, Dictionary<int, object>>();
 		}
 
-		public void SetParameters(ModuleId moduleId, Type moduleType, Dictionary<Enum, object> parameters)
+		public void SetParameters(ModuleId moduleId, Type moduleType, Dictionary<int, object> parameters)
 		{
 			Parameters[new ModuleKey(moduleId, moduleType)] = parameters;
 		}
 
-		public void SetParameter(ModuleId moduleId, Type moduleType, Enum parameter, object value)
+		public void SetParameter(ModuleId moduleId, Type moduleType, int parameter, object value)
 		{
 			var para = GetParameters(moduleId, moduleType);
 			if (para == null)
-				Parameters[new ModuleKey(moduleId, moduleType)] = new Dictionary<Enum, object>();
+				Parameters[new ModuleKey(moduleId, moduleType)] = new Dictionary<int, object>();
 
 			para[parameter] = value;
 		}
 
-		public Dictionary<Enum, object> GetParameters(ModuleId moduleId, Type moduleType)
+		public Dictionary<int, object> GetParameters(ModuleId moduleId, Type moduleType)
 		{
 			var key = new ModuleKey(moduleId, moduleType);
-			Dictionary<Enum, object> output;
+			Dictionary<int, object> output;
 			bool ok = Parameters.TryGetValue(key, out output);
 			return ok ? output : null;
 		}
 
-		public object GetParameter(ModuleId moduleId, Type moduleType, Enum parameter)
+		public object GetParameter(ModuleId moduleId, Type moduleType, int parameter)
 		{
 			var para = GetParameters(moduleId, moduleType);
 			if (para == null)

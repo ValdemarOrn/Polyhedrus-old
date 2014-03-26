@@ -289,6 +289,10 @@
         </Style.Resources>
     </Style>
 
-
+    <Style TargetType="Label" x:Key="LabelStyle">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
 
 </ResourceDictionary>

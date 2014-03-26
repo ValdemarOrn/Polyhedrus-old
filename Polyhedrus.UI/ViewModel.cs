@@ -53,6 +53,7 @@ namespace Polyhedrus
 
 			InsertEffectOptions = ModuleType.InsertEffectTypes.Select(ModuleType.GetName).ToArray();
 			OscillatorOptions = ModuleType.OscillatorTypes.Select(ModuleType.GetName).ToArray();
+			FilterOptions = ModuleType.FilterTypes.Select(ModuleType.GetName).ToArray();
 
 			SetViews();
 		}
@@ -101,6 +102,27 @@ namespace Polyhedrus
 			}
 		}
 
+		public string SelectedFilterOption
+		{
+			get
+			{
+				var module = (ModuleId)((int)ModuleId.Filter1 + SelectedFilter);
+				var type = ctrl.ModuleTypes[module];
+				return ModuleType.GetName(type);
+			}
+			set
+			{
+				var module = (ModuleId)((int)ModuleId.Filter1 + SelectedFilter);
+				var type = ModuleType.GetType(value);
+				if (type == null)
+					return;
+
+				ctrl.SetModuleType(module, type);
+				FilterViews[SelectedFilter] = ViewProvider.GetView(type, ctrl, module);
+				NotifyChange(() => SelectedFilterOption);
+			}
+		}
+
 		public string[] OscNames { get; private set; }
 		public string[] AmpEnvNames { get; private set; }
 		public string[] InsertEffectNames { get; private set; }
@@ -123,6 +145,7 @@ namespace Polyhedrus
 
 		public string[] InsertEffectOptions { get; private set; }
 		public string[] OscillatorOptions { get; private set; }
+		public string[] FilterOptions { get; private set; }
 
 		private ObservableCollection<Control> oscViews;
 		public ObservableCollection<Control> OscViews
@@ -172,7 +195,6 @@ namespace Polyhedrus
 			get { return modulatorViews; }
 			set { modulatorViews = value; NotifyChange(() => ModulatorViews); }
 		}
-
 
 		private int selectedOsc;
 		public int SelectedOsc

@@ -5,6 +5,7 @@ using Polyhedrus.Parameters;
 
 namespace Polyhedrus.Modules
 {
+	[ModuleName("Cascade Filter")]
 	public sealed class CascadeFilter : IFilter
 	{
 		const double Oversample = 4;

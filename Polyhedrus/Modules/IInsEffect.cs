@@ -8,7 +8,7 @@ namespace Polyhedrus.Modules
 		double Samplerate { get; set; }
 		double[] OutputBuffer { get; }
 
-		void SetParameter(InsertParams parameter, object value);
+		void SetParameter(int parameter, object value);
 		double[] Process(double[] input);
 	}
 }
